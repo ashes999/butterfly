@@ -40,8 +40,7 @@ class Main {
     for (entry in filesAndDirs) {
       var relativePath = postsDir + "/" + entry;
       if (!sys.FileSystem.isDirectory(relativePath)) {
-        var content:String = sys.io.File.getContent(relativePath);
-        posts.push(butterfly.Post.parse(entry, content));
+        posts.push(butterfly.Post.parse(relativePath));
       }
     }
 
