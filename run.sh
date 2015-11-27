@@ -1,4 +1,4 @@
-haxe -main Main -neko Main.n
+haxe -lib markdown -main Main -neko Main.n
 
 if [ $? -eq 0 ]
 then

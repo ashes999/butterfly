@@ -1,4 +1,5 @@
 package butterfly;
+using StringTools;
 
 class HtmlGenerator {
   private var layoutHtml:String;
@@ -12,8 +13,8 @@ class HtmlGenerator {
   {
     var titleHtml = '<h2 class="blog-post-title">' + post.title + '</h2>';
     var postedOnHtml = '<p class="blog-post-meta">Posted ' + post.createdOn + '</p>';
-    trace(postedOnHtml);
-    return this.layoutHtml;
+    var finalHtml = "<div class='blog-post'>\n" + titleHtml + "\n" + postedOnHtml + "\n" + post.content + "</div>\n";
+    return this.layoutHtml.replace('<div class="blog-post" />', finalHtml);
   }
 
 }

@@ -13,12 +13,12 @@ class Post {
   // fileName doesn't include any path characters
   public static function parse(pathAndFileName:String) : Post
   {
-    var fileName = pathAndFileName.substr(pathAndFileName.lastIndexOf('/'));
+    var fileName = pathAndFileName.substr(pathAndFileName.lastIndexOf('/') + 1);
     var post = new Post();
     post.title = getTitle(fileName);
     post.url = getUrl(fileName);
     post.createdOn = sys.FileSystem.stat(pathAndFileName).ctime;
-    post.content = sys.io.File.getContent(pathAndFileName);
+    post.content = getContent(pathAndFileName);
     return post;
   }
 
@@ -37,6 +37,13 @@ class Post {
       toReturn += word + " ";
     }
     return toReturn.trim();
+  }
+
+  private static function getContent(pathAndFileName) : String
+  {
+    var markdown = sys.io.File.getContent(pathAndFileName);
+    var html = Markdown.markdownToHtml(markdown);
+    return html;
   }
 
   private static function getUrl(fileName:String) : String
