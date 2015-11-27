@@ -17,16 +17,18 @@ class Main {
     ensureDirExists(projectDir);
 
     var binDir = projectDir + "/bin";
-    if (!sys.FileSystem.exists(binDir)) {
+    if (sys.FileSystem.exists(binDir)) {
+      // always clean/rebuild
+      deleteDirRecursively(binDir);
       sys.FileSystem.createDirectory(binDir);
-      trace("Created " + binDir);
     }
 
     var srcDir = projectDir + "/src";
     ensureDirExists(srcDir);
 
-    if (!sys.FileSystem.exists(srcDir + "/layout.html")) {
-      errorAndExit("Can't find " + srcDir + "/layout.html");
+    var layoutFile = srcDir + "/layout.html";
+    if (!sys.FileSystem.exists(layoutFile)) {
+      errorAndExit("Can't find " + layoutFile);
     }
 
     var postsDir = srcDir + '/posts';
@@ -43,19 +45,45 @@ class Main {
       }
     }
 
-    trace("POSTS: " + posts);
+    var writer = new butterfly.PostWriter();
+    var generator = new butterfly.HtmlGenerator(layoutFile);
+
+    for (post in posts) {
+      var html = generator.generateHtml(post);
+      writer.write(html, post, binDir);
+    }
+
+    trace("Generated " + posts.length + " posts.");
   }
 
-  private function errorAndExit(message:String) : Void {
+  private function errorAndExit(message:String) : Void
+  {
     trace("Error: " + message);
     Sys.exit(1);
   }
 
-  private function ensureDirExists(path:String) : Void {
+  private function ensureDirExists(path:String) : Void
+  {
     if (!sys.FileSystem.exists(path)) {
       errorAndExit(path + " doesn't exist");
     } else if (!sys.FileSystem.isDirectory(path)) {
       errorAndExit(path + " isn't a directory");
+    }
+  }
+
+  private function deleteDirRecursively(path:String) : Void
+  {
+    if (sys.FileSystem.exists(path) && sys.FileSystem.isDirectory(path))
+    {
+      var entries = sys.FileSystem.readDirectory(path);
+      for (entry in entries) {
+        if (sys.FileSystem.isDirectory(path + '/' + entry)) {
+          deleteDirRecursively(path + '/' + entry);
+          sys.FileSystem.deleteDirectory(path + '/' + entry);
+        } else {
+          sys.FileSystem.deleteFile(path + '/' + entry);
+        }
+      }
     }
   }
 }
