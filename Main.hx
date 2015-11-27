@@ -12,22 +12,33 @@ class Main {
       errorAndExit("Usage: neko Main.n <source directory>");
     }
 
-    var srcDir = Sys.args()[0];
-    trace("Using " + srcDir + " as source directory ...");
-    ensureDirExists(srcDir);
+    var projectDir = Sys.args()[0];
+    trace("Using " + projectDir + " as project directory ...");
+    ensureDirExists(projectDir);
 
-    var binDir = srcDir + "/bin";
+    var binDir = projectDir + "/bin";
     if (!sys.FileSystem.exists(binDir)) {
       sys.FileSystem.createDirectory(binDir);
       trace("Created " + binDir);
     }
 
-    if (!sys.FileSystem.exists(srcDir + "/src/layout.html")) {
-      errorAndExit("Can't find " + srcDir + "/src/layout.html");
+    var srcDir = projectDir + "/src";
+    ensureDirExists(srcDir);
+
+    if (!sys.FileSystem.exists(srcDir + "/layout.html")) {
+      errorAndExit("Can't find " + srcDir + "/layout.html");
     }
 
     var postsDir = srcDir + '/posts';
     ensureDirExists(postsDir);
+
+    var filesAndDirs = sys.FileSystem.readDirectory(postsDir);
+    var files = new Array<String>();
+    for (entry in filesAndDirs) {
+      if (!sys.FileSystem.isDirectory(postsDir + "/" + entry)) {
+        files.push(entry);
+      }
+    }
   }
 
   private function errorAndExit(message:String) : Void {
