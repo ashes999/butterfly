@@ -15,7 +15,7 @@ class Main {
     }
 
     var projectDir = Sys.args()[0];
-    trace("Using " + projectDir + " as project directory ...");
+    trace("Using " + projectDir + " as project directory");
     ensureDirExists(projectDir);
 
     var binDir = projectDir + "/bin";
