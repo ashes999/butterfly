@@ -14,10 +14,7 @@ class Main {
 
     var srcDir = Sys.args()[0];
     trace("Using " + srcDir + " as source directory ...");
-
-    if (!sys.FileSystem.exists(srcDir) || !sys.FileSystem.isDirectory(srcDir)) {
-      errorAndExit(srcDir + " doesn't exist or isn't a directory");
-    }
+    ensureDirExists(srcDir);
 
     var binDir = srcDir + "/bin";
     if (!sys.FileSystem.exists(binDir)) {
@@ -30,13 +27,19 @@ class Main {
     }
 
     var postsDir = srcDir + '/posts';
-    if (!sys.FileSystem.exists(postsDir) || !sys.FileSystem.isDirectory(postsDir)) {
-      errorAndExit(postsDir + " doesn't exist or isn't a directory");
-    }
+    ensureDirExists(postsDir);
   }
 
   private function errorAndExit(message:String) : Void {
     trace("Error: " + message);
     Sys.exit(1);
+  }
+
+  private function ensureDirExists(path:String) : Void {
+    if (!sys.FileSystem.exists(path))  {
+      errorAndExit(path + " doesn't exist");
+    } else if (!sys.FileSystem.isDirectory(path)) {
+      errorAndExit(path + " isn't a directory");
+    }
   }
 }
