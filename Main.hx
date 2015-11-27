@@ -33,10 +33,12 @@ class Main {
     ensureDirExists(postsDir);
 
     var filesAndDirs = sys.FileSystem.readDirectory(postsDir);
-    var files = new Array<String>();
+    var posts = new Array<butterfly.Post>();
+
     for (entry in filesAndDirs) {
-      if (!sys.FileSystem.isDirectory(postsDir + "/" + entry)) {
-        files.push(entry);
+      var relativePath = postsDir + "/" + entry;
+      if (!sys.FileSystem.isDirectory(relativePath)) {
+        posts.push(butterfly.Post.parse(relativePath));
       }
     }
   }
@@ -47,7 +49,7 @@ class Main {
   }
 
   private function ensureDirExists(path:String) : Void {
-    if (!sys.FileSystem.exists(path))  {
+    if (!sys.FileSystem.exists(path)) {
       errorAndExit(path + " doesn't exist");
     } else if (!sys.FileSystem.isDirectory(path)) {
       errorAndExit(path + " isn't a directory");
