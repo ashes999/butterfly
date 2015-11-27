@@ -1,0 +1,1 @@
+haxe -main Main --interp
