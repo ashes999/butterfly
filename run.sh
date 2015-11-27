@@ -1,3 +1,7 @@
 haxe -main Main -neko Main.n
-neko ./Main.n "$@"
-rm Main.n
+
+if [ $? -eq 0 ]
+then
+  neko ./Main.n "$@"
+  rm Main.n
+fi

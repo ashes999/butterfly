@@ -4,21 +4,25 @@ using StringTools;
 class Post {
   public var title(default, null) : String;
   public var content(default, null) : String;
+  public var url(default, null) : String;
 
   public function new() {
   }
 
   // fileName doesn't include any path characters
-  public static function parse(fileName:String, content:String) {
+  public static function parse(fileName:String, content:String) : Post
+  {
     var post = new Post();
-    post.title = getTitleFrom(fileName);
+    post.title = getTitle(fileName);
+    post.url = getUrl(fileName);
     post.content = content;
     return post;
   }
 
-  private static function getTitleFrom(fileName:String) {
-    var name = fileName.substr(0, fileName.toUpperCase().lastIndexOf('.MD'));
-    var words:Array<String> = name.split('-');
+  private static function getTitle(fileName:String) : String
+  {
+    var url = getUrl(fileName);
+    var words:Array<String> = url.split('-');
 
     var toReturn = "";
     for (word in words) {
@@ -30,5 +34,10 @@ class Post {
       toReturn += word + " ";
     }
     return toReturn.trim();
+  }
+
+  private static function getUrl(fileName:String) : String
+  {
+    return fileName.substr(0, fileName.toUpperCase().lastIndexOf('.MD'));
   }
 }
