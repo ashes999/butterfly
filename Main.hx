@@ -1,3 +1,5 @@
+using StringTools;
+
 class Main {
   static public function main() : Void {
     new Main().run();
@@ -25,6 +27,14 @@ class Main {
 
     var srcDir = projectDir + "/src";
     ensureDirExists(srcDir);
+
+    // Copy *.css over
+    var entries = sys.FileSystem.readDirectory(srcDir);
+    for (entry in entries) {
+      if (entry.endsWith('.css')) {
+        sys.io.File.copy(srcDir + '/' + entry, binDir + '/' + entry);
+      }
+    }
 
     var layoutFile = srcDir + "/layout.html";
     if (!sys.FileSystem.exists(layoutFile)) {
