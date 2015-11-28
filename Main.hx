@@ -28,13 +28,9 @@ class Main {
     var srcDir = projectDir + "/src";
     ensureDirExists(srcDir);
 
-    // Copy *.css over
-    var entries = sys.FileSystem.readDirectory(srcDir);
-    for (entry in entries) {
-      if (entry.endsWith('.css')) {
-        sys.io.File.copy(srcDir + '/' + entry, binDir + '/' + entry);
-      }
-    }
+    // Copy *.css and favicon over
+    copyFiles(srcDir, '.css', binDir);
+    copyFiles(srcDir, '.ico', binDir);
 
     var layoutFile = srcDir + "/layout.html";
     if (!sys.FileSystem.exists(layoutFile)) {
@@ -78,6 +74,17 @@ class Main {
     } else if (!sys.FileSystem.isDirectory(path)) {
       errorAndExit(path + " isn't a directory");
     }
+  }
+  
+  // endOfName: eg. ".css"
+  private function copyFiles(srcDir:String, endOfName:String, destDir:String) : Void
+  {
+      var entries = sys.FileSystem.readDirectory(srcDir);
+      for (entry in entries) {
+        if (entry.endsWith(endOfName)) {
+          sys.io.File.copy(srcDir + '/' + entry, destDir + '/' + entry);
+        }
+      }
   }
 
   private function deleteDirRecursively(path:String) : Void
