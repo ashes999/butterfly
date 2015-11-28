@@ -1,4 +1,5 @@
-# Butterfly ![logo](logo.png)
+# Butterfly
+![logo](logo.png)
 
 Simple, beautiful, static blogs. Butterfly combines data from JSON files with a Twitter Bootstrap UI to produce a simple, minimal blog. Perfect for hosting on websites like GitHub Pages!
 
