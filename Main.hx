@@ -5,9 +5,7 @@ class Main {
     new Main().run();
   }
 
-  public function new() {
-
-  }
+  public function new() { }
 
   public function run() : Void {
     if (Sys.args().length != 1) {
@@ -28,9 +26,7 @@ class Main {
     var srcDir = projectDir + "/src";
     ensureDirExists(srcDir);
 
-    // Copy *.css and favicon over
-    copyFiles(srcDir, '.css', binDir);
-    copyFiles(srcDir, '.ico', binDir);
+    copyDirRecursively(srcDir + '/content', binDir + '/content');
 
     var layoutFile = srcDir + "/layout.html";
     if (!sys.FileSystem.exists(layoutFile)) {
@@ -75,16 +71,27 @@ class Main {
       errorAndExit(path + " isn't a directory");
     }
   }
-  
-  // endOfName: eg. ".css"
-  private function copyFiles(srcDir:String, endOfName:String, destDir:String) : Void
+
+  private function copyDirRecursively(srcPath:String, destPath:String) : Void
   {
-      var entries = sys.FileSystem.readDirectory(srcDir);
+    if (!sys.FileSystem.exists(destPath)) {
+      sys.FileSystem.createDirectory(destPath);
+    }
+
+    if (sys.FileSystem.exists(srcPath) && sys.FileSystem.isDirectory(srcPath))
+    {
+      var entries = sys.FileSystem.readDirectory(srcPath);
       for (entry in entries) {
-        if (entry.endsWith(endOfName)) {
-          sys.io.File.copy(srcDir + '/' + entry, destDir + '/' + entry);
+        if (sys.FileSystem.isDirectory(srcPath + '/' + entry)) {
+          sys.FileSystem.createDirectory(srcPath + '/' + entry);
+          copyDirRecursively(srcPath + '/' + entry, destPath + '/' + entry);
+        } else {
+          sys.io.File.copy(srcPath + '/' + entry, destPath + '/' + entry);
         }
       }
+    } else {
+      throw srcPath + " doesn't exist or isn't a directory";
+    }
   }
 
   private function deleteDirRecursively(path:String) : Void
