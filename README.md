@@ -20,10 +20,13 @@ Run `./run.sh` or `./run.bat` and specify where your website files are:
 
 `./run.sh /home/myblog`
 
-Your website files must include, at a minimum:
+Your website files must include, at a minimum, a `src` directory with the following:
 
 - A `layout.html` file containing your HTML template. CSS and JS should all be sourced from a CDN.
 - A `posts` directory, with one markdown file per post. The file name becomes the post name, and the markdown content becomes HTML.
+
+You may also include:
+
 - A `pages` directory, with one markdown file per page. (Pages show up in the navbar.)
 
 For an example repository, check out my [Learn Haxe blog repository](https://github.com/ashes999/learnhaxe).
