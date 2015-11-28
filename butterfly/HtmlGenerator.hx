@@ -15,7 +15,7 @@ class HtmlGenerator {
       throw layoutFile + " doesn't have the blog post placeholder in it: " + COTENT_PLACEHOLDER;
     }
 
-    var pagesHtml = this.generatePagesHtml(pages);
+    var pagesHtml = this.generatePagesLinksHtml(pages);
     this.layoutHtml = this.layoutHtml.replace(PAGES_LINKS_PLACEHOLDER, pagesHtml);
   }
 
@@ -42,7 +42,7 @@ class HtmlGenerator {
     return this.layoutHtml.replace(COTENT_PLACEHOLDER, html);
   }
 
-  private function generatePagesHtml(pages:Array<butterfly.Post>) : String
+  private function generatePagesLinksHtml(pages:Array<butterfly.Post>) : String
   {
     var html = "";
     for (page in pages) {
