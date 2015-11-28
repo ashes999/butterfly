@@ -1,13 +1,20 @@
 package butterfly;
 
 class PostWriter {
-  public function new() {
+  private var outputDir:String = "";
 
+  public function new(outputDir:String) {
+    this.outputDir = outputDir;
   }
 
-  public function write(html:String, post:butterfly.Post, outputDir:String) : Void
+  public function writePost(post:butterfly.Post, html:String) : Void
   {
-    var finalFileName = outputDir + "/" + post.url + ".html";
+    this.write(post.url + ".html", html);
+  }
+
+  public function write(fileName:String, html:String) : Void
+  {
+    var finalFileName = outputDir + "/" + fileName;
     if (sys.FileSystem.exists(finalFileName)) {
       sys.FileSystem.deleteFile(finalFileName);
     }

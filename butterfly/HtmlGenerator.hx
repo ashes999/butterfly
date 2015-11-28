@@ -1,5 +1,6 @@
 package butterfly;
 using StringTools;
+using DateTools;
 
 class HtmlGenerator {
 
@@ -14,7 +15,7 @@ class HtmlGenerator {
     }
   }
 
-  public function generateHtml(post:butterfly.Post) : String
+  public function generatePostHtml(post:butterfly.Post) : String
   {
     var titleHtml = '<h2 class="blog-post-title">' + post.title + '</h2>';
     var postedOnHtml = '<p class="blog-post-meta">Posted ' + post.createdOn + '</p>';
@@ -22,4 +23,13 @@ class HtmlGenerator {
     return this.layoutHtml.replace(postPlaceHolder, finalHtml);
   }
 
+  public function generateHomePage(posts:Array<butterfly.Post>) : String
+  {
+    var html = "<ul>";
+    for (post in posts) {
+      html += '<li><a href="${post.url}.html">${post.title}</a> (Posted on ${post.createdOn.format("%Y-%m-%d")})</li>';
+    }
+    html += "</ul>";
+    return this.layoutHtml.replace(postPlaceHolder, html);
+  }
 }

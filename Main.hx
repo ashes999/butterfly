@@ -46,15 +46,18 @@ class Main {
       }
     }
 
-    var writer = new butterfly.PostWriter();
+    var writer = new butterfly.PostWriter(binDir);
     var generator = new butterfly.HtmlGenerator(layoutFile);
 
     for (post in posts) {
-      var html = generator.generateHtml(post);
-      writer.write(html, post, binDir);
+      var html = generator.generatePostHtml(post);
+      writer.writePost(post, html);
     }
 
-    trace("Generated " + posts.length + " posts.");
+    var indexPage = generator.generateHomePage(posts);
+    writer.write("index.html", indexPage);
+
+    trace("Generated index page and " + posts.length + " posts.");
   }
 
   private function errorAndExit(message:String) : Void
