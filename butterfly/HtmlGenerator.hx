@@ -17,10 +17,15 @@ class HtmlGenerator {
 
   public function generatePostHtml(post:butterfly.Post) : String
   {
+    // substitute in content
     var titleHtml = '<h2 class="blog-post-title">' + post.title + '</h2>';
     var postedOnHtml = '<p class="blog-post-meta">Posted ' + post.createdOn + '</p>';
     var finalHtml = postPlaceHolder + "\n" + titleHtml + "\n" + postedOnHtml + "\n" + post.content + "</div>\n";
-    return this.layoutHtml.replace(postPlaceHolder, finalHtml);
+    var toReturn = this.layoutHtml.replace(postPlaceHolder, finalHtml);
+
+    // prefix the post name to the title tag
+    toReturn = toReturn.replace("<title>", '<title>${post.title} | ');
+    return toReturn;
   }
 
   public function generateHomePage(posts:Array<butterfly.Post>) : String
