@@ -33,7 +33,7 @@ class Main {
       errorAndExit("Can't find " + layoutFile);
     }
 
-    // generate pages first, because they may appear in the header
+    // generate pages first, because they appear in the header/layout
     var pages = getPosts(srcDir + '/pages');
     var generator = new butterfly.HtmlGenerator(layoutFile, pages);
 
@@ -45,6 +45,11 @@ class Main {
     for (post in posts) {
       var html = generator.generatePostHtml(post);
       writer.writePost(post, html);
+    }
+
+    for (page in pages) {
+      var html = generator.generatePostHtml(page);
+      writer.writePost(page, html);
     }
 
     var indexPage = generator.generateHomePage(posts);

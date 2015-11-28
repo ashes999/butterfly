@@ -5,17 +5,18 @@ using DateTools;
 class HtmlGenerator {
 
   private var layoutHtml:String;
-  private var postPlaceHolder:String = '<butterfly-content />';
-  private var pages:Array<butterfly.Post>;
-  
+  private static inline var COTENT_PLACEHOLDER:String = '<butterfly-content />';
+  private static inline var PAGES_LINKS_PLACEHOLDER:String = '<butterfly-pages />';
+
   public function new(layoutFile:String, pages:Array<butterfly.Post>)
   {
     this.layoutHtml = sys.io.File.getContent(layoutFile);
-    if (this.layoutHtml.indexOf(postPlaceHolder) == -1) {
-      throw layoutFile + " doesn't have the blog post placeholder in it: " + postPlaceHolder;
+    if (this.layoutHtml.indexOf(COTENT_PLACEHOLDER) == -1) {
+      throw layoutFile + " doesn't have the blog post placeholder in it: " + COTENT_PLACEHOLDER;
     }
 
-    this.pages = pages;
+    var pagesHtml = this.generatePagesHtml(pages);
+    this.layoutHtml = this.layoutHtml.replace(PAGES_LINKS_PLACEHOLDER, pagesHtml);
   }
 
   public function generatePostHtml(post:butterfly.Post) : String
@@ -24,7 +25,7 @@ class HtmlGenerator {
     var titleHtml = '<h2 class="blog-post-title">' + post.title + '</h2>';
     var postedOnHtml = '<p class="blog-post-meta">Posted ' + post.createdOn.format("%Y-%m-%d") + '</p>';
     var finalHtml = titleHtml + "\n" + postedOnHtml + "\n" + post.content + "\n";
-    var toReturn = this.layoutHtml.replace(postPlaceHolder, finalHtml);
+    var toReturn = this.layoutHtml.replace(COTENT_PLACEHOLDER, finalHtml);
 
     // prefix the post name to the title tag
     toReturn = toReturn.replace("<title>", '<title>${post.title} | ');
@@ -38,6 +39,15 @@ class HtmlGenerator {
       html += '<li><a href="${post.url}.html">${post.title}</a> (Posted on ${post.createdOn.format("%Y-%m-%d")})</li>';
     }
     html += "</ul>";
-    return this.layoutHtml.replace(postPlaceHolder, html);
+    return this.layoutHtml.replace(COTENT_PLACEHOLDER, html);
+  }
+
+  private function generatePagesHtml(pages:Array<butterfly.Post>) : String
+  {
+    var html = "";
+    for (page in pages) {
+      html += '<a class="blog-nav-item" href="${page.url}.html">${page.title}</a>';
+    }
+    return html;
   }
 }
