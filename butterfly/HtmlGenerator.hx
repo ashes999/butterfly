@@ -22,9 +22,18 @@ class HtmlGenerator {
   public function generatePostHtml(post:butterfly.Post) : String
   {
     // substitute in content
+
     var titleHtml = '<h2 class="blog-post-title">' + post.title + '</h2>';
-    var postedOnHtml = '<p class="blog-post-meta">Posted ' + post.createdOn.format("%Y-%m-%d") + '</p>';
-    var finalHtml = titleHtml + "\n" + postedOnHtml + "\n" + post.content + "\n";
+    var tagsHtml = "";
+    if (post.tags.length > 0) {
+      tagsHtml = "<p><strong>Tagged with:</strong> ";
+      for (tag in post.tags) {
+        tagsHtml += '${tag}, ';
+      }
+      tagsHtml = tagsHtml.substr(0, tagsHtml.length - 2) + "</p>"; // trim final ", "
+    }
+    var postedOnHtml = '<p class="blog-post-meta">Posted ${post.createdOn.format("%Y-%m-%d")}</p>';
+    var finalHtml = '${titleHtml}\n${tagsHtml}\n${postedOnHtml}\n${post.content}\n';
     var toReturn = this.layoutHtml.replace(COTENT_PLACEHOLDER, finalHtml);
 
     // prefix the post name to the title tag

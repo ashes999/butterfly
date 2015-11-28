@@ -6,6 +6,9 @@ class Post {
   public var content(default, null) : String;
   public var url(default, null) : String;
   public var createdOn(default, null) : Date;
+  public var tags(default, null) : Array<String>;
+
+  private static var tagRegex = ~/^tags: ([\w\s,\-_]+)\n/i;
 
   public function new() {
   }
@@ -18,6 +21,7 @@ class Post {
     post.title = getTitle(fileName);
     post.url = getUrl(fileName);
     post.createdOn = sys.FileSystem.stat(pathAndFileName).ctime;
+    post.tags = getTags(pathAndFileName);
     post.content = getContent(pathAndFileName);
     return post;
   }
@@ -39,11 +43,35 @@ class Post {
     return toReturn.trim();
   }
 
-  private static function getContent(pathAndFileName) : String
+  private static function getContent(pathAndFileName:String) : String
   {
     var markdown = sys.io.File.getContent(pathAndFileName);
+    // Remove tags
+    markdown = tagRegex.replace(markdown, "");
     var html = Markdown.markdownToHtml(markdown);
     return html;
+  }
+
+  private static function getTags(pathAndFileName:String) : Array<String>
+  {
+    var markdown = sys.io.File.getContent(pathAndFileName);
+    if (tagRegex.match(markdown)) {
+      var tagsString = tagRegex.matched(1); // first group
+
+      // split on space or comma
+      var splitChar = " ";
+      if (tagsString.indexOf(",") > -1) {
+        splitChar = ",";
+      }
+      var rawTags = tagsString.split(splitChar);
+      var toReturn = new Array<String>();
+      for (tag in rawTags) {
+        toReturn.push(tag.trim());
+      }
+      return toReturn;
+    } else {
+      return new Array<String>();
+    }
   }
 
   private static function getUrl(fileName:String) : String
