@@ -23,9 +23,9 @@ Run `./run.sh` or `./run.bat` and specify where your website files are:
 Your website files must include, at a minimum, a `src` directory with the following:
 
 - A `layout.html` file containing your HTML template.
-  - CSS, Javascript, and `favicon` files should all be sourced from a CDN, or referenced through the `content` directory.
-  - Your layout file should contain exactly this HTML element, which will be replaced with an expanded `div` containing the HTML content: `<div class="blog-post" />`
+  - Your layout file should contain exactly this HTML element, which will be replaced with an expanded `div` containing the HTML content: `<butterfly-content />`
 - A `posts` directory, with one markdown file per post. The file name becomes the post name, and the markdown content becomes HTML.
+- CSS, Javascript, and `favicon` files should all be sourced from a CDN, or referenced through the `content` directory.
 
 You may also include:
 

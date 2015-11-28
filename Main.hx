@@ -33,21 +33,14 @@ class Main {
       errorAndExit("Can't find " + layoutFile);
     }
 
-    var postsDir = srcDir + '/posts';
-    ensureDirExists(postsDir);
+    // generate pages first, because they may appear in the header
+    var pages = getPosts(srcDir + '/pages');
+    var generator = new butterfly.HtmlGenerator(layoutFile, pages);
 
-    var filesAndDirs = sys.FileSystem.readDirectory(postsDir);
-    var posts = new Array<butterfly.Post>();
-
-    for (entry in filesAndDirs) {
-      var relativePath = postsDir + "/" + entry;
-      if (!sys.FileSystem.isDirectory(relativePath)) {
-        posts.push(butterfly.Post.parse(relativePath));
-      }
-    }
+    ensureDirExists(srcDir + '/posts');
+    var posts = getPosts(srcDir + '/posts');
 
     var writer = new butterfly.PostWriter(binDir);
-    var generator = new butterfly.HtmlGenerator(layoutFile);
 
     for (post in posts) {
       var html = generator.generatePostHtml(post);
@@ -111,5 +104,21 @@ class Main {
         }
       }
     }
+  }
+
+  private function getPosts(path:String) : Array<butterfly.Post>
+  {
+    if (sys.FileSystem.exists(path) && sys.FileSystem.isDirectory(path)) {
+      var filesAndDirs = sys.FileSystem.readDirectory(path);
+      var posts = new Array<butterfly.Post>();
+      for (entry in filesAndDirs) {
+        var relativePath = path + "/" + entry;
+        if (!sys.FileSystem.isDirectory(relativePath)) {
+          posts.push(butterfly.Post.parse(relativePath));
+        }
+      }
+      return posts;
+    }
+    return new Array<butterfly.Post>();
   }
 }
