@@ -76,6 +76,9 @@ class Main {
     var indexPage = generator.generateHomePage(posts);
     writer.write("index.html", indexPage);
 
+    var atomXml = butterfly.AtomGenerator.generate(posts);
+    writer.write("atom.xml", atomXml);
+
     trace("Generated index page and " + posts.length + " posts.");
   }
 

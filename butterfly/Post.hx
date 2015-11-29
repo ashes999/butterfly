@@ -6,6 +6,7 @@ class Post {
   public var content(default, null) : String;
   public var url(default, null) : String;
   public var createdOn(default, null) : Date;
+  public var updatedOn(default, null) : Date;
   public var tags(default, null) : Array<String>;
 
   private static var tagRegex = ~/^tags: ([\w\s,\-_]+)\n/i;
@@ -20,7 +21,9 @@ class Post {
     var post = new Post();
     post.title = getTitle(fileName);
     post.url = getUrl(fileName);
-    post.createdOn = sys.FileSystem.stat(pathAndFileName).ctime;
+    var stat = sys.FileSystem.stat(pathAndFileName);
+    post.createdOn = stat.ctime;
+    post.updatedOn = stat.mtime;
     post.tags = getTags(pathAndFileName);
     post.content = getContent(pathAndFileName);
     return post;
