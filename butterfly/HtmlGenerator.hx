@@ -48,13 +48,16 @@ class HtmlGenerator {
   // Precondition: posts are sorted in the order we want to list them.
   public function generateTagPageHtml(tag:String, posts:Array<butterfly.Post>):String
   {
+    var count = 0;
     var html = "<ul>";
     for (post in posts) {
       if (post.tags.indexOf(tag) > -1) {
         html += '<li><a href="${post.url}.html">${post.title}</a></li>';
+        count++;
       }
     }
     html += "</ul>";
+    html = '<p>${count} posts tagged with ${tag}:</p>\n${html}';
     return this.layoutHtml.replace(COTENT_PLACEHOLDER, html);
   }
 
@@ -82,10 +85,15 @@ class HtmlGenerator {
     var tags = sortKeys(tagCounts);
     var html = "<ul>";
     for (tag in tags) {
-      html += '<li>${tag} (${tagCounts.get(tag)})</li>\n';
+      html += '<li><a href="${tagLink(tag)}">${tag}</a> (${tagCounts.get(tag)})</li>\n';
     }
     html += "</ul>";
     return html;
+  }
+
+  private function tagLink(tag:String):String
+  {
+    return 'tag-${tag}.html';
   }
 
   private function sortKeys(map:haxe.ds.StringMap<Dynamic>) : Array<String>
