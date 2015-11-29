@@ -38,6 +38,10 @@ class Main {
 
     ensureDirExists(srcDir + '/posts');
     var posts = getPosts(srcDir + '/posts');
+    // sort by date, newest-first
+    posts.sort(function(a, b) {
+      return Math.floor(b.createdOn.getTime() - a.createdOn.getTime());
+    });
 
     var tagCounts = new Map<String, Int>();
 
