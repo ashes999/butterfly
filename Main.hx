@@ -56,7 +56,7 @@ class Main {
     }
 
     var generator = new butterfly.HtmlGenerator(layoutFile, pages, tagCounts);
-    var writer = new butterfly.PostWriter(binDir);
+    var writer = new butterfly.FileWriter(binDir);
 
     for (post in posts) {
       var html = generator.generatePostHtml(post);
@@ -66,6 +66,11 @@ class Main {
     for (page in pages) {
       var html = generator.generatePostHtml(page);
       writer.writePost(page, html);
+    }
+
+    for (tag in tagCounts.keys()) {
+      var html = generator.generateTagPageHtml(tag, posts);
+      writer.write('tag-${tag}.html', html);
     }
 
     var indexPage = generator.generateHomePage(posts);

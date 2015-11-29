@@ -27,7 +27,6 @@ class HtmlGenerator {
   public function generatePostHtml(post:butterfly.Post) : String
   {
     // substitute in content
-
     var titleHtml = '<h2 class="blog-post-title">' + post.title + '</h2>';
     var tagsHtml = "";
     if (post.tags.length > 0) {
@@ -44,6 +43,19 @@ class HtmlGenerator {
     // prefix the post name to the title tag
     toReturn = toReturn.replace("<title>", '<title>${post.title} | ');
     return toReturn;
+  }
+
+  // Precondition: posts are sorted in the order we want to list them.
+  public function generateTagPageHtml(tag:String, posts:Array<butterfly.Post>):String
+  {
+    var html = "<ul>";
+    for (post in posts) {
+      if (post.tags.indexOf(tag) > -1) {
+        html += '<li><a href="${post.url}.html">${post.title}</a></li>';
+      }
+    }
+    html += "</ul>";
+    return this.layoutHtml.replace(COTENT_PLACEHOLDER, html);
   }
 
   public function generateHomePage(posts:Array<butterfly.Post>) : String

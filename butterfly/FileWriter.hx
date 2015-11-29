@@ -1,6 +1,6 @@
 package butterfly;
 
-class PostWriter {
+class FileWriter {
   private var outputDir:String = "";
 
   public function new(outputDir:String) {
