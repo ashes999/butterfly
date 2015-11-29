@@ -7,18 +7,19 @@ class AtomGenerator {
   public static function generate(posts:Array<butterfly.Post>):String
   {
     var siteName = "Your site name";
-    var lastUpdated = toIsoTime(posts[0].createdOn);
-    var xml = "<?xml version='1.0' encoding='utf-8'?>
-      <feed xmlns='http://www.w3.org/2005/Atom'>
-      	<title>Atom Feed</title>";
-  	xml += '<id>urn:uuid:${Md5.encode(siteName)}</id>';
-  	xml = '${xml}<updated>${lastUpdated}</updated>';
+    var lastUpdated = posts[0].createdOn;
+    var xml = '<?xml version="1.0" encoding="utf-8"?>
+      <feed xmlns="http://www.w3.org/2005/Atom">
+        <title>${siteName}</title>
+        <id>urn:uuid:${Md5.encode(siteName)}</id>
+  	    <updated>${toIsoTime(lastUpdated)}</updated>';
+
     for (i in 0...Math.round(Math.min(posts.length, 10))) {
       var post = posts[i];
       xml += '<entry>
       		<title>${post.title}</title>
       		<id>urn:uuid:${Md5.encode(post.title)}</id>
-      		<updated>${post.updatedOn}</updated>
+      		<updated>${toIsoTime(post.updatedOn)}</updated>
       		<summary>${post.title}</summary>
       		<content type="xhtml">
       			${post.content}
