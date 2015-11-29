@@ -32,7 +32,7 @@ class HtmlGenerator {
     if (post.tags.length > 0) {
       tagsHtml = "<p><strong>Tagged with:</strong> ";
       for (tag in post.tags) {
-        tagsHtml += '${tag}, ';
+        tagsHtml += '<a href="${tagLink(tag)}">${tag}</a>, ';
       }
       tagsHtml = tagsHtml.substr(0, tagsHtml.length - 2) + "</p>"; // trim final ", "
     }
