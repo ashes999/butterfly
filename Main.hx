@@ -33,13 +33,25 @@ class Main {
       errorAndExit("Can't find " + layoutFile);
     }
 
-    // generate pages first, because they appear in the header/layout
+    // generate pages and tags first, because they appear in the header/layout
     var pages = getPosts(srcDir + '/pages');
-    var generator = new butterfly.HtmlGenerator(layoutFile, pages);
 
     ensureDirExists(srcDir + '/posts');
     var posts = getPosts(srcDir + '/posts');
 
+    var tagCounts = new Map<String, Int>();
+
+    // Calculate tag counts
+    for (post in posts) {
+      for (tag in post.tags) {
+        if (!tagCounts.exists(tag)) {
+          tagCounts.set(tag, 0);
+        }
+        tagCounts.set(tag, tagCounts.get(tag) + 1);
+      }
+    }
+
+    var generator = new butterfly.HtmlGenerator(layoutFile, pages, tagCounts);
     var writer = new butterfly.PostWriter(binDir);
 
     for (post in posts) {

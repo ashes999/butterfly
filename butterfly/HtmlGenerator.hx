@@ -7,8 +7,10 @@ class HtmlGenerator {
   private var layoutHtml:String;
   private static inline var COTENT_PLACEHOLDER:String = '<butterfly-content />';
   private static inline var PAGES_LINKS_PLACEHOLDER:String = '<butterfly-pages />';
+  private static inline var TAG_COUNT_PLACEHOLDER:String = '<butterfly-tags />';
 
-  public function new(layoutFile:String, pages:Array<butterfly.Post>)
+
+  public function new(layoutFile:String, pages:Array<butterfly.Post>, tagCounts:Map<String, Int>)
   {
     this.layoutHtml = sys.io.File.getContent(layoutFile);
     if (this.layoutHtml.indexOf(COTENT_PLACEHOLDER) == -1) {
@@ -17,6 +19,9 @@ class HtmlGenerator {
 
     var pagesHtml = this.generatePagesLinksHtml(pages);
     this.layoutHtml = this.layoutHtml.replace(PAGES_LINKS_PLACEHOLDER, pagesHtml);
+
+    var tagCountHtml = this.generateTagCountHtml(tagCounts);
+    this.layoutHtml = this.layoutHtml.replace(TAG_COUNT_PLACEHOLDER, tagCountHtml);
   }
 
   public function generatePostHtml(post:butterfly.Post) : String
@@ -58,5 +63,46 @@ class HtmlGenerator {
       html += '<a class="blog-nav-item" href="${page.url}.html">${page.title}</a>';
     }
     return html;
+  }
+
+  private function generateTagCountHtml(tagCounts:Map<String, Int>) : String
+  {
+    var tags = sortKeys(tagCounts);
+    var html = "<ul>";
+    for (tag in tags) {
+      html += '<li>${tag} (${tagCounts.get(tag)})</li>\n';
+    }
+    html += "</ul>";
+    return html;
+  }
+
+  private function sortKeys(map:haxe.ds.StringMap<Dynamic>) : Array<String>
+  {
+    // Sort tags by name. Collect them into an array, sort that, et viola.
+    var keys = new Array<String>();
+
+    var mapKeys = map.keys();
+    while (mapKeys.hasNext()) {
+      var next = mapKeys.next();
+      if (keys.indexOf(next) == -1) {
+        keys.push(next);
+      }
+    }
+
+    keys.sort(function(a:String, b:String):Int {
+      a = a.toUpperCase();
+      b = b.toUpperCase();
+
+      if (a < b) {
+        return -1;
+      }
+      else if (a > b) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    return keys;
   }
 }
