@@ -4,9 +4,12 @@ using DateTools;
 using haxe.crypto.Md5;
 
 class AtomGenerator {
-  public static function generate(posts:Array<butterfly.Post>):String
+  public static function generate(posts:Array<butterfly.Post>, config:Dynamic):String
   {
-    var siteName = "Your site name";
+    var siteName = config.siteName;
+    var authorName = config.authorName;
+    var authorEmail = config.authorEmail;
+
     var lastUpdated = posts[0].createdOn;
     var xml = '<?xml version="1.0" encoding="utf-8"?>
       <feed xmlns="http://www.w3.org/2005/Atom">
@@ -25,8 +28,8 @@ class AtomGenerator {
       			${post.content}
       		</content>
       		<author>
-      			<name>Unkonwn</name>
-      			<email>unknown@unknown.com</email>
+      			<name>${authorName}</name>
+      			<email>${authorEmail}</email>
       		</author>
       	</entry>';
     }

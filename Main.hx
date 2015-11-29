@@ -26,6 +26,12 @@ class Main {
     var srcDir = projectDir + "/src";
     ensureDirExists(srcDir);
 
+    var configFile = '${srcDir}/config.json';
+    if (!sys.FileSystem.exists(configFile)) {
+      throw 'Config file ${configFile} is missing. Please add it as a JSON file with fields for siteName, authorName, and authorEmail.';
+    }
+    var config = haxe.Json.parse(sys.io.File.getContent(configFile));
+
     copyDirRecursively(srcDir + '/content', binDir + '/content');
 
     var layoutFile = srcDir + "/layout.html";
@@ -76,7 +82,7 @@ class Main {
     var indexPage = generator.generateHomePage(posts);
     writer.write("index.html", indexPage);
 
-    var atomXml = butterfly.AtomGenerator.generate(posts);
+    var atomXml = butterfly.AtomGenerator.generate(posts, config);
     writer.write("atom.xml", atomXml);
 
     trace("Generated index page and " + posts.length + " posts.");
