@@ -43,7 +43,7 @@ For an example repository, check out my [Learn Haxe blog repository](https://git
 
 Butterfly generates:
 
-- One HTML page per page
-- One HTML page per post
-- One HTML page per tag, listing all posts with that tag
+- One HTML page per page (`post-title.html`)
+- One HTML page per post (`page-title.html`)
+- One HTML page per tag, listing all posts with that tag (`tag-foo.html`)
 - An Atom feed of the most recent 10 items (`atom.xml`)
