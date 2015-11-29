@@ -16,6 +16,8 @@ You need to first install:
 
 # Generating Your Site
 
+## Inputs
+
 Run `./run.sh` or `./run.bat` and specify where your website files are:
 
 `./run.sh /home/myblog`
@@ -27,7 +29,8 @@ Your website files must include, at a minimum, a `src` directory with the follow
   - Include a `<butterfly-content />` tag, which will be replaced with actual page content (post/page content, or the list of posts for the index page).
   - Include a `<butterfly-pages />` tag, which will be replaced with a list of links to the pages.
 - A `posts` directory, with one markdown file per post. The file name becomes the post name, and the markdown content becomes HTML.
-- CSS, Javascript, and `favicon` files should all be sourced from a CDN, or referenced through the `content` directory.
+- CSS, Javascript, and `favicon` files should all be sourced from a CDN, or add to (and referenced through) the `content` directory.
+- A `config.json` file, which contains three fields: `siteName`, `authorName`, and `authorEmail`. These are used for Atom generation.
 
 You may also include:
 
@@ -35,3 +38,12 @@ You may also include:
 - A `content` directory with CSS, Javascript, images, etc. for your site
 
 For an example repository, check out my [Learn Haxe blog repository](https://github.com/ashes999/learnhaxe).
+
+## Outputs
+
+Butterfly generates:
+
+- One HTML page per page
+- One HTML page per post
+- One HTML page per tag, listing all posts with that tag
+- An Atom feed of the most recent 10 items (`atom.xml`)
