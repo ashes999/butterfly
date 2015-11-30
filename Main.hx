@@ -1,4 +1,5 @@
 using StringTools;
+using DateTools;
 
 class Main {
   static public function main() : Void {
@@ -44,9 +45,17 @@ class Main {
 
     ensureDirExists(srcDir + '/posts');
     var posts = getPostsOrPages(srcDir + '/posts');
-    // sort by date, newest-first
-    posts.sort(function(a, b) {
-      return Math.floor(b.createdOn.getTime() - a.createdOn.getTime());
+    // sort by date, newest-first. Sorting by getTime() doesn't seem to work,
+    // for some reason; sorting by the stringified dates (yyyy-mm-dd format) does.
+    haxe.ds.ArraySort.sort(posts, function(a, b) {
+      var x = a.createdOn.format("%Y-%m-%d");
+      var y = b.createdOn.format("%Y-%m-%d");
+
+      if (x < y ) { return 1; }
+      else if (x > y) { return -1; }
+      else { return 0; };
+
+      //return result;
     });
 
     var tagCounts = new Map<String, Int>();
