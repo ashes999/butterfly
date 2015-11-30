@@ -40,10 +40,10 @@ class Main {
     }
 
     // generate pages and tags first, because they appear in the header/layout
-    var pages = getPosts(srcDir + '/pages');
+    var pages = getPostsOrPages(srcDir + '/pages', true);
 
     ensureDirExists(srcDir + '/posts');
-    var posts = getPosts(srcDir + '/posts');
+    var posts = getPostsOrPages(srcDir + '/posts');
     // sort by date, newest-first
     posts.sort(function(a, b) {
       return Math.floor(b.createdOn.getTime() - a.createdOn.getTime());
@@ -141,7 +141,7 @@ class Main {
     }
   }
 
-  private function getPosts(path:String) : Array<butterfly.Post>
+  private function getPostsOrPages(path:String, ?isPage:Bool = false) : Array<butterfly.Post>
   {
     if (sys.FileSystem.exists(path) && sys.FileSystem.isDirectory(path)) {
       var filesAndDirs = sys.FileSystem.readDirectory(path);
@@ -149,7 +149,7 @@ class Main {
       for (entry in filesAndDirs) {
         var relativePath = path + "/" + entry;
         if (!sys.FileSystem.isDirectory(relativePath)) {
-          posts.push(butterfly.Post.parse(relativePath));
+          posts.push(butterfly.Post.parse(relativePath, isPage));
         }
       }
       return posts;

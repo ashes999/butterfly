@@ -9,23 +9,26 @@ class Post {
   public var updatedOn(default, null) : Date;
   public var tags(default, null) : Array<String>;
 
-  private static var tagRegex = ~/^tags: ([\w\s,\-_]+)\n/i;
+  private static var publishDateRegex = ~/meta-publishedOn: (\d{4}-\d{2}-\d{2})/i;
+  private static var tagRegex = ~/meta-tags: ([\w\s,\-_]+)\n/i;
 
   public function new() {
   }
 
   // fileName doesn't include any path characters
-  public static function parse(pathAndFileName:String) : Post
+  public static function parse(pathAndFileName:String, isPage:Bool) : Post
   {
     var fileName = pathAndFileName.substr(pathAndFileName.lastIndexOf('/') + 1);
     var post = new Post();
     post.title = getTitle(fileName);
     post.url = getUrl(fileName);
-    var stat = sys.FileSystem.stat(pathAndFileName);
-    post.createdOn = stat.ctime;
-    post.updatedOn = stat.mtime;
-    post.tags = getTags(pathAndFileName);
-    post.content = getContent(pathAndFileName);
+    var markdown = sys.io.File.getContent(pathAndFileName);
+    if (!isPage) {
+      post.createdOn = getPublishDate(pathAndFileName);
+    }
+    post.updatedOn = sys.FileSystem.stat(pathAndFileName).mtime;
+    post.tags = getTags(markdown);
+    post.content = getHtml(markdown);
     return post;
   }
 
@@ -46,18 +49,18 @@ class Post {
     return toReturn.trim();
   }
 
-  private static function getContent(pathAndFileName:String) : String
+  private static function getHtml(markdown:String) : String
   {
-    var markdown = sys.io.File.getContent(pathAndFileName);
-    // Remove tags
+    // Remove meta-data lines
     markdown = tagRegex.replace(markdown, "");
+    markdown = publishDateRegex.replace(markdown, "");
+
     var html = Markdown.markdownToHtml(markdown);
     return html;
   }
 
-  private static function getTags(pathAndFileName:String) : Array<String>
+  private static function getTags(markdown:String) : Array<String>
   {
-    var markdown = sys.io.File.getContent(pathAndFileName);
     if (tagRegex.match(markdown)) {
       var tagsString = tagRegex.matched(1); // first group
 
@@ -74,6 +77,18 @@ class Post {
       return toReturn;
     } else {
       return new Array<String>();
+    }
+  }
+
+  private static function getPublishDate(fileName:String) : Date
+  {
+    var markdown = sys.io.File.getContent(fileName);
+    var regex = publishDateRegex;
+    if (regex.match(markdown)) {
+      var dateString = regex.matched(1); // first group
+      return Date.fromString(dateString);
+    } else {
+      throw '${fileName} does not seem to have a valid published-on meta date. Please make sure the content contains a line containing: meta-publishedOn: YYYY-mm-dd';
     }
   }
 

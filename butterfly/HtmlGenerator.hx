@@ -36,7 +36,10 @@ class HtmlGenerator {
       }
       tagsHtml = tagsHtml.substr(0, tagsHtml.length - 2) + "</p>"; // trim final ", "
     }
-    var postedOnHtml = '<p class="blog-post-meta">Posted ${post.createdOn.format("%Y-%m-%d")}</p>';
+    var postedOnHtml = "";
+    if (post.createdOn != null) {
+      postedOnHtml = '<p class="blog-post-meta">Posted ${post.createdOn.format("%Y-%m-%d")}</p>';
+    }
     var finalHtml = '${titleHtml}\n${tagsHtml}\n${postedOnHtml}\n${post.content}\n';
     var toReturn = this.layoutHtml.replace(COTENT_PLACEHOLDER, finalHtml);
 
@@ -65,7 +68,7 @@ class HtmlGenerator {
   {
     var html = "<ul>";
     for (post in posts) {
-      html += '<li><a href="${post.url}.html">${post.title}</a> (Posted on ${post.createdOn.format("%Y-%m-%d")})</li>';
+      html += '<li><a href="${post.url}.html">${post.title}</a> (${post.createdOn.format("%Y-%m-%d")})</li>';
     }
     html += "</ul>";
     return this.layoutHtml.replace(COTENT_PLACEHOLDER, html);
