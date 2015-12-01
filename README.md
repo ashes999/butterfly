@@ -24,18 +24,20 @@ Run `./run.sh` or `./run.bat` and specify where your website files are:
 
 Your website files must include, at a minimum, a `src` directory with the following:
 
-- A `layout.html` file containing your HTML template, and `butterfly` markup.
+- A `layout.html` file containing your HTML template for every page, and `butterfly` markup.
   - Your layout file can contain any CSS/HTML/Javascript you like.
   - Include a `<butterfly-content />` tag, which will be replaced with actual page content (post/page content, or the list of posts for the index page).
   - Include a `<butterfly-pages />` tag, which will be replaced with a list of links to the pages.
-- A `posts` directory, with one markdown file per post. The file name becomes the post name, and the markdown content becomes HTML.
-- CSS, Javascript, and `favicon` files should all be sourced from a CDN, or add to (and referenced through) the `content` directory.
+  - Optionally include a `<butterfly-tags />` tag, which will be replaced with a list of tag links (and post count per tag).
+- A `posts` directory, with one markdown file per post. 
+  - The file name becomes the post name, and the markdown content becomes HTML.
+  - The line`meta-tags: foo, bar, baz` tags a post with the tags `foo`, `bar`, and `baz`.
+  - The line `meta-publishedOn: 2015-12-31` sets the post's publication date to December 31st, 2015.
+- An optional `pages` directory which contains one markdown file per page. 
+- A `content` directory containing CSS, Javascript, and `favicon` files (if they're not referenced through a CDN).
 - A `config.json` file, which contains three fields: `siteName`, `authorName`, and `authorEmail`. These are used for Atom generation.
 
-You may also include:
-
-- A `pages` directory, with one markdown file per page. (Pages show up in the navbar.)
-- A `content` directory with CSS, Javascript, images, etc. for your site
+Output appears in the `bin` directory, a sibling-directory to `src`.
 
 For an example repository, check out my [Learn Haxe blog repository](https://github.com/ashes999/learnhaxe).
 
