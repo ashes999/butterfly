@@ -25,8 +25,8 @@ class Post {
     var markdown = sys.io.File.getContent(pathAndFileName);
     if (!isPage) {
       post.createdOn = getPublishDate(pathAndFileName);
+      post.updatedOn = post.createdOn;
     }
-    post.updatedOn = sys.FileSystem.stat(pathAndFileName).mtime;
     post.tags = getTags(markdown);
     post.content = getHtml(markdown);
     return post;
