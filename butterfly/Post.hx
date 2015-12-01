@@ -6,7 +6,6 @@ class Post {
   public var content(default, null) : String;
   public var url(default, null) : String;
   public var createdOn(default, null) : Date;
-  public var updatedOn(default, null) : Date;
   public var tags(default, null) : Array<String>;
 
   private static var publishDateRegex = ~/meta-publishedOn: (\d{4}-\d{2}-\d{2})/i;
@@ -25,7 +24,6 @@ class Post {
     var markdown = sys.io.File.getContent(pathAndFileName);
     if (!isPage) {
       post.createdOn = getPublishDate(pathAndFileName);
-      post.updatedOn = post.createdOn;
     }
     post.tags = getTags(markdown);
     post.content = getHtml(markdown);

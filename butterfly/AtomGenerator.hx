@@ -22,7 +22,7 @@ class AtomGenerator {
       xml += '<entry>
       		<title>${post.title}</title>
       		<id>urn:uuid:${Md5.encode(post.title)}</id>
-      		<updated>${toIsoTime(post.updatedOn)}</updated>
+      		<updated>${toIsoTime(post.createdOn)}</updated>
       		<summary>${post.title}</summary>
       		<content type="xhtml">
       			${post.content}
