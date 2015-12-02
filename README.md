@@ -49,3 +49,16 @@ Butterfly generates:
 - One HTML page per post (`page-title.html`)
 - One HTML page per tag, listing all posts with that tag (`tag-foo.html`)
 - An Atom feed of the most recent 10 items (`atom.xml`)
+
+## Using Google Analytics
+
+You can paste your Google Analytics tracking code under the `<body>` opening tag as usual. If you don't want to track local views (eg. when editing/generating content), you can wrap it in a conditional `if`:
+
+```
+if (window.location.href.indexOf('file://') == -1)
+{
+  ... analytics code ...
+}
+```
+
+This works across all browsers.
