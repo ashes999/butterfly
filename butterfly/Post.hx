@@ -1,4 +1,6 @@
 package butterfly;
+
+import haxe.crypto.Sha1;
 using StringTools;
 
 class Post {
@@ -7,9 +9,11 @@ class Post {
   public var url(default, null) : String;
   public var createdOn(default, null) : Date;
   public var tags(default, null) : Array<String>;
+  public var id(default, null) : String;
 
   private static var publishDateRegex = ~/meta-publishedOn: (\d{4}-\d{2}-\d{2})/i;
   private static var tagRegex = ~/meta-tags: ([\w\s,\-_]+)\n/i;
+  private static var idRegex = ~/meta-id: (\w{40})/i;
 
   public function new() {
   }
@@ -21,12 +25,16 @@ class Post {
     var post = new Post();
     post.title = getTitle(fileName);
     post.url = getUrl(fileName);
+
     var markdown = sys.io.File.getContent(pathAndFileName);
+
     if (!isPage) {
       post.createdOn = getPublishDate(pathAndFileName);
     }
+
     post.tags = getTags(markdown);
     post.content = getHtml(markdown);
+    post.id = getAndGenerateId(pathAndFileName);
     return post;
   }
 
@@ -52,6 +60,7 @@ class Post {
     // Remove meta-data lines
     markdown = tagRegex.replace(markdown, "");
     markdown = publishDateRegex.replace(markdown, "");
+    markdown = idRegex.replace(markdown, "");
 
     var html = Markdown.markdownToHtml(markdown);
     return html;
@@ -93,5 +102,23 @@ class Post {
   private static function getUrl(fileName:String) : String
   {
     return fileName.substr(0, fileName.toUpperCase().lastIndexOf('.MD'));
+  }
+
+  // Gets the ID from the file. If there's no ID, inserts and returns the ID.
+  private static function getAndGenerateId(fileName:String) : String
+  {
+    var markdown = sys.io.File.getContent(fileName);
+    if (!idRegex.match(markdown)) {
+      // Hash the markdown as the id. Any ID will do, really.
+      trace('Generated new ID for ${fileName}');
+      var id = Sha1.encode(markdown);
+      markdown = 'meta-id: ${id}
+
+${markdown}';
+      sys.io.File.saveContent(fileName, markdown);
+      return id;
+    } else {
+      return idRegex.matched(1);
+    }
   }
 }
