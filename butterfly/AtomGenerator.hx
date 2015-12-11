@@ -14,13 +14,16 @@ class AtomGenerator {
     var xml = '<?xml version="1.0" encoding="utf-8"?>
       <feed xmlns="http://www.w3.org/2005/Atom">
         <title>${siteName}</title>
+        <link href="${config.siteUrl}" />
         <id>urn:uuid:${Md5.encode(siteName)}</id>
   	    <updated>${toIsoTime(lastUpdated)}</updated>';
 
     for (i in 0...Math.round(Math.min(posts.length, 10))) {
       var post = posts[i];
+      var url = '${config.siteUrl}/${post.url}';
       xml += '<entry>
       		<title>${post.title}</title>
+          <link href="${url}" />
       		<id>urn:uuid:${Md5.encode(post.title)}</id>
       		<updated>${toIsoTime(post.createdOn)}</updated>
       		<summary>${post.title}</summary>
