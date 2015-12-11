@@ -74,12 +74,12 @@ class Main {
     var writer = new butterfly.FileWriter(binDir);
 
     for (post in posts) {
-      var html = generator.generatePostHtml(post);
+      var html = generator.generatePostHtml(post, config);
       writer.writePost(post, html);
     }
 
     for (page in pages) {
-      var html = generator.generatePostHtml(page);
+      var html = generator.generatePostHtml(page, config);
       writer.writePost(page, html);
     }
 

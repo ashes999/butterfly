@@ -8,7 +8,10 @@ class HtmlGenerator {
   private static inline var COTENT_PLACEHOLDER:String = '<butterfly-content />';
   private static inline var PAGES_LINKS_PLACEHOLDER:String = '<butterfly-pages />';
   private static inline var TAG_COUNT_PLACEHOLDER:String = '<butterfly-tags />';
-
+  private static inline var COMMENTS_PLACEHOLDER:String = '<butterfly-comments />';
+  private static inline var DISQUS_HTML_FILE:String = 'templates/disqus.html';
+  private static inline var DISQUS_PAGE_URL:String = 'PAGE_URL';
+  private static inline var DISQUS_PAGE_IDENTIFIER = 'PAGE_IDENTIFIER';
 
   public function new(layoutFile:String, pages:Array<butterfly.Post>, tagCounts:Map<String, Int>)
   {
@@ -24,7 +27,7 @@ class HtmlGenerator {
     this.layoutHtml = this.layoutHtml.replace(TAG_COUNT_PLACEHOLDER, tagCountHtml);
   }
 
-  public function generatePostHtml(post:butterfly.Post) : String
+  public function generatePostHtml(post:butterfly.Post, config:Dynamic) : String
   {
     // substitute in content
     var titleHtml = '<h2 class="blog-post-title">' + post.title + '</h2>';
@@ -36,12 +39,19 @@ class HtmlGenerator {
       }
       tagsHtml = tagsHtml.substr(0, tagsHtml.length - 2) + "</p>"; // trim final ", "
     }
+
+    // posted-on date
     var postedOnHtml = "";
     if (post.createdOn != null) {
       postedOnHtml = '<p class="blog-post-meta">Posted ${post.createdOn.format("%Y-%m-%d")}</p>';
     }
+
     var finalHtml = '${titleHtml}\n${tagsHtml}\n${postedOnHtml}\n${post.content}\n';
     var toReturn = this.layoutHtml.replace(COTENT_PLACEHOLDER, finalHtml);
+
+    // comments (disqus snippet)
+    var disqusHtml = getDisqusHtml(post, config);
+    toReturn = toReturn.replace(COMMENTS_PLACEHOLDER, disqusHtml);
 
     // prefix the post name to the title tag
     toReturn = toReturn.replace("<title>", '<title>${post.title} | ');
@@ -92,6 +102,15 @@ class HtmlGenerator {
     }
     html += "</ul>";
     return html;
+  }
+
+  private function getDisqusHtml(post:Post, config:Dynamic):String
+  {
+    var template = sys.io.File.getContent(DISQUS_HTML_FILE);
+    var url = '${config.siteUrl}/${post.url}';
+    template = template.replace(DISQUS_PAGE_URL, '"${url}"');
+    template = template.replace(DISQUS_PAGE_IDENTIFIER, '"${post.id}"');
+    return template;
   }
 
   private function tagLink(tag:String):String
