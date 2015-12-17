@@ -1,4 +1,4 @@
-haxe -lib markdown -main Main -neko Main.n
+haxe compile.hxml
 
 if [ $? -eq 0 ]
 then

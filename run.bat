@@ -1,4 +1,4 @@
 @echo off
-haxe -lib markdown -main Main -neko Main.n
+haxe compile.hxml
 neko ./Main.n %*
 del Main.n
