@@ -1,2 +1,3 @@
--lib markdown -main Main
- -neko Main.n
+-main Main
+-lib markdown
+-neko Main.n
