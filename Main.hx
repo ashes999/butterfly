@@ -1,5 +1,6 @@
 using StringTools;
 using DateTools;
+using butterfly.Post;
 
 class Main {
   static public function main() : Void {
@@ -70,7 +71,7 @@ class Main {
       }
     }
 
-    var generator = new butterfly.HtmlGenerator(layoutFile, pages, tagCounts);
+    var generator = new butterfly.HtmlGenerator(layoutFile, posts, pages, tagCounts);
     var writer = new butterfly.FileWriter(binDir);
 
     for (post in posts) {

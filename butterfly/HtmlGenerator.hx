@@ -13,7 +13,9 @@ class HtmlGenerator {
   private static inline var DISQUS_PAGE_URL:String = 'PAGE_URL';
   private static inline var DISQUS_PAGE_IDENTIFIER = 'PAGE_IDENTIFIER';
 
-  public function new(layoutFile:String, pages:Array<butterfly.Post>, tagCounts:Map<String, Int>)
+  private var allContent:Array<butterfly.Post>;
+
+  public function new(layoutFile:String, posts:Array<butterfly.Post>, pages:Array<butterfly.Post>, tagCounts:Map<String, Int>)
   {
     this.layoutHtml = sys.io.File.getContent(layoutFile);
     if (this.layoutHtml.indexOf(COTENT_PLACEHOLDER) == -1) {
@@ -25,6 +27,9 @@ class HtmlGenerator {
 
     var tagCountHtml = this.generateTagCountHtml(tagCounts);
     this.layoutHtml = this.layoutHtml.replace(TAG_COUNT_PLACEHOLDER, tagCountHtml);
+
+    // Pages first so if both a post and page share a title, the page wins.
+    this.allContent = pages.concat(posts);
   }
 
   public function generatePostHtml(post:butterfly.Post, config:Dynamic) : String
@@ -46,7 +51,8 @@ class HtmlGenerator {
       postedOnHtml = '<p class="blog-post-meta">Posted ${post.createdOn.format("%Y-%m-%d")}</p>';
     }
 
-    var finalHtml = '${titleHtml}\n${tagsHtml}\n${postedOnHtml}\n${post.content}\n';
+    var finalContent = generateIntraSiteLinks(post.content);
+    var finalHtml = '${titleHtml}\n${tagsHtml}\n${postedOnHtml}\n${finalContent}\n';
     var toReturn = this.layoutHtml.replace(COTENT_PLACEHOLDER, finalHtml);
 
     // comments (disqus snippet)
@@ -55,6 +61,23 @@ class HtmlGenerator {
 
     // prefix the post name to the title tag
     toReturn = toReturn.replace("<title>", '<title>${post.title} | ');
+    return toReturn;
+  }
+
+  public function generateIntraSiteLinks(content:String) : String
+  {
+    var toReturn = content;
+    // Don't bother scanning if there are no links (syntax: [[title]])
+    if (toReturn.indexOf("[[") > -1) {
+      for (c in allContent) {
+        var titlePlaceholder = new EReg('\\[\\[${c.title}]]', "i");
+        if (titlePlaceholder.match(toReturn)) {
+          var titleLink = '<a href="${c.url}.html">${c.title}</a>';
+          toReturn = titlePlaceholder.replace(toReturn, titleLink);
+        }
+      }
+    }
+
     return toReturn;
   }
 
