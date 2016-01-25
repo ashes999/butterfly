@@ -15,11 +15,11 @@ class HtmlGenerator {
 
   private var allContent:Array<butterfly.Post>;
 
-  public function new(layoutFile:String, posts:Array<butterfly.Post>, pages:Array<butterfly.Post>, tagCounts:Map<String, Int>)
+  public function new(layoutHtml:String, posts:Array<butterfly.Post>, pages:Array<butterfly.Post>, tagCounts:Map<String, Int>)
   {
-    this.layoutHtml = sys.io.File.getContent(layoutFile);
+    this.layoutHtml = layoutHtml;
     if (this.layoutHtml.indexOf(COTENT_PLACEHOLDER) == -1) {
-      throw layoutFile + " doesn't have the blog post placeholder in it: " + COTENT_PLACEHOLDER;
+      throw "Layout HTML doesn't have the blog post placeholder in it: " + COTENT_PLACEHOLDER;
     }
 
     var pagesHtml = this.generatePagesLinksHtml(pages);

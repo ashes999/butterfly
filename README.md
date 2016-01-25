@@ -29,13 +29,13 @@ Your website files must include, at a minimum, a `src` directory with the follow
   - Include a `<butterfly-content />` tag, which will be replaced with actual page content (post/page content, or the list of posts for the index page).
   - Include a `<butterfly-pages />` tag, which will be replaced with a list of links to the pages.
   - Optionally include a `<butterfly-tags />` tag, which will be replaced with a list of tag links (and post count per tag).
-- A `posts` directory, with one markdown file per post. 
+- A `posts` directory, with one markdown file per post.
   - The file name becomes the post name, and the markdown content becomes HTML.
   - The line`meta-tags: foo, bar, baz` tags a post with the tags `foo`, `bar`, and `baz`.
   - The line `meta-publishedOn: 2015-12-31` sets the post's publication date to December 31st, 2015.
-- An optional `pages` directory which contains one markdown file per page. 
+- An optional `pages` directory which contains one markdown file per page.
 - A `content` directory containing CSS, Javascript, and `favicon` files (if they're not referenced through a CDN).
-- A `config.json` file, which contains three fields: `siteName`, `authorName`, and `authorEmail`. These are used for Atom generation.
+- A `config.json` file. See the *JSON Configuration* section for information on what goes in here.
 
 Output appears in the `bin` directory, a sibling-directory to `src`.
 
@@ -50,15 +50,29 @@ Butterfly generates:
 - One HTML page per tag, listing all posts with that tag (`tag-foo.html`)
 - An Atom feed of the most recent 10 items (`atom.xml`)
 
-## Using Google Analytics
+# JSON Configuration
 
-You can paste your Google Analytics tracking code under the `<body>` opening tag as usual. If you don't want to track local views (eg. when editing/generating content), you can wrap it in a conditional `if`:
+Butterfly requires a `config.json` file. At a minimum, it should , contains the following fields: `siteName`, `siteUrl`, `authorName`, and `authorEmail` (these are used for Atom feed generation).
+
+A minimal `config.json` file looks like this:
 
 ```
-if (window.location.href.indexOf('file://') == -1)
 {
-  ... analytics code ...
+  "siteName": "Learn Haxe",
+  "siteUrl": "http://ashes999.github.io/learnhaxe",
+  "authorName": "ashes999",
+  "authorEmail": "ashes999@yahoo.com"
 }
 ```
 
-This works across all browsers.
+# Optional fields
+
+You can add the following optional fields in your config file:
+
+## Google Analytics
+
+Add `googleAnalyticsId` with your Google Analytics ID:
+
+`"googleAnalyticsId": "UA-12345678-1"`
+
+Butterfly then generates the latest Google Analytics code. The block is also wrapped in an `if` statement that doesn't execute when files are viewed locally. If this property isn't specified in your config file, Butterfly doesn't generate any Google Analytics code. (You can manually put your own Google Analytics code in your layout file.)

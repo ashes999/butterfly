@@ -11,7 +11,7 @@ class Main {
 
   public function run() : Void {
     if (Sys.args().length != 1) {
-      errorAndExit("Usage: neko Main.n <source directory>");
+      throw "Usage: neko Main.n <source directory>";
     }
 
     var projectDir = Sys.args()[0];
@@ -30,22 +30,19 @@ class Main {
 
     var configFile = '${srcDir}/config.json';
     if (!sys.FileSystem.exists(configFile)) {
-      throw 'Config file ${configFile} is missing. Please add it as a JSON file with fields for siteName, authorName, and authorEmail.';
+      throw 'Config file ${configFile} is missing. Please add it as a JSON file with fields for siteName, siteUrl, authorName, and authorEmail.';
     }
-    var config = haxe.Json.parse(sys.io.File.getContent(configFile));
+    var config:Dynamic = haxe.Json.parse(sys.io.File.getContent(configFile));
 
     copyDirRecursively(srcDir + '/content', binDir + '/content');
 
     var layoutFile = srcDir + "/layout.html";
-    if (!sys.FileSystem.exists(layoutFile)) {
-      errorAndExit("Can't find " + layoutFile);
-    }
 
     // generate pages and tags first, because they appear in the header/layout
-    var pages = getPostsOrPages(srcDir + '/pages', true);
+    var pages:Array<butterfly.Post> = getPostsOrPages(srcDir + '/pages', true);
 
     ensureDirExists(srcDir + '/posts');
-    var posts = getPostsOrPages(srcDir + '/posts');
+    var posts:Array<butterfly.Post> = getPostsOrPages(srcDir + '/posts');
     // sort by date, newest-first. Sorting by getTime() doesn't seem to work,
     // for some reason; sorting by the stringified dates (yyyy-mm-dd format) does.
     haxe.ds.ArraySort.sort(posts, function(a, b) {
@@ -59,7 +56,7 @@ class Main {
       //return result;
     });
 
-    var tagCounts = new Map<String, Int>();
+    var tagCounts:Map<String, Int> = new Map<String, Int>();
 
     // Calculate tag counts
     for (post in posts) {
@@ -71,7 +68,8 @@ class Main {
       }
     }
 
-    var generator = new butterfly.HtmlGenerator(layoutFile, posts, pages, tagCounts);
+    var layoutHtml = new butterfly.LayoutModifier(layoutFile, config).getHtml();
+    var generator = new butterfly.HtmlGenerator(layoutHtml, posts, pages, tagCounts);
     var writer = new butterfly.FileWriter(binDir);
 
     for (post in posts) {
@@ -98,18 +96,12 @@ class Main {
     trace("Generated index page and " + posts.length + " posts.");
   }
 
-  private function errorAndExit(message:String) : Void
-  {
-    trace("Error: " + message);
-    Sys.exit(1);
-  }
-
   private function ensureDirExists(path:String) : Void
   {
     if (!sys.FileSystem.exists(path)) {
-      errorAndExit(path + " doesn't exist");
+      throw path + " doesn't exist";
     } else if (!sys.FileSystem.isDirectory(path)) {
-      errorAndExit(path + " isn't a directory");
+      throw path + " isn't a directory";
     }
   }
 
