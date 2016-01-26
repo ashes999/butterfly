@@ -16,10 +16,15 @@ class LayoutModifier
     if (!sys.FileSystem.exists(layoutFile)) {
       throw "Can't find layout file " + layoutFile;
     }
+
     var html = sys.io.File.getContent(layoutFile);
+
+    html = addAtomLink(html, config);
+
     if (config.googleAnalyticsId != null) {
       html = addGoogleAnalytics(html, config.googleAnalyticsId);
     }
+
     this.layoutHtml = html;
   }
 
@@ -39,5 +44,13 @@ class LayoutModifier
     }
     var analyticsHtml = analyticsHtml.replace(GOOGLE_ANALYTICS_IDENTIFIER, analyticsId);
     return html.replace("<body>", '<body>${analyticsHtml}');
+  }
+
+  private function addAtomLink(html:String, config:Dynamic) : String
+  {
+    var toReturn:String = html;
+    var atomLink = '<link type="application/atom+xml" title="${config.siteName}" href="${config.siteUrl}/atom.xml" rel="alternate" />';
+    toReturn = toReturn.replace("</head>", '${atomLink}\r\n</head>');
+    return toReturn;
   }
 }
