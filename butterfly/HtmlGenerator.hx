@@ -7,7 +7,7 @@ class HtmlGenerator {
   private var layoutHtml:String;
   private static inline var COTENT_PLACEHOLDER:String = '<butterfly-content />';
   private static inline var PAGES_LINKS_PLACEHOLDER:String = '<butterfly-pages />';
-  private static inline var TAG_COUNT_PLACEHOLDER:String = '<butterfly-tags />';
+  private static inline var TAGS_PLACEHOLDER:String = '<butterfly-tags />';
   private static inline var COMMENTS_PLACEHOLDER:String = '<butterfly-comments />';
   private static inline var DISQUS_HTML_FILE:String = 'templates/disqus.html';
   private static inline var DISQUS_PAGE_URL:String = 'PAGE_URL';
@@ -15,21 +15,21 @@ class HtmlGenerator {
 
   private var allContent:Array<butterfly.Post>;
 
-  public function new(layoutHtml:String, posts:Array<butterfly.Post>, pages:Array<butterfly.Post>, tagCounts:Map<String, Int>)
+  public function new(layoutHtml:String, posts:Array<butterfly.Post>, pages:Array<butterfly.Post>)
   {
     this.layoutHtml = layoutHtml;
     if (this.layoutHtml.indexOf(COTENT_PLACEHOLDER) == -1) {
       throw "Layout HTML doesn't have the blog post placeholder in it: " + COTENT_PLACEHOLDER;
     }
 
+    // Pages first so if both a post and page share a title, the page wins.
+    this.allContent = pages.concat(posts);
+
     var pagesHtml = this.generatePagesLinksHtml(pages);
     this.layoutHtml = this.layoutHtml.replace(PAGES_LINKS_PLACEHOLDER, pagesHtml);
 
-    var tagCountHtml = this.generateTagCountHtml(tagCounts);
-    this.layoutHtml = this.layoutHtml.replace(TAG_COUNT_PLACEHOLDER, tagCountHtml);
-
-    // Pages first so if both a post and page share a title, the page wins.
-    this.allContent = pages.concat(posts);
+    var tagsHtml = this.generateTagsHtml();
+    this.layoutHtml = this.layoutHtml.replace(TAGS_PLACEHOLDER, tagsHtml);
   }
 
   public function generatePostHtml(post:butterfly.Post, config:Dynamic) : String
@@ -116,8 +116,20 @@ class HtmlGenerator {
     return html;
   }
 
-  private function generateTagCountHtml(tagCounts:Map<String, Int>) : String
+  private function generateTagsHtml() : String
   {
+    var tagCounts:Map<String, Int> = new Map<String, Int>();
+
+    // Calculate tag counts
+    for (post in this.allContent) {
+      for (tag in post.tags) {
+        if (!tagCounts.exists(tag)) {
+          tagCounts.set(tag, 0);
+        }
+        tagCounts.set(tag, tagCounts.get(tag) + 1);
+      }
+    }
+
     var tags = sortKeys(tagCounts);
     var html = "<ul>";
     for (tag in tags) {

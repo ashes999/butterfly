@@ -56,20 +56,19 @@ class Main {
       //return result;
     });
 
-    var tagCounts:Map<String, Int> = new Map<String, Int>();
+    var tags = new Array<String>();
 
     // Calculate tag counts
     for (post in posts) {
       for (tag in post.tags) {
-        if (!tagCounts.exists(tag)) {
-          tagCounts.set(tag, 0);
+        if (tags.indexOf(tag) == -1) {
+          tags.push(tag);
         }
-        tagCounts.set(tag, tagCounts.get(tag) + 1);
       }
     }
 
     var layoutHtml = new butterfly.LayoutModifier(layoutFile, config).getHtml();
-    var generator = new butterfly.HtmlGenerator(layoutHtml, posts, pages, tagCounts);
+    var generator = new butterfly.HtmlGenerator(layoutHtml, posts, pages);
     var writer = new butterfly.FileWriter(binDir);
 
     for (post in posts) {
@@ -82,7 +81,7 @@ class Main {
       writer.writePost(page, html);
     }
 
-    for (tag in tagCounts.keys()) {
+    for (tag in tags) {
       var html = generator.generateTagPageHtml(tag, posts);
       writer.write('tag-${tag}.html', html);
     }
