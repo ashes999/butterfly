@@ -8,6 +8,7 @@ class HtmlGenerator {
   private static inline var COTENT_PLACEHOLDER:String = '<butterfly-content />';
   private static inline var PAGES_LINKS_PLACEHOLDER:String = '<butterfly-pages />';
   private static inline var TAGS_PLACEHOLDER:String = '<butterfly-tags />';
+  private static inline var TAGS_COUNTS_OPTION:String = 'show-counts';
   private static inline var COMMENTS_PLACEHOLDER:String = '<butterfly-comments />';
   private static inline var DISQUS_HTML_FILE:String = 'templates/disqus.html';
   private static inline var DISQUS_PAGE_URL:String = 'PAGE_URL';
@@ -29,7 +30,11 @@ class HtmlGenerator {
     this.layoutHtml = this.layoutHtml.replace(PAGES_LINKS_PLACEHOLDER, pagesHtml);
 
     var tagsHtml = this.generateTagsHtml();
-    this.layoutHtml = this.layoutHtml.replace(TAGS_PLACEHOLDER, tagsHtml);
+    // Replace it. The tag may have options.
+    var butterflyTagHtml:String = this.getButterflyTagHtml();
+    if (butterflyTagHtml != "") {
+      this.layoutHtml = this.layoutHtml.replace(butterflyTagHtml, tagsHtml);
+    }
   }
 
   public function generatePostHtml(post:butterfly.Post, config:Dynamic) : String
@@ -118,25 +123,36 @@ class HtmlGenerator {
 
   private function generateTagsHtml() : String
   {
-    var tagCounts:Map<String, Int> = new Map<String, Int>();
+    var butterflyTagHtml:String = this.getButterflyTagHtml();
+    if (butterflyTagHtml != "") {
+      var tagCounts:Map<String, Int> = new Map<String, Int>();
 
-    // Calculate tag counts
-    for (post in this.allContent) {
-      for (tag in post.tags) {
-        if (!tagCounts.exists(tag)) {
-          tagCounts.set(tag, 0);
+      // Calculate tag counts. We need the list of tags even if we don't show counts.
+      for (post in this.allContent) {
+        for (tag in post.tags) {
+          if (!tagCounts.exists(tag)) {
+            tagCounts.set(tag, 0);
+          }
+          tagCounts.set(tag, tagCounts.get(tag) + 1);
         }
-        tagCounts.set(tag, tagCounts.get(tag) + 1);
       }
-    }
 
-    var tags = sortKeys(tagCounts);
-    var html = "<ul>";
-    for (tag in tags) {
-      html += '<li><a href="${tagLink(tag)}">${tag}</a> (${tagCounts.get(tag)})</li>\n';
+      var tags = sortKeys(tagCounts);
+      var html = "<ul>";
+      for (tag in tags) {
+        html += '<li><a href="${tagLink(tag)}">${tag}</a>';
+        if (butterflyTagHtml.indexOf(TAGS_COUNTS_OPTION) > -1) {
+          html += ' (${tagCounts.get(tag)})';
+        }
+        html += '</li>\n';
+      }
+      html += "</ul>";
+      return html;
+    } else {
+      // Laytout doesn't include tags HTML.
+      trace("Warning: Layout doesn't contain <butterfly-tags /> element!");
+      return "";
     }
-    html += "</ul>";
-    return html;
   }
 
   private function getDisqusHtml(post:Post, config:Dynamic):String
@@ -151,6 +167,23 @@ class HtmlGenerator {
   private function tagLink(tag:String):String
   {
     return 'tag-${tag}.html';
+  }
+
+  // Get the <butterfly-tags> tag, including any options (eg. show-counts).
+  // If the tag isn't present in our layout, we return an empty string.
+  private function getButterflyTagHtml():String
+  {
+    var startTag:String = TAGS_PLACEHOLDER.substring(0, TAGS_PLACEHOLDER.indexOf('/>'));
+    var startIndex:Int = this.layoutHtml.indexOf(startTag);
+    if (startIndex > -1) {
+      // Layout includes tags HTML.
+      var stopIndex:Int = this.layoutHtml.indexOf('/>', startIndex);
+      var butterflyTagHtml:String = this.layoutHtml.substring(startIndex, stopIndex + 2);
+      return butterflyTagHtml;
+    } else {
+      // Tag is absent from layout
+      return "";
+    }
   }
 
   private function sortKeys(map:haxe.ds.StringMap<Dynamic>) : Array<String>
