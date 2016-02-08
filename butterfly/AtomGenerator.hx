@@ -6,11 +6,18 @@ using haxe.crypto.Md5;
 class AtomGenerator {
   public static function generate(posts:Array<butterfly.Post>, config:Dynamic):String
   {
-    var siteName = config.siteName;
-    var authorName = config.authorName;
-    var authorEmail = config.authorEmail;
+    var siteName:String = config.siteName;
+    var authorName:String = config.authorName;
+    var authorEmail:String = config.authorEmail;
+    var lastUpdated:Date = Date.now();
 
-    var lastUpdated = posts[0].createdOn;
+    // Posts are sorted reverse chronologically. Anyway, get the newest date
+    // of the newest post as our last-updated date. (If there are no posts,
+    // and since pages don't have a publication date, we use today's date.)
+    if (posts.length > 0) {
+      lastUpdated = posts[0].createdOn;
+    }
+
     var xml = '<?xml version="1.0" encoding="utf-8"?>
       <feed xmlns="http://www.w3.org/2005/Atom">
         <title>${siteName}</title>
