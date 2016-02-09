@@ -1,6 +1,11 @@
 using StringTools;
 using DateTools;
-using butterfly.Post;
+
+import butterfly.core.Post;
+import butterfly.generator.AtomGenerator;
+import butterfly.generator.HtmlGenerator;
+import butterfly.FileWriter;
+import butterfly.LayoutModifier;
 
 class Main {
   static public function main() : Void {
@@ -39,8 +44,8 @@ class Main {
     var layoutFile = srcDir + "/layout.html";
 
     // generate pages and tags first, because they appear in the header/layout
-    var pages:Array<butterfly.Post> = getPostsOrPages('${srcDir}/pages', true);
-    var posts:Array<butterfly.Post> = new Array<butterfly.Post>();
+    var pages:Array<Post> = getPostsOrPages('${srcDir}/pages', true);
+    var posts:Array<Post> = new Array<Post>();
 
     if (sys.FileSystem.exists('${srcDir}/posts')) {
       posts = getPostsOrPages('${srcDir}/posts');
@@ -68,9 +73,9 @@ class Main {
       }
     }
 
-    var layoutHtml = new butterfly.LayoutModifier(layoutFile, config).getHtml();
-    var generator = new butterfly.HtmlGenerator(layoutHtml, posts, pages);
-    var writer = new butterfly.FileWriter(binDir);
+    var layoutHtml = new LayoutModifier(layoutFile, config).getHtml();
+    var generator = new HtmlGenerator(layoutHtml, posts, pages);
+    var writer = new FileWriter(binDir);
 
     for (post in posts) {
       var html = generator.generatePostHtml(post, config);
@@ -90,7 +95,7 @@ class Main {
     var indexPage = generator.generateHomePage(posts);
     writer.write("index.html", indexPage);
 
-    var atomXml = butterfly.AtomGenerator.generate(posts, config);
+    var atomXml = AtomGenerator.generate(posts, config);
     writer.write("atom.xml", atomXml);
 
     trace('Generated index page, ${pages.length} page(s), and ${posts.length} post(s).');
@@ -143,20 +148,20 @@ class Main {
     }
   }
 
-  private function getPostsOrPages(path:String, ?isPage:Bool = false) : Array<butterfly.Post>
+  private function getPostsOrPages(path:String, ?isPage:Bool = false) : Array<Post>
   {
     if (sys.FileSystem.exists(path) && sys.FileSystem.isDirectory(path)) {
       var filesAndDirs = sys.FileSystem.readDirectory(path);
-      var posts = new Array<butterfly.Post>();
+      var posts = new Array<Post>();
       for (entry in filesAndDirs) {
         var relativePath = '${path}/${entry}';
         // Ignore .DS on Mac/OSX
         if (entry.indexOf(".DS") == -1 && !sys.FileSystem.isDirectory(relativePath)) {
-          posts.push(butterfly.Post.parse(relativePath, isPage));
+          posts.push(Post.parse(relativePath, isPage));
         }
       }
       return posts;
     }
-    return new Array<butterfly.Post>();
+    return new Array<Post>();
   }
 }

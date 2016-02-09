@@ -1,6 +1,8 @@
-package butterfly;
+package butterfly.generator;
+
 using StringTools;
 using DateTools;
+using butterfly.core.Post;
 
 class HtmlGenerator {
 
@@ -14,9 +16,9 @@ class HtmlGenerator {
   private static inline var DISQUS_PAGE_URL:String = 'PAGE_URL';
   private static inline var DISQUS_PAGE_IDENTIFIER = 'PAGE_IDENTIFIER';
 
-  private var allContent:Array<butterfly.Post>;
+  private var allContent:Array<Post>;
 
-  public function new(layoutHtml:String, posts:Array<butterfly.Post>, pages:Array<butterfly.Post>)
+  public function new(layoutHtml:String, posts:Array<Post>, pages:Array<Post>)
   {
     this.layoutHtml = layoutHtml;
     if (this.layoutHtml.indexOf(COTENT_PLACEHOLDER) == -1) {
@@ -37,7 +39,7 @@ class HtmlGenerator {
     }
   }
 
-  public function generatePostHtml(post:butterfly.Post, config:Dynamic) : String
+  public function generatePostHtml(post:Post, config:Dynamic) : String
   {
     // substitute in content
     var titleHtml = '<h2 class="blog-post-title">' + post.title + '</h2>';
@@ -87,7 +89,7 @@ class HtmlGenerator {
   }
 
   // Precondition: posts are sorted in the order we want to list them.
-  public function generateTagPageHtml(tag:String, posts:Array<butterfly.Post>):String
+  public function generateTagPageHtml(tag:String, posts:Array<Post>):String
   {
     var count = 0;
     var html = "<ul>";
@@ -102,7 +104,7 @@ class HtmlGenerator {
     return this.layoutHtml.replace(COTENT_PLACEHOLDER, html);
   }
 
-  public function generateHomePage(posts:Array<butterfly.Post>) : String
+  public function generateHomePage(posts:Array<Post>) : String
   {
     var html = "<ul>";
     for (post in posts) {
@@ -112,7 +114,7 @@ class HtmlGenerator {
     return this.layoutHtml.replace(COTENT_PLACEHOLDER, html);
   }
 
-  private function generatePagesLinksHtml(pages:Array<butterfly.Post>) : String
+  private function generatePagesLinksHtml(pages:Array<Post>) : String
   {
     var html = "";
     for (page in pages) {

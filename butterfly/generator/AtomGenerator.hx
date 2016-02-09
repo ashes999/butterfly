@@ -1,10 +1,10 @@
-package butterfly;
+package butterfly.generator;
 
 using DateTools;
 using haxe.crypto.Md5;
 
 class AtomGenerator {
-  public static function generate(posts:Array<butterfly.Post>, config:Dynamic):String
+  public static function generate(posts:Array<butterfly.core.Post>, config:Dynamic):String
   {
     var siteName:String = config.siteName;
     var authorName:String = config.authorName;

@@ -1,4 +1,4 @@
-package butterfly;
+package butterfly.core;
 
 import haxe.crypto.Sha1;
 using StringTools;
@@ -18,7 +18,7 @@ class Post {
   public function new() {
   }
 
-  // fileName doesn't include any path characters  
+  // fileName doesn't include any path characters
   public static function parse(pathAndFileName:String, isPage:Bool) : Post
   {
     var fileName = pathAndFileName.substr(pathAndFileName.lastIndexOf('/') + 1);

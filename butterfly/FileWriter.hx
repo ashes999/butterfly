@@ -7,7 +7,7 @@ class FileWriter {
     this.outputDir = outputDir;
   }
 
-  public function writePost(post:butterfly.Post, html:String) : Void
+  public function writePost(post:butterfly.core.Post, html:String) : Void
   {
     this.write(post.url + ".html", html);
   }
