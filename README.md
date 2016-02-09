@@ -29,7 +29,7 @@ Your website files must include, at a minimum, a `src` directory with the follow
   - Include a `<butterfly-content />` tag, which will be replaced with actual page content (post/page content, or the list of posts for the index page).
   - Include a `<butterfly-pages />` tag, which will be replaced with a list of links to the pages.
   - Optionally include a `<butterfly-tags />` tag, which will be replaced with a list of tag links. If you want to display the number of posts with each tag, use the `show-counts` attribute: `<butterfly-tags show-counts />`
-- A `posts` directory, with one markdown file per post.
+- An optional `posts` directory, with one markdown file per post.
   - The file name becomes the post name, and the markdown content becomes HTML.
   - The line`meta-tags: foo, bar, baz` tags a post with the tags `foo`, `bar`, and `baz`.
   - The line `meta-publishedOn: 2015-12-31` sets the post's publication date to December 31st, 2015.
@@ -76,3 +76,25 @@ Add `googleAnalyticsId` with your Google Analytics ID:
 `"googleAnalyticsId": "UA-12345678-1"`
 
 Butterfly then generates the latest Google Analytics code. The block is also wrapped in an `if` statement that doesn't execute when files are viewed locally. If this property isn't specified in your config file, Butterfly doesn't generate any Google Analytics code. (You can manually put your own Google Analytics code in your layout file.)
+
+## Customizing the HTML For the List of Pages
+
+By default, butterfly replaces `<butterfly-pages />` with a list of pages. If we had a single `about` page, we would see Butterfly generate HTML like this:
+
+`<a href="http://yourdomain.com/about.html">About</a>`
+
+Butterfly generates one `a` tag per page.
+
+You can specify three additional properties on your the `butterfly-pages` tag:
+
+- `link-prefix`: An HTML/text prefix to preprend to each link (before the `<a` tag);
+- `link-suffix`: an HTML/text suffix to attach after each link (after the `</a>` tag)
+- `link-attributes`: HTML to inject within the anchor tag
+
+For example, if we wanted an unordered list that uses the same CSS as the Bootstrap blog template, we could write something like:
+
+`<butterfly-pages link-prefix="<li>" link-suffix="</li>" link-attributes="class='blog-nav-item'" />`
+
+This would generate HTML for our about page as:
+
+`<li><a class='blog-nav-item' href="http://yourdomain.com/about.html"></li>`

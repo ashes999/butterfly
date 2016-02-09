@@ -45,10 +45,9 @@ class Main {
 
     // generate pages and tags first, because they appear in the header/layout
     var pages:Array<Post> = getPostsOrPages('${srcDir}/pages', true);
-    var posts:Array<Post> = new Array<Post>();
+    var posts:Array<Post> = getPostsOrPages('${srcDir}/posts');
 
-    if (sys.FileSystem.exists('${srcDir}/posts')) {
-      posts = getPostsOrPages('${srcDir}/posts');
+    if (posts.length > 0) {
       // sort by date, newest-first. Sorting by getTime() doesn't seem to work,
       // for some reason; sorting by the stringified dates (yyyy-mm-dd format) does.
       haxe.ds.ArraySort.sort(posts, function(a, b) {

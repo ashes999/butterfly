@@ -2,7 +2,10 @@ package butterfly.generator;
 
 using StringTools;
 using DateTools;
-using butterfly.core.Post;
+import butterfly.core.Post;
+import ButterflyConfig;
+import butterfly.html.TagFinder;
+import butterfly.html.HtmlTag;
 
 class HtmlGenerator {
 
@@ -28,8 +31,9 @@ class HtmlGenerator {
     // Pages first so if both a post and page share a title, the page wins.
     this.allContent = pages.concat(posts);
 
-    var pagesHtml = this.generatePagesLinksHtml(pages);
-    this.layoutHtml = this.layoutHtml.replace(PAGES_LINKS_PLACEHOLDER, pagesHtml);
+    var pagesTag = TagFinder.findTag(PAGES_LINKS_PLACEHOLDER, this.layoutHtml);
+    var pagesHtml = this.generatePagesLinksHtml(pagesTag, pages);
+    this.layoutHtml = this.layoutHtml.replace(pagesTag.html, pagesHtml);
 
     var tagsHtml = this.generateTagsHtml();
     // Replace it. The tag may have options.
@@ -39,7 +43,7 @@ class HtmlGenerator {
     }
   }
 
-  public function generatePostHtml(post:Post, config:Dynamic) : String
+  public function generatePostHtml(post:Post, config:ButterflyConfig) : String
   {
     // substitute in content
     var titleHtml = '<h2 class="blog-post-title">' + post.title + '</h2>';
@@ -114,12 +118,18 @@ class HtmlGenerator {
     return this.layoutHtml.replace(COTENT_PLACEHOLDER, html);
   }
 
-  private function generatePagesLinksHtml(pages:Array<Post>) : String
+  private function generatePagesLinksHtml(pagesTag:HtmlTag, pages:Array<Post>) : String
   {
+    var linkAttributes:String = pagesTag.attribute("link-attributes");
+    var linkPrefix:String = pagesTag.attribute("link-prefix");
+    var linkSuffix:String = pagesTag.attribute("link-suffix");
+
     var html = "";
+
     for (page in pages) {
-      html += '<a class="blog-nav-item" href="${page.url}.html">${page.title}</a>';
+     html += '${linkPrefix}<a ${linkAttributes} href="${page.url}.html">${page.title}</a>${linkSuffix}';
     }
+
     return html;
   }
 
@@ -157,7 +167,7 @@ class HtmlGenerator {
     }
   }
 
-  private function getDisqusHtml(post:Post, config:Dynamic):String
+  private function getDisqusHtml(post:Post, config:ButterflyConfig):String
   {
     var template = sys.io.File.getContent(DISQUS_HTML_FILE);
     var url = '${config.siteUrl}/${post.url}';
@@ -173,6 +183,7 @@ class HtmlGenerator {
 
   // Get the <butterfly-tags> tag, including any options (eg. show-counts).
   // If the tag isn't present in our layout, we return an empty string.
+  // TODO: replace this with TagFinder
   private function getButterflyTagHtml():String
   {
     var startTag:String = TAGS_PLACEHOLDER.substring(0, TAGS_PLACEHOLDER.indexOf('/>'));
