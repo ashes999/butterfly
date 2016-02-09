@@ -1,4 +1,4 @@
-package butterfly;
+package butterfly.html;
 
 class FileWriter {
   private var outputDir:String = "";

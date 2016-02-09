@@ -1,4 +1,4 @@
-package butterfly;
+package butterfly.html;
 
 using StringTools;
 

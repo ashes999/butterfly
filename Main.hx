@@ -4,8 +4,8 @@ using DateTools;
 import butterfly.core.Post;
 import butterfly.generator.AtomGenerator;
 import butterfly.generator.HtmlGenerator;
-import butterfly.FileWriter;
-import butterfly.LayoutModifier;
+import butterfly.html.FileWriter;
+import butterfly.html.LayoutModifier;
 
 class Main {
   static public function main() : Void {
