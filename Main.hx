@@ -149,8 +149,9 @@ class Main {
       var filesAndDirs = sys.FileSystem.readDirectory(path);
       var posts = new Array<butterfly.Post>();
       for (entry in filesAndDirs) {
-        var relativePath = path + "/" + entry;
-        if (!sys.FileSystem.isDirectory(relativePath)) {
+        var relativePath = '${path}/${entry}';
+        // Ignore .DS on Mac/OSX
+        if (entry.indexOf(".DS") == -1 && !sys.FileSystem.isDirectory(relativePath)) {
           posts.push(butterfly.Post.parse(relativePath, isPage));
         }
       }

@@ -16,6 +16,11 @@ class AtomGenerator {
     // and since pages don't have a publication date, we use today's date.)
     if (posts.length > 0) {
       lastUpdated = posts[0].createdOn;
+      for (post in posts) {
+        if (post.createdOn.getTime() >= lastUpdated.getTime()) {
+          lastUpdated = post.createdOn;
+        }
+      }
     }
 
     var xml = '<?xml version="1.0" encoding="utf-8"?>
