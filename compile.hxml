@@ -1,3 +1,4 @@
+--cwd src
 -main Main
 -lib markdown
 -neko Main.n
