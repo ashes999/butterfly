@@ -5,4 +5,4 @@ neko: "2.0.0"
 hxml:
   - test.hxml
 script:
-  haxe run munit test
+  haxelib run munit test
