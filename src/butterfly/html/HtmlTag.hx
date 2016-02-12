@@ -7,9 +7,10 @@ class HtmlTag
   private static var attributePairsRegex:EReg = new EReg("([a-zA-Z0-9_\\-]+)=['\"]([^'\"]+)['\"]", "ig");
 
   public var attributeCount(default, null):Int;
+  // The HTML input. We need this to know what the generated HTML we're replacing is.
+  public var html(default, null):String;
 
   private var attributes:Map<String, String> = new Map<String, String>();
-  private var html:String = "";
 
   public function new(tagName:String, html:String)
   {

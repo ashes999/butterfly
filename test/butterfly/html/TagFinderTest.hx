@@ -1,13 +1,23 @@
 package butterfly.html;
 
 import massive.munit.Assert;
-import butterfly.html.HtmlTag;
+import butterfly.html.TagFinder;
 
-class HtmlTagTest
+class TagFinderTest
 {
 	@Test
-	public function placeholder():Void
+	public function findTagReturnsTagIfTagIsPresent():Void
 	{
-		Assert.isTrue(true);
+		var expected = "<img src='cool.png' />";
+		var actual = TagFinder.findTag("img", '<div>${expected}</div>');
+		Assert.isNotNull(actual);
+		Assert.areEqual(expected, actual.html);
+	}
+
+	@Test
+	public function findTagReturnsNullIfTagIsNotPresent():Void
+	{
+		var actual = TagFinder.findTag("phone", "<div><p>Hi!</p><p>Hello!</p></div>");
+		Assert.isNull(actual);
 	}
 }

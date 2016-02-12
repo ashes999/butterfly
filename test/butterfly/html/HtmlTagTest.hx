@@ -1,9 +1,9 @@
 package butterfly.html;
 
 import massive.munit.Assert;
-import butterfly.html.TagFinder;
+import butterfly.html.HtmlTag;
 
-class TagFinderTest
+class HtmlTagTest
 {
 	@Test
 	public function constructorFindsSelfEnclosedTagWithoutAttributes()
