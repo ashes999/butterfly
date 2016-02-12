@@ -1,5 +1,7 @@
 import massive.munit.TestSuite;
 
+import butterfly.html.TagFinderTest;
+import butterfly.html.HtmlTagTest;
 import ExampleTest;
 
 /**
@@ -14,6 +16,8 @@ class TestSuite extends massive.munit.TestSuite
 	{
 		super();
 
+		add(butterfly.html.TagFinderTest);
+		add(butterfly.html.HtmlTagTest);
 		add(ExampleTest);
 	}
 }

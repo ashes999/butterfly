@@ -4,14 +4,20 @@ using StringTools;
 
 class HtmlTag
 {
-  private static var attributePairsRegex:EReg = new EReg('([a-zA-Z0-9_\\-]+)=[\'"]([^\'"]+)[\'"]', "ig");
+  private static var attributePairsRegex:EReg = new EReg("([a-zA-Z0-9_\\-]+)=['\"]([^'\"]+)['\"]", "ig");
 
-  public var html(default, null):String;
+  public var attributeCount(default, null):Int;
+
   private var attributes:Map<String, String> = new Map<String, String>();
+  private var html:String = "";
 
   public function new(tagName:String, html:String)
   {
     this.html = html;
+    // Haxe doesn't yet give us a way to get a map count, without iterating.
+    // Iterating is O(n), and this is a fixed collection (won't change after
+    // being created). So it's okay to self-count it this time.
+    this.attributeCount = 0;
 
     // parse attributes
     var start = html.indexOf(tagName) + tagName.length;
@@ -42,6 +48,7 @@ class HtmlTag
         var value = matches.substring(valueStart, valueEnd);
         matches = matches.substring(valueEnd + 2);
         attributes.set(key, value);
+        this.attributeCount += 1;
       }
     }
   }

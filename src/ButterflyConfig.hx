@@ -6,7 +6,6 @@ typedef ButterflyConfig =
   var authorName : String;
   var authorEmail : String;
   @optional var googleAnlyticsId : String;
-  @optional var disqus : String; // TODO: remove if unused
   @optional var linkAttributes : String;
   @optional var linkPrefix : String;
   @optional var linkSuffix : String;
