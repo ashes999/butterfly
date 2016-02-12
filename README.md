@@ -28,7 +28,7 @@ Your website files must include, at a minimum, a `src` directory with the follow
   - Your layout file can contain any CSS/HTML/Javascript you like.
   - Include a `<butterfly-content />` tag, which will be replaced with actual page content (post/page content, or the list of posts for the index page).
   - Include a `<butterfly-pages />` tag, which will be replaced with a list of links to the pages.
-  - Optionally include a `<butterfly-tags />` tag, which will be replaced with a list of tag links. If you want to display the number of posts with each tag, use the `show-counts` attribute: `<butterfly-tags show-counts />`
+  - Optionally include a `<butterfly-tags />` tag, which will be replaced with a list of tag links.
 - An optional `posts` directory, with one markdown file per post.
   - The file name becomes the post name, and the markdown content becomes HTML.
   - The line`meta-tags: foo, bar, baz` tags a post with the tags `foo`, `bar`, and `baz`.
@@ -98,3 +98,7 @@ For example, if we wanted an unordered list that uses the same CSS as the Bootst
 This would generate HTML for our about page as:
 
 `<li><a class='blog-nav-item' href="http://yourdomain.com/about.html"></li>`
+
+## Customizing the Tag List
+
+By default, the `<butterfly-tags />` tag doesn't include the count of posts in each tag. To add the count, change the tag to `<butterfly-tags show-counts />`. (This is not recommended, because adding a post causes every generated file to change, which can make it difficult to `diff` and see the actual files changed.)
