@@ -10,7 +10,7 @@ import butterfly.html.HtmlTag;
 class HtmlGenerator {
 
   private var layoutHtml:String;
-  private static inline var COTENT_PLACEHOLDER:String = '<butterfly-content />';
+  private static inline var CONTENT_PLACEHOLDER:String = '<butterfly-content />';
   private static inline var PAGES_LINKS_PLACEHOLDER:String = '<butterfly-pages />';
   private static inline var TAGS_PLACEHOLDER:String = '<butterfly-tags />';
   private static inline var TAGS_COUNTS_OPTION:String = 'show-counts';
@@ -24,8 +24,8 @@ class HtmlGenerator {
   public function new(layoutHtml:String, posts:Array<Post>, pages:Array<Post>)
   {
     this.layoutHtml = layoutHtml;
-    if (this.layoutHtml.indexOf(COTENT_PLACEHOLDER) == -1) {
-      throw "Layout HTML doesn't have the blog post placeholder in it: " + COTENT_PLACEHOLDER;
+    if (this.layoutHtml.indexOf(CONTENT_PLACEHOLDER) == -1) {
+      throw "Layout HTML doesn't have the blog post placeholder in it: " + CONTENT_PLACEHOLDER;
     }
 
     // Pages first so if both a post and page share a title, the page wins.
@@ -64,7 +64,7 @@ class HtmlGenerator {
 
     var finalContent = generateIntraSiteLinks(post.content);
     var finalHtml = '${titleHtml}\n${tagsHtml}\n${postedOnHtml}\n${finalContent}\n';
-    var toReturn = this.layoutHtml.replace(COTENT_PLACEHOLDER, finalHtml);
+    var toReturn = this.layoutHtml.replace(CONTENT_PLACEHOLDER, finalHtml);
 
     // comments (disqus snippet)
     var disqusHtml = getDisqusHtml(post, config);
@@ -105,7 +105,7 @@ class HtmlGenerator {
     }
     html += "</ul>";
     html = '<p>${count} posts tagged with ${tag}:</p>\n${html}';
-    return this.layoutHtml.replace(COTENT_PLACEHOLDER, html);
+    return this.layoutHtml.replace(CONTENT_PLACEHOLDER, html);
   }
 
   public function generateHomePage(posts:Array<Post>) : String
@@ -115,7 +115,7 @@ class HtmlGenerator {
       html += '<li><a href="${post.url}.html">${post.title}</a> (${post.createdOn.format("%Y-%m-%d")})</li>';
     }
     html += "</ul>";
-    return this.layoutHtml.replace(COTENT_PLACEHOLDER, html);
+    return this.layoutHtml.replace(CONTENT_PLACEHOLDER, html);
   }
 
   private function generatePagesLinksHtml(pagesTag:HtmlTag, pages:Array<Post>) : String
