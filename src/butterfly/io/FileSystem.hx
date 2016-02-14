@@ -13,11 +13,11 @@ class FileSystem
     {
       var entries = sys.FileSystem.readDirectory(srcPath);
       for (entry in entries) {
-        if (sys.FileSystem.isDirectory(srcPath + '/' + entry)) {
-          sys.FileSystem.createDirectory(srcPath + '/' + entry);
-          copyDirRecursively(srcPath + '/' + entry, destPath + '/' + entry);
+        if (sys.FileSystem.isDirectory('${srcPath}/${entry}')) {
+          sys.FileSystem.createDirectory('${srcPath}/${entry}');
+          copyDirRecursively('${srcPath}/${entry}', '${destPath}/${entry}');
         } else {
-          sys.io.File.copy(srcPath + '/' + entry, destPath + '/' + entry);
+          sys.io.File.copy('${srcPath}/${entry}', '${destPath}/${entry}');
         }
       }
     } else {
@@ -31,11 +31,11 @@ class FileSystem
     {
       var entries = sys.FileSystem.readDirectory(path);
       for (entry in entries) {
-        if (sys.FileSystem.isDirectory(path + '/' + entry)) {
-          deleteDirRecursively(path + '/' + entry);
-          sys.FileSystem.deleteDirectory(path + '/' + entry);
+        if (sys.FileSystem.isDirectory('${path}/${entry}')) {
+          deleteDirRecursively('${path}/${entry}');
+          sys.FileSystem.deleteDirectory('${path}/${entry}');
         } else {
-          sys.FileSystem.deleteFile(path + '/' + entry);
+          sys.FileSystem.deleteFile('${path}/${entry}');
         }
       }
     }

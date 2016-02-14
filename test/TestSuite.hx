@@ -1,8 +1,8 @@
 import massive.munit.TestSuite;
 
-import butterfly.html.TagFinderTest;
+import butterfly.html.LayoutModifierTest;
 import butterfly.html.HtmlTagTest;
-import ExampleTest;
+import butterfly.html.TagFinderTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -16,8 +16,8 @@ class TestSuite extends massive.munit.TestSuite
 	{
 		super();
 
-		add(butterfly.html.TagFinderTest);
+		add(butterfly.html.LayoutModifierTest);
 		add(butterfly.html.HtmlTagTest);
-		add(ExampleTest);
+		add(butterfly.html.TagFinderTest);
 	}
 }
