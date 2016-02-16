@@ -22,17 +22,12 @@ class Factory
   {
     // Typedefs are painful to work with. We have to have all fields here,
     // even if they're @optional.
-    return {
+    var config:ButterflyConfig = {
       "siteName": "",
       "siteUrl": "",
       "authorName": "",
-      "authorEmail": "",
-
-      // optional fields
-      "googleAnalyticsId": "",
-      "linkPrefix": "",
-      "linkSuffix": "",
-      "linkAttributes": "",
     }
+
+    return config;
   }
 }
