@@ -69,6 +69,8 @@ A minimal `config.json` file looks like this:
 
 You can add the following optional fields in your config file:
 
+- `<butterfly-title />` renders the post title in an H2 tag.
+
 ## Google Analytics
 
 Add `googleAnalyticsId` with your Google Analytics ID:

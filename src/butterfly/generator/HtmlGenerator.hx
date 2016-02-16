@@ -10,6 +10,7 @@ import butterfly.html.HtmlTag;
 class HtmlGenerator {
 
   private var layoutHtml:String;
+  private static inline var TITLE_PLACEHOLDER:String = '<butterfly-title />';
   private static inline var CONTENT_PLACEHOLDER:String = '<butterfly-content />';
   private static inline var PAGES_LINKS_PLACEHOLDER:String = '<butterfly-pages />';
   private static inline var TAGS_PLACEHOLDER:String = '<butterfly-tags />';
@@ -43,6 +44,11 @@ class HtmlGenerator {
     }
   }
 
+  /**
+  Generates the HTML for a post, using values from config (like the site URL).
+  Returns the fully-formed, final HTML (after rendering to Markdown, adding
+  the HTML with the post's tags, etc.).
+  */
   public function generatePostHtml(post:Post, config:ButterflyConfig) : String
   {
     // substitute in content
@@ -64,6 +70,9 @@ class HtmlGenerator {
     var finalContent = generateIntraSiteLinks(post.content);
     var finalHtml = '${tagsHtml}\n${postedOnHtml}\n${finalContent}\n';
     var toReturn = this.layoutHtml.replace(CONTENT_PLACEHOLDER, finalHtml);
+
+    // replace <butterfly-title /> with the title, if it exists
+    toReturn = toReturn.replace(TITLE_PLACEHOLDER, post.title);
 
     // comments (disqus snippet)
     var disqusHtml = getDisqusHtml(post, config);

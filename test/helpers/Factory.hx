@@ -8,11 +8,11 @@ import butterfly.generator.HtmlGenerator;
 // so that they have simpler constructors? Maybe we want dependency injection?
 class Factory
 {
-  public static function createHtmlGenerator() : HtmlGenerator
+  public static function createHtmlGenerator(layoutHtml:String = "<butterfly-pages /><butterfly-content /><butterfly-tags />")
+  : HtmlGenerator
   {
     // Minimum set of tags we need for Butterfly to work.
     // butterfly-tags generates a warning if not present (it's optional)
-    var layoutHtml = "<butterfly-pages /><butterfly-content /><butterfly-tags />";
     var emptyList = new Array<Post>();
     var toReturn = new HtmlGenerator(layoutHtml, emptyList, emptyList);
     return toReturn;
@@ -20,8 +20,7 @@ class Factory
 
   public static function createButterflyConfig() : ButterflyConfig
   {
-    // Typedefs are painful to work with. We have to have all fields here,
-    // even if they're @optional.
+    // Required fields are all that we need here
     var config:ButterflyConfig = {
       "siteName": "",
       "siteUrl": "",

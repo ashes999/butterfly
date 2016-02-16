@@ -4,7 +4,7 @@ import haxe.crypto.Sha1;
 using StringTools;
 
 class Post {
-  public var title(default, null) : String;
+  public var title(default, default) : String;
   public var content(default, null) : String;
   public var url(default, null) : String;
   public var createdOn(default, null) : Date;
