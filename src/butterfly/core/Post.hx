@@ -15,7 +15,11 @@ class Post {
   private static var tagRegex = ~/meta-tags: ([\w\s,\-_]+)\n/i;
   private static var idRegex = ~/meta-id: (\w{40})/i;
 
-  public function new() {
+  public function new()
+  {
+    // fields that we rely on should be initialized
+    this.content = "";
+    this.tags = new Array<String>();
   }
 
   // fileName doesn't include any path characters

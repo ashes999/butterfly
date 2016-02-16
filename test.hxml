@@ -2,6 +2,7 @@
 -main TestMain
 -lib munit
 -lib hamcrest
+-lib markdown
 -cp src
 
 -cp test

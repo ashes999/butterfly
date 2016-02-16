@@ -11,7 +11,7 @@ class LayoutModifier
   private static inline var GOOGLE_ANALYTICS_HTML_FILE:String = 'templates/googleAnalytics.html';
   private static inline var GOOGLE_ANALYTICS_IDENTIFIER = 'GOOGLE_ANALYTICS_ID';
 
-  public function new(layoutFile:String, config:Dynamic)
+  public function new(layoutFile:String, config:ButterflyConfig)
   {
     if (!sys.FileSystem.exists(layoutFile)) {
       throw "Can't find layout file " + layoutFile;

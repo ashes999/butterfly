@@ -46,7 +46,6 @@ class HtmlGenerator {
   public function generatePostHtml(post:Post, config:ButterflyConfig) : String
   {
     // substitute in content
-    var titleHtml = '<h2 class="blog-post-title">' + post.title + '</h2>';
     var tagsHtml = "";
     if (post.tags.length > 0) {
       tagsHtml = "<p><strong>Tagged with:</strong> ";
@@ -63,7 +62,7 @@ class HtmlGenerator {
     }
 
     var finalContent = generateIntraSiteLinks(post.content);
-    var finalHtml = '${titleHtml}\n${tagsHtml}\n${postedOnHtml}\n${finalContent}\n';
+    var finalHtml = '${tagsHtml}\n${postedOnHtml}\n${finalContent}\n';
     var toReturn = this.layoutHtml.replace(CONTENT_PLACEHOLDER, finalHtml);
 
     // comments (disqus snippet)
