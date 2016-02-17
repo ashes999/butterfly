@@ -54,6 +54,16 @@ class LayoutModifierTest
     Assert.isTrue(actualHtml.indexOf(expectedSnippet) > -1);
   }
 
+  @Test
+  public function constructorSubstitutesVariablesFromConfigWithTheirValues() {
+    var layoutFile = createLayoutFile("<head><title>$siteName</title></head>");
+    var config = Factory.createButterflyConfig();
+    config.siteName = "Learn Haxe";
+    var modifier = new LayoutModifier(layoutFile, config);
+    var actual = modifier.getHtml();
+    Assert.isTrue(actual.indexOf("<title>Learn Haxe</title>") > -1);
+  }
+
   // Creates a layout file. Has a sensible default HTML/filename. Returns the
   // fully-qualified file name.
   private function createLayoutFile(html:String = "<html><head></head><body><!-- Placeholder --></body></html>",

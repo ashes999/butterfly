@@ -25,7 +25,27 @@ class LayoutModifier
       html = addGoogleAnalytics(html, config.googleAnalyticsId);
     }
 
+    html = substituteVariables(html, config);
     this.layoutHtml = html;
+  }
+
+  /**
+  Substitues any variables defined in the layout with their values from config.json.
+  eg. $siteName is replaced with the value of the config.json property
+  Returns the modified (after-substitution) HTML.
+  */
+  private function substituteVariables(html:String, config:ButterflyConfig) : String
+  {
+    var toReturn:String = html;
+
+    var fields:Array<String> = Reflect.fields(config);
+    for (field in fields) {
+      var value:String = Reflect.field(config, field);
+      // If the property is "siteName", replace ""$siteName" with the value
+      toReturn = toReturn.replace('$$$field', value);
+    }
+
+    return toReturn;
   }
 
   // Returns the final, generated HTML that takes into account all of the required
