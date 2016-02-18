@@ -11,7 +11,7 @@ import test.helpers.Factory;
 
 class MainTest
 {
-  private static inline var TEST_FILES_DIR = "test/temp";
+  private static inline var TEST_FILES_DIR = "test/temp/main";
 
   @Before
   public function createTestFilesDirectory() {

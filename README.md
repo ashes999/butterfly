@@ -33,7 +33,8 @@ Your website files must include, at a minimum, a `src` directory with the follow
   - The file name becomes the post name, and the markdown content becomes HTML.
   - The line`meta-tags: foo, bar, baz` tags a post with the tags `foo`, `bar`, and `baz`.
   - The line `meta-publishedOn: 2015-12-31` sets the post's publication date to December 31st, 2015.
-- An optional `pages` directory which contains one markdown file per page. You son't need any meta-entries for it.
+  - See the "Meta-Data" section below for more information about meta-data.
+- An optional `pages` directory which contains one markdown file per page. You don't need any meta-entries for it.
 - A `content` directory containing CSS, Javascript, and `favicon` files (if they're not referenced through a CDN).
 - A `config.json` file. See the *JSON Configuration* section for information on what goes in here. It must have at least `siteName`, `siteUrl`, and `authorName` defined.
 
@@ -105,3 +106,19 @@ In your layout template, you can specify the value of any config file property, 
 This will generate the following HTML:
 
 `<h2>Learn Haxe</h2>`
+
+# Post/Page Content
+
+In general, any Markdown content will work. If you run into trouble, open an issue and let us know so we can investigate and hopefully resolve it.
+
+## Meta-Data
+
+You can embed the following meta-data fields into any post or page, unless mentioned otherwise (note that they have to be at the beginning of the line in order to match):
+
+- `meta-title`: The title of the post. If unspecified, a cleaned up version of the filename of the post becomes the title.
+- `meta-tags`: A comma-delimited or space-delimited set of tags for posts (not pages). (Butterfly also generates a page, per tag, listing all posts with that tag.)
+meta-publishedOn: The publication date of the post (not for pages) in the format *YYYY-mm-dd*.
+
+The following meta data is automatically inserted, and shouldn't be changed/deleted (unless you are *really* sure that know what you're doing):
+
+- `meta-id`: a unique ID for each post. This is used for Disqus integration (Disqus requires a unique URL and ID for each piece of content). **Changing this could result in you losing comments on your post/page!**

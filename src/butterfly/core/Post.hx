@@ -14,6 +14,7 @@ class Post {
   private static var publishDateRegex = ~/meta-publishedOn: (\d{4}-\d{2}-\d{2})/i;
   private static var tagRegex = ~/meta-tags: ([\w\s,\-_]+)\n/i;
   private static var idRegex = ~/meta-id: (\w{40})/i;
+  private static var titleRegex = ~/^meta-title:(.*)$/im;
 
   public function new()
   {
@@ -28,10 +29,9 @@ class Post {
   {
     var fileName = pathAndFileName.substr(pathAndFileName.lastIndexOf('/') + 1);
     var post = new Post();
-    post.title = getTitle(fileName);
     post.url = getUrl(fileName);
-
     var markdown = sys.io.File.getContent(pathAndFileName);
+    post.title = getTitle(fileName, markdown);
 
     if (!isPage) {
       post.createdOn = getPublishDate(pathAndFileName);
@@ -43,21 +43,26 @@ class Post {
     return post;
   }
 
-  private static function getTitle(fileName:String) : String
+  public static function getTitle(fileName:String, markdown:String) : String
   {
-    var url = getUrl(fileName);
-    var words:Array<String> = url.split('-');
+    // Check if there's a meta-title defined; use that (first).
+    if (titleRegex.match(markdown)) {
+      return titleRegex.matched(1).trim(); // first group
+    } else {
+      var url = getUrl(fileName);
+      var words:Array<String> = url.split('-');
 
-    var toReturn = "";
-    for (word in words) {
-      // TODO: filter out stop-words properly instead of guessing by length
-      // Capitalizes the first letter for non-stop-words
-      if (word.length > 3) {
-        word = word.charAt(0).toUpperCase() + word.substr(1);
+      var toReturn = "";
+      for (word in words) {
+        // TODO: filter out stop-words properly instead of guessing by length
+        // Capitalizes the first letter for non-stop-words
+        if (word.length > 3) {
+          word = word.charAt(0).toUpperCase() + word.substr(1);
+        }
+        toReturn += word + " ";
       }
-      toReturn += word + " ";
+      return toReturn.trim();
     }
-    return toReturn.trim();
   }
 
   private static function getHtml(markdown:String) : String
