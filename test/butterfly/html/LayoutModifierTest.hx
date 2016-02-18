@@ -65,6 +65,24 @@ class LayoutModifierTest
     Assert.isTrue(actual.indexOf("<title>Learn Haxe</title>") > -1);
   }
 
+	@Test
+	public function constructorReplacesButterflyTagsPlaceholderWithTags()
+	{
+		// Create a couple of posts with tags
+		// Create a layout with <butterfly-tags />
+		// Validate that you can see both tags in the final HTML
+		Assert.isTrue(true);
+	}
+
+  @Test
+	public function constructorInsertsTagCountsIfAttributeIsSpecified()
+	{
+		// Create a couple of posts with tags
+		// Create a layout with <butterfly-tags show-counts="true" />
+		// Validate that you can see both tags in the final HTML, with their post counts
+		Assert.isTrue(true);
+	}
+
   // Creates a layout file. Has a sensible default HTML/filename. Returns the
   // fully-qualified file name.
   private function createLayoutFile(html:String = "<html><head></head><body><butterfly-pages /><!-- Placeholder --></body></html>",

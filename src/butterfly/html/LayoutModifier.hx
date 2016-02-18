@@ -35,7 +35,7 @@ class LayoutModifier
     if (pagesTag == null) {
       throw 'Layout file ${layoutFile} does not contain the tag to list pages: ${PAGES_LINKS_PLACEHOLDER}';
     }
-    
+
     var pagesHtml:String = this.generatePagesLinksHtml(pagesTag, pages);
     html = html.replace(pagesTag.html, pagesHtml);
 
@@ -83,54 +83,53 @@ class LayoutModifier
     return this.layoutHtml;
   }
 
+  private function generatePagesLinksHtml(pagesTag:HtmlTag, pages:Array<Post>) : String
+  {
+    var linkAttributes:String = pagesTag.attribute("link-attributes");
+    var linkPrefix:String = pagesTag.attribute("link-prefix");
+    var linkSuffix:String = pagesTag.attribute("link-suffix");
 
-    private function generatePagesLinksHtml(pagesTag:HtmlTag, pages:Array<Post>) : String
-    {
-      var linkAttributes:String = pagesTag.attribute("link-attributes");
-      var linkPrefix:String = pagesTag.attribute("link-prefix");
-      var linkSuffix:String = pagesTag.attribute("link-suffix");
+    var html = "";
 
-      var html = "";
+    for (page in pages) {
+     html += '${linkPrefix}<a ${linkAttributes} href="${page.url}.html">${page.title}</a>${linkSuffix}';
+    }
 
-      for (page in pages) {
-       html += '${linkPrefix}<a ${linkAttributes} href="${page.url}.html">${page.title}</a>${linkSuffix}';
+    return html;
+  }
+
+  private function generateTagsHtml(html:String) : String
+  {
+    var butterflyTag:HtmlTag = TagFinder.findTag(TAGS_PLACEHOLDER, html);
+    if (butterflyTag != null) {
+      var tagCounts:Map<String, Int> = new Map<String, Int>();
+
+      // Calculate tag counts. We need the list of tags even if we don't show counts.
+      for (post in this.postsAndPages) {
+        for (tag in post.tags) {
+          if (!tagCounts.exists(tag)) {
+            tagCounts.set(tag, 0);
+          }
+          tagCounts.set(tag, tagCounts.get(tag) + 1);
+        }
       }
 
+      var tags = sortKeys(tagCounts);
+      var html = "<ul>";
+      for (tag in tags) {
+        html += '<li>${HtmlGenerator.tagLink(tag)}';
+        if (butterflyTag.attribute(TAGS_COUNTS_OPTION) != "") {
+          html += ' (${tagCounts.get(tag)})';
+        }
+        html += '</li>\n';
+      }
+      html += "</ul>";
       return html;
+    } else {
+      // Laytout doesn't include tags HTML.
+      return "";
     }
-
-    private function generateTagsHtml(html:String) : String
-    {
-      var butterflyTag:HtmlTag = TagFinder.findTag(TAGS_PLACEHOLDER, html);
-      if (butterflyTag != null) {
-        var tagCounts:Map<String, Int> = new Map<String, Int>();
-
-        // Calculate tag counts. We need the list of tags even if we don't show counts.
-        for (post in this.postsAndPages) {
-          for (tag in post.tags) {
-            if (!tagCounts.exists(tag)) {
-              tagCounts.set(tag, 0);
-            }
-            tagCounts.set(tag, tagCounts.get(tag) + 1);
-          }
-        }
-
-        var tags = sortKeys(tagCounts);
-        var html = "<ul>";
-        for (tag in tags) {
-          html += '<li>${HtmlGenerator.tagLink(tag)}';
-          if (butterflyTag.attribute(TAGS_COUNTS_OPTION) != "") {
-            html += ' (${tagCounts.get(tag)})';
-          }
-          html += '</li>\n';
-        }
-        html += "</ul>";
-        return html;
-      } else {
-        // Laytout doesn't include tags HTML.
-        return "";
-      }
-    }
+  }
 
   private function addGoogleAnalytics(html:String, analyticsId:String) : String
   {

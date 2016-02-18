@@ -3,7 +3,8 @@
 -lib munit
 -lib hamcrest
 -lib markdown
--cp src
 
+-cp src
 -cp test
+
 -neko build/neko_test.n
