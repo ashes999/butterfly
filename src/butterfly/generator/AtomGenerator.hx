@@ -6,7 +6,7 @@ using StringTools;
 using haxe.crypto.Md5;
 
 class AtomGenerator {
-  public static function generate(posts:Array<butterfly.core.Post>, config:Dynamic):String
+  public static function generate(posts:Array<butterfly.core.Post>, config:ButterflyConfig):String
   {
     var siteName:String = config.siteName;
     var authorName:String = config.authorName;
@@ -45,10 +45,13 @@ class AtomGenerator {
       			${sanitize(post.content)}
       		</content>
       		<author>
-      			<name>${authorName}</name>
-      			<email>${authorEmail}</email>
-      		</author>
-      	</entry>';
+      			<name>${authorName}</name>';
+      if (authorEmail != null) {
+        xml += '\r\n      			<email>${authorEmail}</email>';
+      }
+
+      xml += "\r\n      		</author>
+      	</entry>\r\n      	";
     }
     xml += "</feed>";
     return xml;
