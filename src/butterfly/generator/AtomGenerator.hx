@@ -1,6 +1,8 @@
 package butterfly.generator;
 
 using DateTools;
+using StringTools;
+
 using haxe.crypto.Md5;
 
 class AtomGenerator {
@@ -38,9 +40,9 @@ class AtomGenerator {
           <link href="${url}" />
       		<id>urn:uuid:${Md5.encode(post.title)}</id>
       		<updated>${toIsoTime(post.createdOn)}</updated>
-      		<summary>${post.title}</summary>
+      		<summary>${sanitize(post.title)}</summary>
       		<content type="xhtml">
-      			${post.content}
+      			${sanitize(post.content)}
       		</content>
       		<author>
       			<name>${authorName}</name>
@@ -50,6 +52,12 @@ class AtomGenerator {
     }
     xml += "</feed>";
     return xml;
+  }
+
+  // Removes any angle brackets; those break stuff.
+  private static function sanitize(content:String) : String
+  {
+    return content.htmlEscape();
   }
 
   private static function toIsoTime(date:Date):String
