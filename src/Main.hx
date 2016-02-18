@@ -47,24 +47,10 @@ class Main {
     // generate pages and tags first, because they appear in the header/layout
     var pages:Array<Post> = getPostsOrPages('${srcDir}/pages', true);
     var posts:Array<Post> = getPostsOrPages('${srcDir}/posts');
+    sortPosts(posts);
 
-    if (posts.length > 0) {
-      // sort by date, newest-first. Sorting by getTime() doesn't seem to work,
-      // for some reason; sorting by the stringified dates (yyyy-mm-dd format) does.
-      haxe.ds.ArraySort.sort(posts, function(a, b) {
-        var x = a.createdOn.format("%Y-%m-%d");
-        var y = b.createdOn.format("%Y-%m-%d");
-
-        if (x < y ) { return 1; }
-        else if (x > y) { return -1; }
-        else { return 0; };
-
-        //return result;
-      });
-    }
     var tags = new Array<String>();
 
-    // Calculate tag counts
     for (post in posts) {
       for (tag in post.tags) {
         if (tags.indexOf(tag) == -1) {
@@ -81,15 +67,8 @@ class Main {
     var generator = new HtmlGenerator(layoutHtml, posts, pages);
     var writer = new FileWriter(binDir);
 
-    for (post in posts) {
-      var html = generator.generatePostHtml(post, config);
-      writer.writePost(post, html);
-    }
-
-    for (page in pages) {
-      var html = generator.generatePostHtml(page, config);
-      writer.writePost(page, html);
-    }
+    generateHtmlFilesFor(posts, generator, config, writer);
+    generateHtmlFilesFor(pages, generator, config, writer);
 
     for (tag in tags) {
       var html = generator.generateTagPageHtml(tag, posts);
@@ -124,6 +103,35 @@ class Main {
       indexPageHtml = generator.generateHomePage();
     }
     writer.write("index.html", indexPageHtml);
+  }
+
+  // Performs a sort on posts itself.
+  private function sortPosts(posts:Array<Post>) : Void
+  {
+    if (posts.length > 0) {
+      // sort by date, newest-first. Sorting by getTime() doesn't seem to work,
+      // for some reason; sorting by the stringified dates (yyyy-mm-dd format) does.
+      haxe.ds.ArraySort.sort(posts, function(a, b) {
+        var x = a.createdOn.format("%Y-%m-%d");
+        var y = b.createdOn.format("%Y-%m-%d");
+
+        if (x < y ) { return 1; }
+        else if (x > y) { return -1; }
+        else { return 0; };
+
+        //return result;
+      });
+    }
+  }
+
+  // Content is an array of posts (or pages)
+  private function generateHtmlFilesFor(content:Array<Post>, generator:HtmlGenerator,
+    config:ButterflyConfig, writer:FileWriter) : Void
+  {
+    for (c in content) {
+      var html = generator.generatePostHtml(c, config);
+      writer.writePost(c, html);
+    }
   }
 
   private function getPostsOrPages(path:String, ?isPage:Bool = false) : Array<Post>
