@@ -5,7 +5,7 @@ using StringTools;
 
 class Post {
   public var title(default, default) : String;
-  public var content(default, null) : String;
+  public var content(default, default) : String;
   public var url(default, null) : String;
   public var createdOn(default, null) : Date;
   public var tags(default, default) : Array<String>;

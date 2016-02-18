@@ -1,5 +1,6 @@
 import massive.munit.TestSuite;
 
+import butterfly.generator.AtomGeneratorTest;
 import butterfly.generator.HtmlGeneratorTest;
 import butterfly.MainTest;
 import butterfly.core.PostTest;
@@ -19,6 +20,7 @@ class TestSuite extends massive.munit.TestSuite
 	{
 		super();
 
+		add(butterfly.generator.AtomGeneratorTest);
 		add(butterfly.generator.HtmlGeneratorTest);
 		add(butterfly.MainTest);
 		add(butterfly.core.PostTest);
