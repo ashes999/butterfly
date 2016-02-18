@@ -1,6 +1,7 @@
 import massive.munit.TestSuite;
 
 import butterfly.generator.HtmlGeneratorTest;
+import butterfly.MainTest;
 import butterfly.html.TagFinderTest;
 import butterfly.html.HtmlTagTest;
 import butterfly.html.LayoutModifierTest;
@@ -18,6 +19,7 @@ class TestSuite extends massive.munit.TestSuite
 		super();
 
 		add(butterfly.generator.HtmlGeneratorTest);
+		add(butterfly.MainTest);
 		add(butterfly.html.TagFinderTest);
 		add(butterfly.html.HtmlTagTest);
 		add(butterfly.html.LayoutModifierTest);

@@ -42,7 +42,7 @@ class Main {
 
     FileSystem.copyDirRecursively('${srcDir}/content', '${binDir}/content');
 
-    var layoutFile = srcDir + "/layout.html";
+    var layoutFile = '${srcDir}/layout.html';
 
     // generate pages and tags first, because they appear in the header/layout
     var pages:Array<Post> = getPostsOrPages('${srcDir}/pages', true);
@@ -74,6 +74,10 @@ class Main {
     }
 
     var layoutHtml = new LayoutModifier(layoutFile, config, posts, pages).getHtml();
+    if (layoutHtml.indexOf(HtmlGenerator.CONTENT_PLACEHOLDER) == -1) {
+      throw "Layout HTML doesn't have the blog post placeholder in it: " + HtmlGenerator.CONTENT_PLACEHOLDER;
+    }
+
     var generator = new HtmlGenerator(layoutHtml, posts, pages);
     var writer = new FileWriter(binDir);
 
@@ -92,13 +96,34 @@ class Main {
       writer.write('tag-${tag}.html', html);
     }
 
-    var indexPage = generator.generateHomePage(posts);
-    writer.write("index.html", indexPage);
+    this.generateIndexPage(config, srcDir, posts, pages, generator, writer);
 
     var atomXml = AtomGenerator.generate(posts, config);
     writer.write("atom.xml", atomXml);
 
     trace('Generated index page, ${pages.length} page(s), and ${posts.length} post(s).');
+  }
+
+  /**
+  Generates the index.html (home page) file. By default, this uses the same
+  layout as everything else, and fills in <butterfly-content /> with a list of
+  posts, ordered chronologically descending.
+  If homePageLayout is specified in the config file, that HTML file is used
+  instead for the home page's layout.
+  */
+  public function generateIndexPage(config:ButterflyConfig, srcDir:String, posts:Array<Post>,
+    pages:Array<Post>, generator:HtmlGenerator, writer:FileWriter) : Void
+  {
+    var indexPageHtml:String;
+    if (config.homePageLayout != null) {
+      var homePageLayoutFile:String = '${srcDir}/${config.homePageLayout}';
+      var homePageHtml = new LayoutModifier(homePageLayoutFile, config, posts, pages, false).getHtml();
+      var homePageGenerator:HtmlGenerator = new HtmlGenerator(homePageHtml, posts, pages);
+      indexPageHtml = homePageGenerator.generateHomePage();
+    } else {
+      indexPageHtml = generator.generateHomePage();
+    }
+    writer.write("index.html", indexPageHtml);
   }
 
   private function getPostsOrPages(path:String, ?isPage:Bool = false) : Array<Post>

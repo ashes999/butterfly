@@ -21,7 +21,8 @@ class LayoutModifier
 
   private var postsAndPages:Array<Post>; // all pages and posts
 
-  public function new(layoutFile:String, config:ButterflyConfig, posts:Array<Post>, pages:Array<Post>)
+  public function new(layoutFile:String, config:ButterflyConfig, posts:Array<Post>,
+    pages:Array<Post>, checkForPagesPlaceholder:Bool = true)
   {
     if (!sys.FileSystem.exists(layoutFile)) {
       throw "Can't find layout file " + layoutFile;
@@ -33,17 +34,19 @@ class LayoutModifier
 
     var pagesTag:HtmlTag = TagFinder.findTag(PAGES_LINKS_PLACEHOLDER, html);
     if (pagesTag == null) {
-      throw 'Layout file ${layoutFile} does not contain the tag to list pages: ${PAGES_LINKS_PLACEHOLDER}';
+      if (checkForPagesPlaceholder) {
+        throw 'Layout file ${layoutFile} does not contain the tag to list pages: ${PAGES_LINKS_PLACEHOLDER}';
+      }
+    } else {
+      var pagesHtml:String = this.generatePagesLinksHtml(pagesTag, pages);
+      html = html.replace(pagesTag.html, pagesHtml);
     }
 
-    var pagesHtml:String = this.generatePagesLinksHtml(pagesTag, pages);
-    html = html.replace(pagesTag.html, pagesHtml);
-
-    var tagsHtml = this.generateTagsHtml(html);
     // Replace it. The tag may have options.
     var butterflyTag:HtmlTag = TagFinder.findTag(TAGS_PLACEHOLDER, html);
     if (butterflyTag != null)
     {
+      var tagsHtml = this.generateTagsHtml(html);      
       html = html.replace(butterflyTag.html, tagsHtml);
     }
 

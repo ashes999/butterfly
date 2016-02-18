@@ -9,11 +9,13 @@ import butterfly.html.HtmlTag;
 
 class HtmlGenerator {
 
+  public static inline var CONTENT_PLACEHOLDER:String = '<butterfly-content />';
+
   private var layoutHtml:String;
-  private var postsAndPages:Array<Post>;
+  private var posts:Array<Post>;
+  private var pages:Array<Post>;
 
   private static inline var TITLE_PLACEHOLDER:String = '<butterfly-title />';
-  private static inline var CONTENT_PLACEHOLDER:String = '<butterfly-content />';
   private static inline var COMMENTS_PLACEHOLDER:String = '<butterfly-comments />';
 
   private static inline var DISQUS_HTML_FILE:String = 'templates/disqus.html';
@@ -23,11 +25,8 @@ class HtmlGenerator {
   public function new(layoutHtml:String, posts:Array<Post>, pages:Array<Post>)
   {
     this.layoutHtml = layoutHtml;
-    this.postsAndPages = pages.concat(posts);
-
-    if (this.layoutHtml.indexOf(CONTENT_PLACEHOLDER) == -1) {
-      throw "Layout HTML doesn't have the blog post placeholder in it: " + CONTENT_PLACEHOLDER;
-    }
+    this.posts = posts;
+    this.pages = pages;
   }
 
   /**
@@ -74,7 +73,8 @@ class HtmlGenerator {
     var toReturn = content;
     // Don't bother scanning if there are no links (syntax: [[title]])
     if (toReturn.indexOf("[[") > -1) {
-      for (c in this.postsAndPages) {
+      var postsAndPages = this.pages.concat(this.posts);
+      for (c in postsAndPages) {
         var titlePlaceholder = new EReg('\\[\\[${c.title}]]', "i");
         if (titlePlaceholder.match(toReturn)) {
           var titleLink = '<a href="${c.url}.html">${c.title}</a>';
@@ -102,7 +102,7 @@ class HtmlGenerator {
     return this.layoutHtml.replace(CONTENT_PLACEHOLDER, html);
   }
 
-  public function generateHomePage(posts:Array<Post>) : String
+  public function generateHomePage() : String
   {
     var html = "<ul>";
     for (post in posts) {

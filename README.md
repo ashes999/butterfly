@@ -68,8 +68,9 @@ A minimal `config.json` file looks like this:
 
 ## Optional Attributes
 
-- `authorEmail`: the site owner's email. (Appears in the RSS feed.)
+- `authorEmail`: The site owner's email. (Appears in the RSS feed.)
 - `googleAnalyticsId`: Your Google Analytics site ID (eg. `UA-12345678-1`). If present, Butterfly generates the latest version of Google Analytics code. The code is wrapped in an `if` statement that prevents it from being executed if the site URL starts with `file://`.
+- `homePageLayout`: The name of a file that contains the HTML template for *just the home page*. Variables, butterfly tags, etc. all work as usual on this page.
 
 # Layout.html (Template File)
 

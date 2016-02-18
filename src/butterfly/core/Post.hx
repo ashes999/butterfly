@@ -8,7 +8,7 @@ class Post {
   public var content(default, null) : String;
   public var url(default, null) : String;
   public var createdOn(default, null) : Date;
-  public var tags(default, null) : Array<String>;
+  public var tags(default, default) : Array<String>;
   public var id(default, null) : String;
 
   private static var publishDateRegex = ~/meta-publishedOn: (\d{4}-\d{2}-\d{2})/i;
@@ -20,6 +20,7 @@ class Post {
     // fields that we rely on should be initialized
     this.content = "";
     this.tags = new Array<String>();
+    this.createdOn = Date.now();
   }
 
   // fileName doesn't include any path characters
