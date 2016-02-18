@@ -25,6 +25,7 @@ class TestMain
 		#if MCOVER
 			var client = new mcover.coverage.munit.client.MCoverPrintClient();
 			var httpClient = new HTTPClient(new mcover.coverage.munit.client.MCoverSummaryReportClient());
+		  client.includeClassAndPackageBreakdowns = true;
 		#else
 			var client = new RichPrintClient();
 			var httpClient = new HTTPClient(new SummaryReportClient());
