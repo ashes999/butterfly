@@ -32,4 +32,21 @@ class HtmlGeneratorTest
     var actual = gen.generatePostHtml(post, Factory.createButterflyConfig());
     Assert.isTrue(actual.indexOf('<h2>${post.title}</h2>') > -1);
 	}
+
+	///////// TODO: move these into Layout Generator when you move the code over
+	public function constructorReplacesButterflyTagsPlaceholderWithTags()
+	{
+		// Create a couple of posts with tags
+		// Create a layout with <butterfly-tags />
+		// Validate that you can see both tags in the final HTML
+		Assert.isTrue(true);
+	}
+
+	public function constructorInsertsTagCountsIfAttributeIsSpecified()
+	{
+		// Create a couple of posts with tags
+		// Create a layout with <butterfly-tags show-counts="true" />
+		// Validate that you can see both tags in the final HTML, with their post counts
+		Assert.isTrue(true);
+	}
 }

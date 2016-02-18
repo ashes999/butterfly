@@ -32,15 +32,16 @@ class HtmlGenerator {
     // Pages first so if both a post and page share a title, the page wins.
     this.allContent = pages.concat(posts);
 
-    var pagesTag = TagFinder.findTag(PAGES_LINKS_PLACEHOLDER, this.layoutHtml);
-    var pagesHtml = this.generatePagesLinksHtml(pagesTag, pages);
+    var pagesTag:HtmlTag = TagFinder.findTag(PAGES_LINKS_PLACEHOLDER, this.layoutHtml);
+    var pagesHtml:String = this.generatePagesLinksHtml(pagesTag, pages);
     this.layoutHtml = this.layoutHtml.replace(pagesTag.html, pagesHtml);
 
     var tagsHtml = this.generateTagsHtml();
     // Replace it. The tag may have options.
-    var butterflyTagHtml:String = this.getButterflyTagHtml();
-    if (butterflyTagHtml != "") {
-      this.layoutHtml = this.layoutHtml.replace(butterflyTagHtml, tagsHtml);
+    var butterflyTag:HtmlTag = TagFinder.findTag(TAGS_PLACEHOLDER, this.layoutHtml);
+    if (butterflyTag != null)
+    {
+      this.layoutHtml = this.layoutHtml.replace(butterflyTag.html, tagsHtml);
     }
   }
 
@@ -143,8 +144,8 @@ class HtmlGenerator {
 
   private function generateTagsHtml() : String
   {
-    var butterflyTagHtml:String = this.getButterflyTagHtml();
-    if (butterflyTagHtml != "") {
+    var butterflyTag:HtmlTag = TagFinder.findTag(TAGS_PLACEHOLDER, this.layoutHtml);
+    if (butterflyTag != null) {
       var tagCounts:Map<String, Int> = new Map<String, Int>();
 
       // Calculate tag counts. We need the list of tags even if we don't show counts.
@@ -161,7 +162,7 @@ class HtmlGenerator {
       var html = "<ul>";
       for (tag in tags) {
         html += '<li><a href="${tagLink(tag)}">${tag}</a>';
-        if (butterflyTagHtml.indexOf(TAGS_COUNTS_OPTION) > -1) {
+        if (butterflyTag.attribute(TAGS_COUNTS_OPTION) != "") {
           html += ' (${tagCounts.get(tag)})';
         }
         html += '</li>\n';
@@ -170,7 +171,6 @@ class HtmlGenerator {
       return html;
     } else {
       // Laytout doesn't include tags HTML.
-      trace("Warning: Layout doesn't contain <butterfly-tags /> element!");
       return "";
     }
   }
@@ -187,24 +187,6 @@ class HtmlGenerator {
   private function tagLink(tag:String):String
   {
     return 'tag-${tag}.html';
-  }
-
-  // Get the <butterfly-tags> tag, including any options (eg. show-counts).
-  // If the tag isn't present in our layout, we return an empty string.
-  // TODO: replace this with TagFinder
-  private function getButterflyTagHtml():String
-  {
-    var startTag:String = TAGS_PLACEHOLDER.substring(0, TAGS_PLACEHOLDER.indexOf('/>'));
-    var startIndex:Int = this.layoutHtml.indexOf(startTag);
-    if (startIndex > -1) {
-      // Layout includes tags HTML.
-      var stopIndex:Int = this.layoutHtml.indexOf('/>', startIndex);
-      var butterflyTagHtml:String = this.layoutHtml.substring(startIndex, stopIndex + 2);
-      return butterflyTagHtml;
-    } else {
-      // Tag is absent from layout
-      return "";
-    }
   }
 
   private function sortKeys(map:haxe.ds.StringMap<Dynamic>) : Array<String>

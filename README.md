@@ -89,7 +89,7 @@ Your layout file needs the following tags:
 
 You can add the following optional fields in your layout:
 
-- `<butterfly-tags />` renders a list of `<li>tag name</li>` for each tag (ordered alphabetically). You can include the tag counts by adding `show-counts` (eg. `<butterfly-tags show-counts />`, but this is not recommended, because adding a new post causes every HTML file to change -- which makes it difficult to `diff` and see what really changed).
+- `<butterfly-tags />` renders a list of `<li>tag name</li>` for each tag (ordered alphabetically). You can include the tag counts by adding `show-counts` (eg. `<butterfly-tags show-counts="true" />`). This is not recommended, because adding a new post causes every HTML file to change -- which makes it difficult to `diff` and see what really changed.
 - `<butterfly-title />` renders the post title as-is.
 - `<butterfly-comments />` renders the Disqus code for commenting on that page/post.
 
