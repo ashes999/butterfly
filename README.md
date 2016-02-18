@@ -1,5 +1,5 @@
 ![logo](logo.png)
-# Butterfly
+# Butterfly ![build status](https://travis-ci.org/ashes999/butterfly.svg?branch=master)
 
 Simple, beautiful, static blogs. Butterfly combines data from JSON files with a Twitter Bootstrap UI to produce a simple, minimal blog. Perfect for hosting on websites like GitHub Pages!
 
