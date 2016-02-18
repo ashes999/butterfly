@@ -73,7 +73,7 @@ class Main {
       }
     }
 
-    var layoutHtml = new LayoutModifier(layoutFile, config).getHtml();
+    var layoutHtml = new LayoutModifier(layoutFile, config, posts, pages).getHtml();
     var generator = new HtmlGenerator(layoutHtml, posts, pages);
     var writer = new FileWriter(binDir);
 

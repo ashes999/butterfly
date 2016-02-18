@@ -4,6 +4,7 @@ import massive.munit.Assert;
 import sys.FileSystem;
 import sys.io.File;
 
+import butterfly.core.Post;
 import test.helpers.Factory;
 
 using StringTools;
@@ -34,7 +35,7 @@ class LayoutModifierTest
     var config = Factory.createButterflyConfig();
     config.googleAnalyticsId = gaId;
 
-    var modifier = new LayoutModifier(layoutFile, config);
+    var modifier = new LayoutModifier(layoutFile, config, new Array<Post>(), new Array<Post>());
 
     var actualHtml = modifier.getHtml();
     Assert.isTrue(actualHtml.indexOf(gaCode) > -1);
@@ -49,24 +50,24 @@ class LayoutModifierTest
     Assert.isTrue(sys.io.File.getContent(layoutFile).indexOf(expectedSnippet) == -1);
     var config = Factory.createButterflyConfig();
 
-    var modifier = new LayoutModifier(layoutFile, config);
+    var modifier = new LayoutModifier(layoutFile, config, new Array<Post>(), new Array<Post>());
     var actualHtml = modifier.getHtml();
     Assert.isTrue(actualHtml.indexOf(expectedSnippet) > -1);
   }
 
   @Test
   public function constructorSubstitutesVariablesFromConfigWithTheirValues() {
-    var layoutFile = createLayoutFile("<head><title>$siteName</title></head>");
+    var layoutFile = createLayoutFile("<head><title>$siteName</title></head> <butterfly-pages />");
     var config = Factory.createButterflyConfig();
     config.siteName = "Learn Haxe";
-    var modifier = new LayoutModifier(layoutFile, config);
+    var modifier = new LayoutModifier(layoutFile, config, new Array<Post>(), new Array<Post>());
     var actual = modifier.getHtml();
     Assert.isTrue(actual.indexOf("<title>Learn Haxe</title>") > -1);
   }
 
   // Creates a layout file. Has a sensible default HTML/filename. Returns the
   // fully-qualified file name.
-  private function createLayoutFile(html:String = "<html><head></head><body><!-- Placeholder --></body></html>",
+  private function createLayoutFile(html:String = "<html><head></head><body><butterfly-pages /><!-- Placeholder --></body></html>",
     fileName:String = 'layout.html') : String
   {
     var fullFileName = '${TEST_FILES_DIR}/${fileName}';
