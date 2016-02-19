@@ -32,4 +32,25 @@ class HtmlGeneratorTest
     var actual = gen.generatePostHtml(post, Factory.createButterflyConfig());
     Assert.isTrue(actual.indexOf('<h2>${post.title}</h2>') > -1);
 	}
+
+	@Test
+	public function generateIntraSiteLinksReplacesPageAndPostTitlesWithLinks()
+	{
+		var post = new Post();
+		post.title = "Chocolate Truffles: Delicious or Unhealthy?";
+		post.url = "http://fake.com/chocolate-truffles-unhealthy-eh";
+
+		var page = new Page();
+		page.title = "About Le Chocolatier";
+		page.url = "http://fake.com/about";
+
+		var content = 'Do not ask [[${page.title}]]; just read this: are ${post.title}';
+
+		var generator = new HtmlGenerator("<butterfly-pages /><butterfly-content /><butterfly-tags />",
+			[post], [page]);
+
+		var actual = generator.generateIntraSiteLinks(content);
+		Assert.isTrue(actual.indexOf(post.url) > -1);
+		Assert.isTrue(actual.indexOf(page.url) > -1);
+	}
 }

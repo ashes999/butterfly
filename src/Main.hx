@@ -1,7 +1,9 @@
 using StringTools;
 using DateTools;
 
+import butterfly.core.Content;
 import butterfly.core.Post;
+import butterfly.core.Page;
 import butterfly.generator.AtomGenerator;
 import butterfly.generator.HtmlGenerator;
 import butterfly.html.FileWriter;
@@ -45,8 +47,19 @@ class Main {
     var layoutFile = '${srcDir}/layout.html';
 
     // generate pages and tags first, because they appear in the header/layout
-    var pages:Array<Post> = getPostsOrPages('${srcDir}/pages', true);
-    var posts:Array<Post> = getPostsOrPages('${srcDir}/posts');
+    var pages:Array<Page> = new Array<Page>();
+    var posts:Array<Post> = new Array<Post>();
+
+    var files:Array<String> = getContentFiles('${srcDir}/pages');
+    for (file in files) {
+      pages.push(Page.parse(file));
+    }
+
+    files = getContentFiles('${srcDir}/posts');
+    for (file in files) {
+      posts.push(Post.parse(file));
+    }
+
     sortPosts(posts);
 
     var tags = new Array<String>();
@@ -91,7 +104,7 @@ class Main {
   instead for the home page's layout.
   */
   public function generateIndexPage(config:ButterflyConfig, srcDir:String, posts:Array<Post>,
-    pages:Array<Post>, generator:HtmlGenerator, writer:FileWriter) : Void
+    pages:Array<Page>, generator:HtmlGenerator, writer:FileWriter) : Void
   {
     var indexPageHtml:String;
     if (config.homePageLayout != null) {
@@ -125,29 +138,35 @@ class Main {
   }
 
   // Content is an array of posts (or pages)
-  private function generateHtmlFilesFor(content:Array<Post>, generator:HtmlGenerator,
+  private function generateHtmlFilesFor(content:Array<Dynamic>, generator:HtmlGenerator,
     config:ButterflyConfig, writer:FileWriter) : Void
   {
     for (c in content) {
+
+      if (!Std.is(c, Post) && !Std.is(c, Page)) {
+        throw 'Expected only pages/posts as input to generateHtmlFilesFor; got: ${Type.getClassName(Type.getClass(c))}';
+      }
+
       var html = generator.generatePostHtml(c, config);
       writer.writePost(c, html);
     }
   }
 
-  private function getPostsOrPages(path:String, ?isPage:Bool = false) : Array<Post>
+  private function getContentFiles(path:String) : Array<String>
   {
+    var toReturn = new Array<String>();
+
     if (sys.FileSystem.exists(path) && sys.FileSystem.isDirectory(path)) {
       var filesAndDirs = sys.FileSystem.readDirectory(path);
-      var posts = new Array<Post>();
       for (entry in filesAndDirs) {
         var relativePath = '${path}/${entry}';
         // Ignore .DS on Mac/OSX
         if (entry.indexOf(".DS") == -1 && !sys.FileSystem.isDirectory(relativePath)) {
-          posts.push(Post.parse(relativePath, isPage));
+          toReturn.push(relativePath);
         }
       }
-      return posts;
     }
-    return new Array<Post>();
+
+    return toReturn;
   }
 }

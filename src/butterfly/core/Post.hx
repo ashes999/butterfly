@@ -2,6 +2,9 @@ package butterfly.core;
 
 using StringTools;
 
+/**
+A post extends content; it has tags, and a created-on date (unlike a Page).
+*/
 class Post extends Content {
 
   private static var publishDateRegex = ~/meta-publishedOn: (\d{4}-\d{2}-\d{2})/i;
@@ -20,15 +23,13 @@ class Post extends Content {
   }
 
   // fileName doesn't include any path characters
-  public static function parse(pathAndFileName:String, isPage:Bool) : Post
+  public static function parse(pathAndFileName:String) : Post
   {
-    var post:Post = cast(Content.parse(pathAndFileName, isPage));
+    var post:Post = cast(Content.parse(pathAndFileName));
     var markdown = sys.io.File.getContent(pathAndFileName);
 
-    if (!isPage) {
-      post.createdOn = getPublishDate(pathAndFileName);
-      post.tags = getTags(markdown);
-    }
+    post.createdOn = getPublishDate(pathAndFileName);
+    post.tags = getTags(markdown);
     return post;
   }
 

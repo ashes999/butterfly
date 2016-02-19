@@ -1,5 +1,7 @@
 package butterfly.html;
 
+import butterfly.core.Content;
+
 class FileWriter {
   private var outputDir:String = "";
 
@@ -7,9 +9,9 @@ class FileWriter {
     this.outputDir = outputDir;
   }
 
-  public function writePost(post:butterfly.core.Post, html:String) : Void
+  public function writePost(content:Content, html:String) : Void
   {
-    this.write(post.url + ".html", html);
+    this.write(content.url + ".html", html);
   }
 
   public function write(fileName:String, html:String) : Void

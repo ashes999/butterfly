@@ -5,6 +5,7 @@ using DateTools;
 
 import butterfly.core.Content;
 import butterfly.core.Post;
+import butterfly.core.Page;
 import ButterflyConfig;
 import butterfly.html.TagFinder;
 import butterfly.html.HtmlTag;
@@ -15,7 +16,7 @@ class HtmlGenerator {
 
   private var layoutHtml:String;
   private var posts:Array<Post>;
-  private var pages:Array<Post>;
+  private var pages:Array<Page>;
 
   private static inline var TITLE_PLACEHOLDER:String = '<butterfly-title />';
   private static inline var COMMENTS_PLACEHOLDER:String = '<butterfly-comments />';
@@ -24,7 +25,7 @@ class HtmlGenerator {
   private static inline var DISQUS_PAGE_URL:String = 'PAGE_URL';
   private static inline var DISQUS_PAGE_IDENTIFIER = 'PAGE_IDENTIFIER';
 
-  public function new(layoutHtml:String, posts:Array<Post>, pages:Array<Post>)
+  public function new(layoutHtml:String, posts:Array<Post>, pages:Array<Page>)
   {
     this.layoutHtml = layoutHtml;
     this.posts = posts;
@@ -43,6 +44,7 @@ class HtmlGenerator {
 
     // substitute in content
     if (Std.is(content, Post)) {
+      trace("POST POST POST POST POST");
       var post:Post = cast(content);
       if (post.tags.length > 0) {
         tagsHtml = "<p><strong>Tagged with:</strong> ";
@@ -77,13 +79,24 @@ class HtmlGenerator {
   public function generateIntraSiteLinks(content:String) : String
   {
     var toReturn = content;
+
     // Don't bother scanning if there are no links (syntax: [[title]])
     if (toReturn.indexOf("[[") > -1) {
-      var postsAndPages = this.pages.concat(this.posts);
-      for (c in postsAndPages) {
-        var titlePlaceholder = new EReg('\\[\\[${c.title}]]', "i");
+      // Map of title => url
+      var urls:Map<String, String> = new Map<String, String>();
+
+      for (post in this.posts) {
+        urls.set(post.title, post.url);
+      }
+
+      for (page in this.pages) {
+        urls.set(page.title, page.url);
+      }
+
+      for (title in urls.keys()) {
+        var titlePlaceholder = new EReg('\\[\\[${title}]]', "i");
         if (titlePlaceholder.match(toReturn)) {
-          var titleLink = '<a href="${c.url}.html">${c.title}</a>';
+          var titleLink = '<a href="${urls.get(title)}.html">${title}</a>';
           toReturn = titlePlaceholder.replace(toReturn, titleLink);
         }
       }

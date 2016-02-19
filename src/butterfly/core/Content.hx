@@ -23,7 +23,7 @@ class Content
   }
 
   // fileName doesn't include any path characters
-  public static function parse(pathAndFileName:String, isPage:Bool) : Content
+  public static function parse(pathAndFileName:String) : Content
   {
     var fileName = pathAndFileName.substr(pathAndFileName.lastIndexOf('/') + 1);
     var content = new Content();
