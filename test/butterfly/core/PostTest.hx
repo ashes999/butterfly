@@ -30,7 +30,7 @@ meta-title: FileStat.ctime in Unix
 The rest of this content is just *placeholder* data. The content has to start at
 the beginning of the line to match the meta-data regex.
     ";
-    var actual:String = Post.getTitle(fileName, markdown);
+    var actual:String = Content.getTitle(fileName, markdown);
     Assert.areEqual("FileStat.ctime in Unix", actual);
   }
 

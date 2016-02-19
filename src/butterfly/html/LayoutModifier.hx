@@ -19,7 +19,7 @@ class LayoutModifier
   private static inline var GOOGLE_ANALYTICS_HTML_FILE:String = 'templates/googleAnalytics.html';
   private static inline var GOOGLE_ANALYTICS_IDENTIFIER = 'GOOGLE_ANALYTICS_ID';
 
-  private var postsAndPages:Array<Post>; // all pages and posts
+  private var posts:Array<Post>; // all pages and posts
 
   public function new(layoutFile:String, config:ButterflyConfig, posts:Array<Post>,
     pages:Array<Post>, checkForPagesPlaceholder:Bool = true)
@@ -28,7 +28,7 @@ class LayoutModifier
       throw "Can't find layout file " + layoutFile;
     }
 
-    this.postsAndPages = pages.concat(posts);
+    this.posts = posts;
 
     var html:String = sys.io.File.getContent(layoutFile);
 
@@ -46,7 +46,7 @@ class LayoutModifier
     var butterflyTag:HtmlTag = TagFinder.findTag(TAGS_PLACEHOLDER, html);
     if (butterflyTag != null)
     {
-      var tagsHtml = this.generateTagsHtml(html);      
+      var tagsHtml = this.generateTagsHtml(html);
       html = html.replace(butterflyTag.html, tagsHtml);
     }
 
@@ -108,7 +108,7 @@ class LayoutModifier
       var tagCounts:Map<String, Int> = new Map<String, Int>();
 
       // Calculate tag counts. We need the list of tags even if we don't show counts.
-      for (post in this.postsAndPages) {
+      for (post in this.posts) {
         for (tag in post.tags) {
           if (!tagCounts.exists(tag)) {
             tagCounts.set(tag, 0);

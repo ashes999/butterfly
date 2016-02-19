@@ -3,6 +3,7 @@ package butterfly.generator;
 using StringTools;
 using DateTools;
 
+import butterfly.core.Content;
 import butterfly.core.Post;
 import ButterflyConfig;
 import butterfly.html.TagFinder;
@@ -35,37 +36,41 @@ class HtmlGenerator {
   Returns the fully-formed, final HTML (after rendering to Markdown, adding
   the HTML with the post's tags, etc.).
   */
-  public function generatePostHtml(post:Post, config:ButterflyConfig) : String
+  public function generatePostHtml(content:Content, config:ButterflyConfig) : String
   {
-    // substitute in content
     var tagsHtml = "";
-    if (post.tags.length > 0) {
-      tagsHtml = "<p><strong>Tagged with:</strong> ";
-      for (tag in post.tags) {
-        tagsHtml += '${HtmlGenerator.tagLink(tag)}, ';
-      }
-      tagsHtml = tagsHtml.substr(0, tagsHtml.length - 2) + "</p>"; // trim final ", "
-    }
-
-    // posted-on date
     var postedOnHtml = "";
-    if (post.createdOn != null) {
-      postedOnHtml = '<p class="blog-post-meta">Posted ${post.createdOn.format("%Y-%m-%d")}</p>';
+
+    // substitute in content
+    if (Std.is(content, Post)) {
+      var post:Post = cast(content);
+      if (post.tags.length > 0) {
+        tagsHtml = "<p><strong>Tagged with:</strong> ";
+        for (tag in post.tags) {
+          tagsHtml += '${HtmlGenerator.tagLink(tag)}, ';
+        }
+        tagsHtml = tagsHtml.substr(0, tagsHtml.length - 2) + "</p>"; // trim final ", "
+      }
+
+      // posted-on date
+      if (post.createdOn != null) {
+        postedOnHtml = '<p class="blog-post-meta">Posted ${post.createdOn.format("%Y-%m-%d")}</p>';
+      }
     }
 
-    var finalContent = generateIntraSiteLinks(post.content);
+    var finalContent = generateIntraSiteLinks(content.content);
     var finalHtml = '${tagsHtml}\n${postedOnHtml}\n${finalContent}\n';
     var toReturn = this.layoutHtml.replace(CONTENT_PLACEHOLDER, finalHtml);
 
     // replace <butterfly-title /> with the title, if it exists
-    toReturn = toReturn.replace(TITLE_PLACEHOLDER, post.title);
+    toReturn = toReturn.replace(TITLE_PLACEHOLDER, content.title);
 
     // comments (disqus snippet)
-    var disqusHtml = getDisqusHtml(post, config);
+    var disqusHtml = getDisqusHtml(content, config);
     toReturn = toReturn.replace(COMMENTS_PLACEHOLDER, disqusHtml);
 
     // prefix the post name to the title tag
-    toReturn = toReturn.replace("<title>", '<title>${post.title} | ');
+    toReturn = toReturn.replace("<title>", '<title>${content.title} | ');
     return toReturn;
   }
 
@@ -118,12 +123,12 @@ class HtmlGenerator {
     return '<a href="tag-${tag}.html">${tag}</a>';
   }
 
-  private function getDisqusHtml(post:Post, config:ButterflyConfig):String
+  private function getDisqusHtml(content:Content, config:ButterflyConfig):String
   {
     var template = sys.io.File.getContent(DISQUS_HTML_FILE);
-    var url = '${config.siteUrl}/${post.url}';
+    var url = '${config.siteUrl}/${content.url}';
     template = template.replace(DISQUS_PAGE_URL, '"${url}"');
-    template = template.replace(DISQUS_PAGE_IDENTIFIER, '"${post.id}"');
+    template = template.replace(DISQUS_PAGE_IDENTIFIER, '"${content.id}"');
     return template;
   }
 }
