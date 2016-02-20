@@ -2,6 +2,7 @@ package butterfly.generator;
 
 import massive.munit.Assert;
 import butterfly.generator.HtmlGenerator;
+import butterfly.core.Page;
 import butterfly.core.Post;
 import test.helpers.Factory;
 
@@ -37,14 +38,14 @@ class HtmlGeneratorTest
 	public function generateIntraSiteLinksReplacesPageAndPostTitlesWithLinks()
 	{
 		var post = new Post();
-		post.title = "Chocolate Truffles: Delicious or Unhealthy?";
-		post.url = "http://fake.com/chocolate-truffles-unhealthy-eh";
+		post.title = "Chocolate Truffles";
+		post.url = "http://fake.com/chocolate-truffles";
 
 		var page = new Page();
 		page.title = "About Le Chocolatier";
 		page.url = "http://fake.com/about";
 
-		var content = 'Do not ask [[${page.title}]]; just read this: are ${post.title}';
+		var content = 'Do not ask [[${page.title}]]; just read this: [[${post.title}]]';
 
 		var generator = new HtmlGenerator("<butterfly-pages /><butterfly-content /><butterfly-tags />",
 			[post], [page]);

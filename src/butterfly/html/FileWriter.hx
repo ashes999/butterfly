@@ -9,14 +9,14 @@ class FileWriter {
     this.outputDir = outputDir;
   }
 
-  public function writePost(content:Content, html:String) : Void
+  public function writeContent(content:Content, html:String) : Void
   {
-    this.write(content.url + ".html", html);
+    this.write('${content.url}.html', html);
   }
 
   public function write(fileName:String, html:String) : Void
   {
-    var finalFileName = outputDir + "/" + fileName;
+    var finalFileName = '${outputDir}/${fileName}';
     if (sys.FileSystem.exists(finalFileName)) {
       sys.FileSystem.deleteFile(finalFileName);
     }

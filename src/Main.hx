@@ -52,12 +52,16 @@ class Main {
 
     var files:Array<String> = getContentFiles('${srcDir}/pages');
     for (file in files) {
-      pages.push(Page.parse(file));
+      var p = new Page();
+      p.parse(file);
+      pages.push(p);
     }
 
     files = getContentFiles('${srcDir}/posts');
     for (file in files) {
-      posts.push(Post.parse(file));
+      var p = new Post();
+      p.parse(file);
+      posts.push(p);
     }
 
     sortPosts(posts);
@@ -80,8 +84,8 @@ class Main {
     var generator = new HtmlGenerator(layoutHtml, posts, pages);
     var writer = new FileWriter(binDir);
 
-    generateHtmlFilesFor(posts, generator, config, writer);
-    generateHtmlFilesFor(pages, generator, config, writer);
+    generateHtmlFilesForPosts(posts, generator, config, writer);
+    generateHtmlFilesForPages(pages, generator, config, writer);
 
     for (tag in tags) {
       var html = generator.generateTagPageHtml(tag, posts);
@@ -137,18 +141,21 @@ class Main {
     }
   }
 
-  // Content is an array of posts (or pages)
-  private function generateHtmlFilesFor(content:Array<Dynamic>, generator:HtmlGenerator,
+  private function generateHtmlFilesForPosts(posts:Array<Post>, generator:HtmlGenerator,
     config:ButterflyConfig, writer:FileWriter) : Void
   {
-    for (c in content) {
+    for (post in posts) {
+      var html = generator.generatePostHtml(post, config);
+      writer.writeContent(post, html);
+    }
+  }
 
-      if (!Std.is(c, Post) && !Std.is(c, Page)) {
-        throw 'Expected only pages/posts as input to generateHtmlFilesFor; got: ${Type.getClassName(Type.getClass(c))}';
-      }
-
-      var html = generator.generatePostHtml(c, config);
-      writer.writePost(c, html);
+  private function generateHtmlFilesForPages(pages:Array<Page>, generator:HtmlGenerator,
+    config:ButterflyConfig, writer:FileWriter) : Void
+  {
+    for (page in pages) {
+      var html = generator.generatePageHtml(page, config);
+      writer.writeContent(page, html);
     }
   }
 

@@ -3,9 +3,9 @@ package butterfly.generator;
 using StringTools;
 using DateTools;
 
-import butterfly.core.Content;
-import butterfly.core.Post;
 import butterfly.core.Page;
+import butterfly.core.Post;
+import butterfly.core.Content;
 import ButterflyConfig;
 import butterfly.html.TagFinder;
 import butterfly.html.HtmlTag;
@@ -33,47 +33,60 @@ class HtmlGenerator {
   }
 
   /**
+  Generates the HTML for a page, using values from config (like the site URL).
+  Returns the fully-formed, final HTML (after rendering to Markdown).
+  */
+  public function generateCommonHtml(content:Content, config:ButterflyConfig) : String
+  {
+    var finalContent = this.layoutHtml;
+
+    // replace <butterfly-title /> with the title, if it exists
+    finalContent = finalContent.replace(TITLE_PLACEHOLDER, content.title);
+
+    // comments (disqus snippet)
+    var disqusHtml = getDisqusHtml(content, config);
+    finalContent = finalContent.replace(COMMENTS_PLACEHOLDER, disqusHtml);
+
+    // prefix the post name to the title tag
+    finalContent = finalContent.replace("<title>", '<title>${content.title} | ');
+    return finalContent;
+  }
+
+  public function generatePageHtml(page:Page, config:ButterflyConfig) : String
+  {
+    var html:String = generateCommonHtml(page, config);
+    var content = generateIntraSiteLinks(page.content);
+    html = html.replace(CONTENT_PLACEHOLDER, content);
+    return html;
+  }
+
+  /**
   Generates the HTML for a post, using values from config (like the site URL).
   Returns the fully-formed, final HTML (after rendering to Markdown, adding
   the HTML with the post's tags, etc.).
   */
-  public function generatePostHtml(content:Content, config:ButterflyConfig) : String
+  public function generatePostHtml(post:Post, config:ButterflyConfig) : String
   {
     var tagsHtml = "";
     var postedOnHtml = "";
 
     // substitute in content
-    if (Std.is(content, Post)) {
-      trace("POST POST POST POST POST");
-      var post:Post = cast(content);
-      if (post.tags.length > 0) {
-        tagsHtml = "<p><strong>Tagged with:</strong> ";
-        for (tag in post.tags) {
-          tagsHtml += '${HtmlGenerator.tagLink(tag)}, ';
-        }
-        tagsHtml = tagsHtml.substr(0, tagsHtml.length - 2) + "</p>"; // trim final ", "
+    if (post.tags.length > 0) {
+      tagsHtml = "<p><strong>Tagged with:</strong> ";
+      for (tag in post.tags) {
+        tagsHtml += '${HtmlGenerator.tagLink(tag)}, ';
       }
-
-      // posted-on date
-      if (post.createdOn != null) {
-        postedOnHtml = '<p class="blog-post-meta">Posted ${post.createdOn.format("%Y-%m-%d")}</p>';
-      }
+      tagsHtml = tagsHtml.substr(0, tagsHtml.length - 2) + "</p>"; // trim final ", "
     }
 
-    var finalContent = generateIntraSiteLinks(content.content);
-    var finalHtml = '${tagsHtml}\n${postedOnHtml}\n${finalContent}\n';
-    var toReturn = this.layoutHtml.replace(CONTENT_PLACEHOLDER, finalHtml);
+    // posted-on date
+    postedOnHtml = '<p class="blog-post-meta">Posted ${post.createdOn.format("%Y-%m-%d")}</p>';
 
-    // replace <butterfly-title /> with the title, if it exists
-    toReturn = toReturn.replace(TITLE_PLACEHOLDER, content.title);
-
-    // comments (disqus snippet)
-    var disqusHtml = getDisqusHtml(content, config);
-    toReturn = toReturn.replace(COMMENTS_PLACEHOLDER, disqusHtml);
-
-    // prefix the post name to the title tag
-    toReturn = toReturn.replace("<title>", '<title>${content.title} | ');
-    return toReturn;
+    var html = generateCommonHtml(post, config);
+    var content = generateIntraSiteLinks(post.content);
+    var finalHtml = '${tagsHtml}\n${postedOnHtml}\n${content}\n';
+    finalHtml = html.replace(CONTENT_PLACEHOLDER, finalHtml);
+    return finalHtml;
   }
 
   public function generateIntraSiteLinks(content:String) : String
@@ -82,22 +95,21 @@ class HtmlGenerator {
 
     // Don't bother scanning if there are no links (syntax: [[title]])
     if (toReturn.indexOf("[[") > -1) {
-      // Map of title => url
-      var urls:Map<String, String> = new Map<String, String>();
+      var titlesToUrls:Map<String, String> = new Map<String, String>();
 
-      for (post in this.posts) {
-        urls.set(post.title, post.url);
+      for (post in posts) {
+        titlesToUrls.set(post.title, post.url);
+      }
+      for (page in pages) {
+        titlesToUrls.set(page.title, page.url);
       }
 
-      for (page in this.pages) {
-        urls.set(page.title, page.url);
-      }
-
-      for (title in urls.keys()) {
+      for (title in titlesToUrls.keys()) {
         var titlePlaceholder = new EReg('\\[\\[${title}]]', "i");
         if (titlePlaceholder.match(toReturn)) {
-          var titleLink = '<a href="${urls.get(title)}.html">${title}</a>';
+          var titleLink = '<a href="${titlesToUrls.get(title)}.html">${title}</a>';
           toReturn = titlePlaceholder.replace(toReturn, titleLink);
+        } else {
         }
       }
     }

@@ -18,19 +18,18 @@ class Post extends Content {
     super();
 
     // Fields that we rely on should be initialized. Mostly for unit testing.
+    this.content = "";
     this.tags = new Array<String>();
     this.createdOn = Date.now();
   }
 
   // fileName doesn't include any path characters
-  public static function parse(pathAndFileName:String) : Post
+  public override function parse(pathAndFileName:String) : String
   {
-    var post:Post = cast(Content.parse(pathAndFileName));
-    var markdown = sys.io.File.getContent(pathAndFileName);
-
-    post.createdOn = getPublishDate(pathAndFileName);
-    post.tags = getTags(markdown);
-    return post;
+    var markdown = super.parse(pathAndFileName);
+    this.createdOn = getPublishDate(pathAndFileName);
+    this.tags = getTags(markdown);
+    return markdown;
   }
 
   private static function getTags(markdown:String) : Array<String>

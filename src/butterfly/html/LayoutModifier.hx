@@ -20,7 +20,7 @@ class LayoutModifier
   private static inline var GOOGLE_ANALYTICS_HTML_FILE:String = 'templates/googleAnalytics.html';
   private static inline var GOOGLE_ANALYTICS_IDENTIFIER = 'GOOGLE_ANALYTICS_ID';
 
-  private var posts:Array<Post>; 
+  private var posts:Array<Post>;
   private var pages:Array<Page>;
 
   public function new(layoutFile:String, config:ButterflyConfig, posts:Array<Post>,

@@ -15,7 +15,7 @@ class Content
   public var id(default, null) : String;
   public var title(default, default) : String;
   public var content(default, default) : String;
-  public var url(default, null) : String;
+  public var url(default, default) : String;
 
   public function new()
   {
@@ -23,16 +23,15 @@ class Content
   }
 
   // fileName doesn't include any path characters
-  public static function parse(pathAndFileName:String) : Content
+  public function parse(pathAndFileName:String) : String
   {
     var fileName = pathAndFileName.substr(pathAndFileName.lastIndexOf('/') + 1);
-    var content = new Content();
-    content.url = getUrl(fileName);
     var markdown = sys.io.File.getContent(pathAndFileName);
-    content.title = getTitle(fileName, markdown);
-    content.content = getHtml(markdown);
-    content.id = getAndGenerateId(pathAndFileName);
-    return content;
+    this.url = getUrl(fileName);
+    this.title = getTitle(fileName, markdown);
+    this.content = getHtml(markdown);
+    this.id = getAndGenerateId(pathAndFileName);
+    return markdown;
   }
 
   private static function getUrl(fileName:String) : String
