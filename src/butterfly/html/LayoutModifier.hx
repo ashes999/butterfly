@@ -1,6 +1,7 @@
 package butterfly.html;
 
 import butterfly.core.Post;
+import butterfly.core.Page;
 import butterfly.generator.HtmlGenerator;
 
 using StringTools;
@@ -19,16 +20,18 @@ class LayoutModifier
   private static inline var GOOGLE_ANALYTICS_HTML_FILE:String = 'templates/googleAnalytics.html';
   private static inline var GOOGLE_ANALYTICS_IDENTIFIER = 'GOOGLE_ANALYTICS_ID';
 
-  private var postsAndPages:Array<Post>; // all pages and posts
+  private var posts:Array<Post>;
+  private var pages:Array<Page>;
 
   public function new(layoutFile:String, config:ButterflyConfig, posts:Array<Post>,
-    pages:Array<Post>, checkForPagesPlaceholder:Bool = true)
+    pages:Array<Page>, checkForPagesPlaceholder:Bool = true)
   {
     if (!sys.FileSystem.exists(layoutFile)) {
       throw "Can't find layout file " + layoutFile;
     }
 
-    this.postsAndPages = pages.concat(posts);
+    this.posts = posts;
+    this.pages = pages;
 
     var html:String = sys.io.File.getContent(layoutFile);
 
@@ -46,7 +49,7 @@ class LayoutModifier
     var butterflyTag:HtmlTag = TagFinder.findTag(TAGS_PLACEHOLDER, html);
     if (butterflyTag != null)
     {
-      var tagsHtml = this.generateTagsHtml(html);      
+      var tagsHtml = this.generateTagsHtml(html);
       html = html.replace(butterflyTag.html, tagsHtml);
     }
 
@@ -86,7 +89,7 @@ class LayoutModifier
     return this.layoutHtml;
   }
 
-  private function generatePagesLinksHtml(pagesTag:HtmlTag, pages:Array<Post>) : String
+  private function generatePagesLinksHtml(pagesTag:HtmlTag, pages:Array<Page>) : String
   {
     var linkAttributes:String = pagesTag.attribute("link-attributes");
     var linkPrefix:String = pagesTag.attribute("link-prefix");
@@ -108,7 +111,7 @@ class LayoutModifier
       var tagCounts:Map<String, Int> = new Map<String, Int>();
 
       // Calculate tag counts. We need the list of tags even if we don't show counts.
-      for (post in this.postsAndPages) {
+      for (post in this.posts) {
         for (tag in post.tags) {
           if (!tagCounts.exists(tag)) {
             tagCounts.set(tag, 0);

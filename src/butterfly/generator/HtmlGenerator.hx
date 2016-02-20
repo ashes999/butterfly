@@ -3,7 +3,9 @@ package butterfly.generator;
 using StringTools;
 using DateTools;
 
+import butterfly.core.Page;
 import butterfly.core.Post;
+import butterfly.core.Content;
 import ButterflyConfig;
 import butterfly.html.TagFinder;
 import butterfly.html.HtmlTag;
@@ -14,7 +16,7 @@ class HtmlGenerator {
 
   private var layoutHtml:String;
   private var posts:Array<Post>;
-  private var pages:Array<Post>;
+  private var pages:Array<Page>;
 
   private static inline var TITLE_PLACEHOLDER:String = '<butterfly-title />';
   private static inline var COMMENTS_PLACEHOLDER:String = '<butterfly-comments />';
@@ -23,11 +25,39 @@ class HtmlGenerator {
   private static inline var DISQUS_PAGE_URL:String = 'PAGE_URL';
   private static inline var DISQUS_PAGE_IDENTIFIER = 'PAGE_IDENTIFIER';
 
-  public function new(layoutHtml:String, posts:Array<Post>, pages:Array<Post>)
+  public function new(layoutHtml:String, posts:Array<Post>, pages:Array<Page>)
   {
     this.layoutHtml = layoutHtml;
     this.posts = posts;
     this.pages = pages;
+  }
+
+  /**
+  Generates the HTML for a page, using values from config (like the site URL).
+  Returns the fully-formed, final HTML (after rendering to Markdown).
+  */
+  public function generateCommonHtml(content:Content, config:ButterflyConfig) : String
+  {
+    var finalContent = this.layoutHtml;
+
+    // replace <butterfly-title /> with the title, if it exists
+    finalContent = finalContent.replace(TITLE_PLACEHOLDER, content.title);
+
+    // comments (disqus snippet)
+    var disqusHtml = getDisqusHtml(content, config);
+    finalContent = finalContent.replace(COMMENTS_PLACEHOLDER, disqusHtml);
+
+    // prefix the post name to the title tag
+    finalContent = finalContent.replace("<title>", '<title>${content.title} | ');
+    return finalContent;
+  }
+
+  public function generatePageHtml(page:Page, config:ButterflyConfig) : String
+  {
+    var html:String = generateCommonHtml(page, config);
+    var content = generateIntraSiteLinks(page.content);
+    html = html.replace(CONTENT_PLACEHOLDER, content);
+    return html;
   }
 
   /**
@@ -53,20 +83,11 @@ class HtmlGenerator {
       postedOnHtml = '<p class="blog-post-meta">Posted ${post.createdOn.format("%Y-%m-%d")}</p>';
     }
 
-    var finalContent = generateIntraSiteLinks(post.content);
-    var finalHtml = '${tagsHtml}\n${postedOnHtml}\n${finalContent}\n';
-    var toReturn = this.layoutHtml.replace(CONTENT_PLACEHOLDER, finalHtml);
-
-    // replace <butterfly-title /> with the title, if it exists
-    toReturn = toReturn.replace(TITLE_PLACEHOLDER, post.title);
-
-    // comments (disqus snippet)
-    var disqusHtml = getDisqusHtml(post, config);
-    toReturn = toReturn.replace(COMMENTS_PLACEHOLDER, disqusHtml);
-
-    // prefix the post name to the title tag
-    toReturn = toReturn.replace("<title>", '<title>${post.title} | ');
-    return toReturn;
+    var html = generateCommonHtml(post, config);
+    var content = generateIntraSiteLinks(post.content);
+    var finalHtml = '${tagsHtml}\n${postedOnHtml}\n${content}\n';
+    finalHtml = html.replace(CONTENT_PLACEHOLDER, finalHtml);
+    return finalHtml;
   }
 
   public function generateIntraSiteLinks(content:String) : String
@@ -74,11 +95,19 @@ class HtmlGenerator {
     var toReturn = content;
     // Don't bother scanning if there are no links (syntax: [[title]])
     if (toReturn.indexOf("[[") > -1) {
-      var postsAndPages = this.pages.concat(this.posts);
-      for (c in postsAndPages) {
-        var titlePlaceholder = new EReg('\\[\\[${c.title}]]', "i");
+      var titlesToUrls:Map<String, String> = new Map<String, String>();
+
+      for (post in posts) {
+        titlesToUrls.set(post.title, post.url);
+      }
+      for (page in pages) {
+        titlesToUrls.set(page.title, page.url);
+      }
+
+      for (title in titlesToUrls.keys()) {
+        var titlePlaceholder = new EReg('\\[\\[${title}]]', "i");
         if (titlePlaceholder.match(toReturn)) {
-          var titleLink = '<a href="${c.url}.html">${c.title}</a>';
+          var titleLink = '<a href="${titlesToUrls.get(title)}.html">${title}</a>';
           toReturn = titlePlaceholder.replace(toReturn, titleLink);
         }
       }
@@ -118,12 +147,12 @@ class HtmlGenerator {
     return '<a href="tag-${tag}.html">${tag}</a>';
   }
 
-  private function getDisqusHtml(post:Post, config:ButterflyConfig):String
+  private function getDisqusHtml(content:Content, config:ButterflyConfig):String
   {
     var template = sys.io.File.getContent(DISQUS_HTML_FILE);
-    var url = '${config.siteUrl}/${post.url}';
+    var url = '${config.siteUrl}/${content.url}';
     template = template.replace(DISQUS_PAGE_URL, '"${url}"');
-    template = template.replace(DISQUS_PAGE_IDENTIFIER, '"${post.id}"');
+    template = template.replace(DISQUS_PAGE_IDENTIFIER, '"${content.id}"');
     return template;
   }
 }

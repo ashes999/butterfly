@@ -21,20 +21,6 @@ class PostTest
   }
 
   @Test
-  public function generateIndexPageUsesLayout()
-  {
-    var fileName = "filestat-ctime-in-unix";
-    var markdown = "meta-tags: Haxe, unix
-meta-title: FileStat.ctime in Unix
-
-The rest of this content is just *placeholder* data. The content has to start at
-the beginning of the line to match the meta-data regex.
-    ";
-    var actual:String = Post.getTitle(fileName, markdown);
-    Assert.areEqual("FileStat.ctime in Unix", actual);
-  }
-
-  @Test
   public function parseParsesAllMetaDataProperly()
   {
     var id:String = "1356d551e2281e1b76b8e386b849d9794daba478";
@@ -51,7 +37,8 @@ Why would you want to display animated GIFs in a HaxeFlixel game? ...';
 
     var fullFileName = '${TEST_FILES_DIR}/title-from-filename.md';
     File.saveContent(fullFileName, markdown);
-    var post:Post = Post.parse(fullFileName, false);
+    var post:Post = new Post();
+    post.parse(fullFileName);
 
     Assert.areEqual(title, post.title);
     Assert.areEqual(1, post.tags.length);

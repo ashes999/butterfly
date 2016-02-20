@@ -1,6 +1,8 @@
 using StringTools;
 using DateTools;
 
+import butterfly.core.Content;
+import butterfly.core.Page;
 import butterfly.core.Post;
 import butterfly.generator.AtomGenerator;
 import butterfly.generator.HtmlGenerator;
@@ -45,8 +47,23 @@ class Main {
     var layoutFile = '${srcDir}/layout.html';
 
     // generate pages and tags first, because they appear in the header/layout
-    var pages:Array<Post> = getPostsOrPages('${srcDir}/pages', true);
-    var posts:Array<Post> = getPostsOrPages('${srcDir}/posts');
+    var pages:Array<Page> = new Array<Page>();
+    var posts:Array<Post> = new Array<Post>();
+
+    var files = getContentFiles('${srcDir}/pages');
+    for (file in files) {
+      var p = new Page();
+      p.parse(file);
+      pages.push(p);
+    }
+
+    files = getContentFiles('${srcDir}/posts');
+    for (file in files) {
+      var p = new Post();
+      p.parse(file);
+      posts.push(p);
+    }
+
     sortPosts(posts);
 
     var tags = new Array<String>();
@@ -67,8 +84,8 @@ class Main {
     var generator = new HtmlGenerator(layoutHtml, posts, pages);
     var writer = new FileWriter(binDir);
 
-    generateHtmlFilesFor(posts, generator, config, writer);
-    generateHtmlFilesFor(pages, generator, config, writer);
+    generateHtmlFilesForPosts(posts, generator, config, writer);
+    generateHtmlFilesForPages(pages, generator, config, writer);
 
     for (tag in tags) {
       var html = generator.generateTagPageHtml(tag, posts);
@@ -91,7 +108,7 @@ class Main {
   instead for the home page's layout.
   */
   public function generateIndexPage(config:ButterflyConfig, srcDir:String, posts:Array<Post>,
-    pages:Array<Post>, generator:HtmlGenerator, writer:FileWriter) : Void
+    pages:Array<Page>, generator:HtmlGenerator, writer:FileWriter) : Void
   {
     var indexPageHtml:String;
     if (config.homePageLayout != null) {
@@ -124,30 +141,38 @@ class Main {
     }
   }
 
-  // Content is an array of posts (or pages)
-  private function generateHtmlFilesFor(content:Array<Post>, generator:HtmlGenerator,
+  private function generateHtmlFilesForPosts(posts:Array<Post>, generator:HtmlGenerator,
     config:ButterflyConfig, writer:FileWriter) : Void
   {
-    for (c in content) {
-      var html = generator.generatePostHtml(c, config);
-      writer.writePost(c, html);
+    for (post in posts) {
+      var html = generator.generatePostHtml(post, config);
+      writer.writeContent(post, html);
     }
   }
 
-  private function getPostsOrPages(path:String, ?isPage:Bool = false) : Array<Post>
+  private function generateHtmlFilesForPages(pages:Array<Page>, generator:HtmlGenerator,
+    config:ButterflyConfig, writer:FileWriter) : Void
   {
+    for (page in pages) {
+      var html = generator.generatePageHtml(page, config);
+      writer.writeContent(page, html);
+    }
+  }
+
+  private function getContentFiles(path:String) : Array<String>
+  {
+    var toReturn = new Array<String>();
+
     if (sys.FileSystem.exists(path) && sys.FileSystem.isDirectory(path)) {
       var filesAndDirs = sys.FileSystem.readDirectory(path);
-      var posts = new Array<Post>();
       for (entry in filesAndDirs) {
         var relativePath = '${path}/${entry}';
         // Ignore .DS on Mac/OSX
         if (entry.indexOf(".DS") == -1 && !sys.FileSystem.isDirectory(relativePath)) {
-          posts.push(Post.parse(relativePath, isPage));
+          toReturn.push(relativePath);
         }
       }
-      return posts;
     }
-    return new Array<Post>();
+    return toReturn;
   }
 }

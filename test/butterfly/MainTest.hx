@@ -2,6 +2,7 @@ package butterfly;
 
 import sys.io.File;
 import sys.FileSystem;
+import butterfly.core.Page;
 import butterfly.core.Post;
 import butterfly.html.FileWriter;
 import Main;
@@ -33,7 +34,6 @@ class MainTest
   @Test
   public function generateIndexPageUsesHomePageLayoutIfSpecifiedInConfig()
   {
-    var empty = new Array<Post>();
     var config = Factory.createButterflyConfig();
 
     config.siteName = "Client-Facing Site";
@@ -48,7 +48,7 @@ class MainTest
     var generator = Factory.createHtmlGenerator();
     var writer = new FileWriter(TEST_FILES_DIR);
 
-    new Main().generateIndexPage(config, TEST_FILES_DIR, [post], empty, generator, writer);
+    new Main().generateIndexPage(config, TEST_FILES_DIR, [post], new Array<Page>(), generator, writer);
 
     var actual = sys.io.File.getContent('${TEST_FILES_DIR}/index.html');
     // Check tags, content, and variables generated properly

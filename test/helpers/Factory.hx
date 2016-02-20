@@ -1,5 +1,6 @@
 package test.helpers;
 
+import butterfly.core.Page;
 import butterfly.core.Post;
 import butterfly.generator.HtmlGenerator;
 
@@ -13,8 +14,7 @@ class Factory
   {
     // Minimum set of tags we need for Butterfly to work.
     // butterfly-tags generates a warning if not present (it's optional)
-    var emptyList = new Array<Post>();
-    var toReturn = new HtmlGenerator(layoutHtml, emptyList, emptyList);
+    var toReturn = new HtmlGenerator(layoutHtml, new Array<Post>(), new Array<Page>());
     return toReturn;
   }
 

@@ -4,6 +4,7 @@ import massive.munit.Assert;
 import sys.FileSystem;
 import sys.io.File;
 
+import butterfly.core.Page;
 import butterfly.core.Post;
 import test.helpers.Factory;
 
@@ -35,7 +36,7 @@ class LayoutModifierTest
     var config = Factory.createButterflyConfig();
     config.googleAnalyticsId = gaId;
 
-    var modifier = new LayoutModifier(layoutFile, config, new Array<Post>(), new Array<Post>());
+    var modifier = new LayoutModifier(layoutFile, config, new Array<Post>(), new Array<Page>());
 
     var actualHtml = modifier.getHtml();
     Assert.isTrue(actualHtml.indexOf(gaCode) > -1);
@@ -50,7 +51,7 @@ class LayoutModifierTest
     Assert.isTrue(sys.io.File.getContent(layoutFile).indexOf(expectedSnippet) == -1);
     var config = Factory.createButterflyConfig();
 
-    var modifier = new LayoutModifier(layoutFile, config, new Array<Post>(), new Array<Post>());
+    var modifier = new LayoutModifier(layoutFile, config, new Array<Post>(), new Array<Page>());
     var actualHtml = modifier.getHtml();
     Assert.isTrue(actualHtml.indexOf(expectedSnippet) > -1);
   }
@@ -60,7 +61,7 @@ class LayoutModifierTest
     var layoutFile = createLayoutFile("<head><title>$siteName</title></head> <butterfly-pages />");
     var config = Factory.createButterflyConfig();
     config.siteName = "Learn Haxe";
-    var modifier = new LayoutModifier(layoutFile, config, new Array<Post>(), new Array<Post>());
+    var modifier = new LayoutModifier(layoutFile, config, new Array<Post>(), new Array<Page>());
     var actual = modifier.getHtml();
     Assert.isTrue(actual.indexOf("<title>Learn Haxe</title>") > -1);
   }
