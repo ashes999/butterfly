@@ -32,12 +32,6 @@ class MainTest
   }
 
   @Test
-  public function buildsFailWhenTestsFail()
-  {
-    Assert.isTrue(false);
-  }
-
-  @Test
   public function generateIndexPageUsesHomePageLayoutIfSpecifiedInConfig()
   {
     var config = Factory.createButterflyConfig();
