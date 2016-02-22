@@ -9,6 +9,7 @@ import Main;
 
 import massive.munit.Assert;
 import test.helpers.Factory;
+import test.helpers.ContentMaker;
 
 class MainTest
 {
@@ -56,5 +57,26 @@ class MainTest
     Assert.isTrue(actual.indexOf(post.title) > -1);
     // The last part of the tag link (the name) and the count
     Assert.isTrue(actual.indexOf("test-tag</a> (1)") > -1);
+  }
+
+  @Test
+  public function sortPostsSortsPostsReverseChronologically()
+  {
+  }
+
+  @Test
+  public function sortPagesSortsPagesByOrderAscending()
+  {
+    // Create three pages, out of order (with respect to their "order" field);
+    var firstPage = ContentMaker.createPage('meta-order: -3\r\nFirst post!', '${TEST_FILES_DIR}/first.md');
+    // default (0)
+    var secondPage = ContentMaker.createPage('Second post!!', '${TEST_FILES_DIR}/second.md');
+    var thirdPage = ContentMaker.createPage('meta-order: 1\r\nThird post!!!', '${TEST_FILES_DIR}/third.md');
+
+    var pages:Array<Page> = [thirdPage, secondPage, firstPage];
+    new Main().sortPages(pages);
+    Assert.areEqual(0, pages.indexOf(firstPage));
+    Assert.areEqual(1, pages.indexOf(secondPage));
+    Assert.areEqual(2, pages.indexOf(thirdPage));
   }
 }

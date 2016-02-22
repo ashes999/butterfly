@@ -3,6 +3,7 @@ import massive.munit.TestSuite;
 import butterfly.generator.AtomGeneratorTest;
 import butterfly.generator.HtmlGeneratorTest;
 import butterfly.MainTest;
+import butterfly.core.PageTest;
 import butterfly.core.PostTest;
 import butterfly.html.TagFinderTest;
 import butterfly.html.HtmlTagTest;
@@ -23,6 +24,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(butterfly.generator.AtomGeneratorTest);
 		add(butterfly.generator.HtmlGeneratorTest);
 		add(butterfly.MainTest);
+		add(butterfly.core.PageTest);
 		add(butterfly.core.PostTest);
 		add(butterfly.html.TagFinderTest);
 		add(butterfly.html.HtmlTagTest);

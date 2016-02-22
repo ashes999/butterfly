@@ -8,3 +8,5 @@
 -cp test
 
 -neko build/neko_test.n
+
+--no-traces

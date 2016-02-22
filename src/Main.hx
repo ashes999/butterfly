@@ -57,6 +57,8 @@ class Main {
       pages.push(p);
     }
 
+    sortPages(pages);
+
     files = getContentFiles('${srcDir}/posts');
     for (file in files) {
       var p = new Post();
@@ -122,12 +124,12 @@ class Main {
     writer.write("index.html", indexPageHtml);
   }
 
-  // Performs a sort on posts itself.
+  // Performs a sort on posts itself. Orders reverse-chronologically.
   private function sortPosts(posts:Array<Post>) : Void
   {
     if (posts.length > 0) {
-      // sort by date, newest-first. Sorting by getTime() doesn't seem to work,
-      // for some reason; sorting by the stringified dates (yyyy-mm-dd format) does.
+      // Sorting by getTime() doesn't seem to work, for some reason; sorting by
+      // the stringified dates (yyyy-mm-dd format) does.
       haxe.ds.ArraySort.sort(posts, function(a, b) {
         var x = a.createdOn.format("%Y-%m-%d");
         var y = b.createdOn.format("%Y-%m-%d");
@@ -135,8 +137,21 @@ class Main {
         if (x < y ) { return 1; }
         else if (x > y) { return -1; }
         else { return 0; };
+      });
+    }
+  }
 
-        //return result;
+  // Performs a sort on pages itself. Orders by "order" field.
+  public function sortPages(pages:Array<Page>) : Void
+  {
+    if (pages.length > 0) {
+      haxe.ds.ArraySort.sort(pages, function(a, b) {
+        var x = a.order;
+        var y = b.order;
+
+        if (x < y ) { return -1; }
+        else if (x > y) { return 1; }
+        else { return 0; };
       });
     }
   }
