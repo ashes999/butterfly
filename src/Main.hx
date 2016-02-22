@@ -148,10 +148,18 @@ class Main {
       haxe.ds.ArraySort.sort(pages, function(a, b) {
         var x = a.order;
         var y = b.order;
+        trace('Comparing ${x} and ${y} for ${a.title} and ${b.title}');
 
         if (x < y ) { return -1; }
         else if (x > y) { return 1; }
-        else { return 0; };
+        else {
+            // if tied, sort by title ascending
+            var m = a.title;
+            var n = b.title;
+            if (m < n) { return -1; }
+            else if (m > n) { return 1; }
+            else { return 0; };
+        }
       });
     }
   }

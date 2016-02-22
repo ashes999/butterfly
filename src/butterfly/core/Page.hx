@@ -2,7 +2,7 @@ package butterfly.core;
 
 class Page extends Content
 {
-  private static var orderRegex = ~/^meta-order: (-?\d+)/i;
+  private static var orderRegex = ~/meta-order: (-?\d+)/i;
   private static inline var DEFAULT_ORDER:Int = 0;
 
   public var order(default, default) : Int = DEFAULT_ORDER;

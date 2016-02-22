@@ -77,16 +77,18 @@ class MainTest
   @Test
   public function sortPagesSortsPagesByOrderAscending()
   {
-    // Create three pages, out of order (with respect to their "order" field);
+    // Create four pages, out of order (with respect to their "order" field);
     var firstPage = ContentMaker.createPage('meta-order: -3\r\nFirst post!', '${TEST_FILES_DIR}/first.md');
-    // default (0)
-    var secondPage = ContentMaker.createPage('Second post!!', '${TEST_FILES_DIR}/second.md');
-    var thirdPage = ContentMaker.createPage('meta-order: 1\r\nThird post!!!', '${TEST_FILES_DIR}/third.md');
+    // default (0). These two should be sorted by name (a-name first, then s-name)
+    var secondPage = ContentMaker.createPage('Third post!!', '${TEST_FILES_DIR}/a-name.md');
+    var thirdPage = ContentMaker.createPage('Second post!!', '${TEST_FILES_DIR}/s-name.md');
+    var fourthPage = ContentMaker.createPage('meta-order: 1\r\nFourth post!!!', '${TEST_FILES_DIR}/third.md');
 
-    var pages:Array<Page> = [thirdPage, secondPage, firstPage];
+    var pages:Array<Page> = [thirdPage, secondPage, fourthPage, firstPage];
     new Main().sortPages(pages);
     Assert.areEqual(0, pages.indexOf(firstPage));
     Assert.areEqual(1, pages.indexOf(secondPage));
     Assert.areEqual(2, pages.indexOf(thirdPage));
+    Assert.areEqual(3, pages.indexOf(fourthPage));
   }
 }
