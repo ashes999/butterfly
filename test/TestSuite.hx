@@ -1,12 +1,12 @@
 import massive.munit.TestSuite;
 
-import butterfly.core.PostTest;
-import butterfly.generator.HtmlGeneratorTest;
 import butterfly.generator.AtomGeneratorTest;
-import butterfly.html.LayoutModifierTest;
-import butterfly.html.HtmlTagTest;
-import butterfly.html.TagFinderTest;
+import butterfly.generator.HtmlGeneratorTest;
 import butterfly.MainTest;
+import butterfly.core.PostTest;
+import butterfly.html.TagFinderTest;
+import butterfly.html.HtmlTagTest;
+import butterfly.html.LayoutModifierTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -20,12 +20,12 @@ class TestSuite extends massive.munit.TestSuite
 	{
 		super();
 
-		add(butterfly.core.PostTest);
-		add(butterfly.generator.HtmlGeneratorTest);
 		add(butterfly.generator.AtomGeneratorTest);
-		add(butterfly.html.LayoutModifierTest);
-		add(butterfly.html.HtmlTagTest);
-		add(butterfly.html.TagFinderTest);
+		add(butterfly.generator.HtmlGeneratorTest);
 		add(butterfly.MainTest);
+		add(butterfly.core.PostTest);
+		add(butterfly.html.TagFinderTest);
+		add(butterfly.html.HtmlTagTest);
+		add(butterfly.html.LayoutModifierTest);
 	}
 }
