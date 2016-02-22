@@ -62,6 +62,16 @@ class MainTest
   @Test
   public function sortPostsSortsPostsReverseChronologically()
   {
+    // Create three posts, out of order (with respect to their "order" field);
+    var firstPost = ContentMaker.createPost('meta-publishedOn: 2011-01-31\r\nFirst post!', '${TEST_FILES_DIR}/first.md');
+    var secondPost = ContentMaker.createPost('meta-publishedOn: 2016-02-21\r\nSecond post!!', '${TEST_FILES_DIR}/second.md');
+    var thirdPost = ContentMaker.createPost('meta-publishedOn: 2016-02-22\r\nThird post!!!', '${TEST_FILES_DIR}/third.md');
+
+    var posts:Array<Post> = [secondPost, thirdPost, firstPost];
+    new Main().sortPosts(posts);
+    Assert.areEqual(0, posts.indexOf(thirdPost));
+    Assert.areEqual(1, posts.indexOf(secondPost));
+    Assert.areEqual(2, posts.indexOf(firstPost));
   }
 
   @Test

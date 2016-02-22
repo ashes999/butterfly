@@ -125,7 +125,7 @@ class Main {
   }
 
   // Performs a sort on posts itself. Orders reverse-chronologically.
-  private function sortPosts(posts:Array<Post>) : Void
+  public function sortPosts(posts:Array<Post>) : Void
   {
     if (posts.length > 0) {
       // Sorting by getTime() doesn't seem to work, for some reason; sorting by
