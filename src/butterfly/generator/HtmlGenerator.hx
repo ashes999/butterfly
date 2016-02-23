@@ -19,6 +19,7 @@ class HtmlGenerator {
   private var pages:Array<Page>;
 
   private static inline var TITLE_PLACEHOLDER:String = '<butterfly-title />';
+  private static inline var POST_DATE_PLACEHOLDER:String = '<butterfly-post-date />';
   private static inline var COMMENTS_PLACEHOLDER:String = '<butterfly-comments />';
 
   private static inline var DISQUS_HTML_FILE:String = 'templates/disqus.html';
@@ -68,7 +69,7 @@ class HtmlGenerator {
   public function generatePostHtml(post:Post, config:ButterflyConfig) : String
   {
     var tagsHtml = "";
-    var postedOnHtml = "";
+    var postDateHtml = "";
 
     // substitute in content
     if (post.tags.length > 0) {
@@ -79,12 +80,24 @@ class HtmlGenerator {
       tagsHtml = tagsHtml.substr(0, tagsHtml.length - 2) + "</p>"; // trim final ", "
     }
 
-    // posted-on date
-    postedOnHtml = '<p class="blog-post-meta">Posted ${post.createdOn.format("%Y-%m-%d")}</p>';
-
     var html = generateCommonHtml(post, config);
     var content = generateIntraSiteLinks(post.content);
-    var finalHtml = '${tagsHtml}\n${postedOnHtml}\n${content}\n';
+
+    // Substitute in posted-on date if the tag exists
+    // If not, lump it into the content text.
+    postDateHtml = '${post.createdOn.format("%Y-%m-%d")}';
+    var postDateTag:HtmlTag = TagFinder.findTag(POST_DATE_PLACEHOLDER, html);
+    if (postDateTag != null) {
+      var prefix:String = postDateTag.attribute("prefix");
+      var cssClass:String = ${postDateTag.attribute("class")}
+      postDateHtml = '<p class="${cssClass}">${prefix}${postDateHtml}</p>';
+      html = html.replace(postDateTag.html, postDateHtml);
+    } else {
+      postDateHtml = '<p>Posted on ${postDateHtml}</p>';
+      content = '${postDateHtml}\n${content}';
+    }
+
+    var finalHtml = '${tagsHtml}\n${content}\n';
     finalHtml = html.replace(CONTENT_PLACEHOLDER, finalHtml);
     return finalHtml;
   }

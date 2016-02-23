@@ -10,7 +10,7 @@ class Post extends Content {
   private static var publishDateRegex = ~/meta-publishedOn: (\d{4}-\d{2}-\d{2})/i;
   private static var tagRegex = ~/meta-tags: ([\w\s,\-_]+)\n/i;
 
-  public var createdOn(default, null) : Date;
+  public var createdOn(default, default) : Date;
   public var tags(default, default) : Array<String>;
 
   public function new()

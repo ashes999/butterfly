@@ -6,6 +6,8 @@ import butterfly.core.Page;
 import butterfly.core.Post;
 import test.helpers.Factory;
 
+using DateTools;
+
 class HtmlGeneratorTest
 {
 	@Test
@@ -32,6 +34,32 @@ class HtmlGeneratorTest
 
     var actual = gen.generatePostHtml(post, Factory.createButterflyConfig());
     Assert.isTrue(actual.indexOf('<h2>${post.title}</h2>') > -1);
+	}
+
+	@Test
+	// no <butterfly-post-date /> tag present
+	public function generatePostHtmlInsertsPostedOnDateInButterflyContentTag()
+	{
+		var layout = "<butterfly-pages /><h2><butterfly-title /></h2>\n<butterfly-content /><butterfly-tags />";
+		var gen = Factory.createHtmlGenerator(layout);
+    var post = new Post();
+		post.createdOn = Date.now();
+
+    var actual = gen.generatePostHtml(post, Factory.createButterflyConfig());
+    Assert.isTrue(actual.indexOf('Posted on ${post.createdOn.format("%Y-%m-%d")}') > -1);
+	}
+
+	@Test
+	public function generatePostHtmlInsertsPostedOnDateInButterflyPostDateTag()
+	{
+		var layout = "<butterfly-pages /><h2><butterfly-title /></h2>\n<butterfly-content /><butterfly-tags />" +
+		'Published <butterfly-post-date class="post-meta" prefix="Crafted on " />';
+		var gen = Factory.createHtmlGenerator(layout);
+    var post = new Post();
+		post.createdOn = Date.now();
+
+    var actual = gen.generatePostHtml(post, Factory.createButterflyConfig());
+    Assert.isTrue(actual.indexOf('<p class="post-meta">Crafted on ${post.createdOn.format("%Y-%m-%d")}') > -1);
 	}
 
 	@Test

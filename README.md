@@ -87,9 +87,9 @@ Your layout file needs the following tags:
 
 - `<butterfly-content />` which renders the actual post/page content
 - `<butterfly-pages />` renders the list of page titles (and links to the pages), usually for navigation. This generates a link (`a` tag) for each page. Optional attributes include:
-  - `link-prefix`: An HTML/text prefix to preprend to each link (before the `<a` tag, eg. `<li>`);
-  - `link-suffix`: An HTML/text suffix to attach after each link (after the `</a>` tag, eg. `</li>`)
-  - `link-class`: The CSS class to specify on all links, eg. if you specify `blog-nav-item`, the HTML generated for each `a` tag includes `class="blog-nav-item"`.
+  - `page-link-prefix`: An HTML/text prefix to preprend to each link (before the `<a` tag, eg. `<li>`);
+  - `page-link-suffix`: An HTML/text suffix to attach after each link (after the `</a>` tag, eg. `</li>`)
+  - `page-link-class`: The CSS class to specify on all links, eg. if you specify `blog-nav-item`, the HTML generated for each `a` tag includes `class="blog-nav-item"`.
 
 ## Optional Tags
 
@@ -98,6 +98,7 @@ You can add the following optional fields in your layout:
 - `<butterfly-tags />` renders a list of `<li>tag name</li>` for each tag (ordered alphabetically). You can include the tag counts by adding `show-counts` (eg. `<butterfly-tags show-counts="true" />`). This is not recommended, because adding a new post causes every HTML file to change -- which makes it difficult to `diff` and see what really changed.
 - `<butterfly-title />` renders the post title as-is.
 - `<butterfly-comments />` renders the Disqus code for commenting on that page/post.
+- `<butterfly-post-date />` renders the date the post was published on. If it's not specified, butterfly generates `Posted on {date}` for posts (not pages). Optional attributes include `class` (CSS class) and `prefix` (a message to display before the date).
 
 ## Variables
 
