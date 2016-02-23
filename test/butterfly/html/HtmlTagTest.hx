@@ -47,12 +47,12 @@ class HtmlTagTest
 	public function constructorCanFindAttributesWithQuotesInThem()
 	{
 		// Used by LearnHaxe for Bootstrap blog template
-		var expected = '<butterfly-pages link-prefix="<li>" link-suffix="</li>" link-attributes="class=\'blog-nav-item\'" />';
+		var expected = '<butterfly-pages link-prefix="<li>" link-suffix="</li>" link-class="blog-nav-item" />';
 		var actual = new HtmlTag("butterfly-pages", expected);
 
 		Assert.areEqual(3, actual.attributeCount);
 		Assert.areEqual("<li>", actual.attribute("link-prefix"));
 		Assert.areEqual("</li>", actual.attribute("link-suffix"));
-		Assert.areEqual("class='blog-nav-item'", actual.attribute("link-attributes"));
+		Assert.areEqual("blog-nav-item", actual.attribute("link-class"));
 	}
 }

@@ -91,14 +91,14 @@ class LayoutModifier
 
   private function generatePagesLinksHtml(pagesTag:HtmlTag, pages:Array<Page>) : String
   {
-    var linkAttributes:String = pagesTag.attribute("link-attributes");
+    var linkClass:String = pagesTag.attribute("link-class");
     var linkPrefix:String = pagesTag.attribute("link-prefix");
     var linkSuffix:String = pagesTag.attribute("link-suffix");
 
     var html = "";
 
     for (page in pages) {
-     html += '${linkPrefix}<a ${linkAttributes} href="${page.url}.html">${page.title}</a>${linkSuffix}';
+     html += '${linkPrefix}<a class="${linkClass}" href="${page.url}.html">${page.title}</a>${linkSuffix}';
     }
 
     return html;

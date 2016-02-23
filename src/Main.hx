@@ -148,7 +148,6 @@ class Main {
       haxe.ds.ArraySort.sort(pages, function(a, b) {
         var x = a.order;
         var y = b.order;
-        trace('Comparing ${x} and ${y} for ${a.title} and ${b.title}');
 
         if (x < y ) { return -1; }
         else if (x > y) { return 1; }
