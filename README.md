@@ -1,16 +1,16 @@
 ![logo](logo.png)
 # Butterfly ![build status](https://travis-ci.org/ashes999/butterfly.svg?branch=master)
 
-Simple, beautiful, static blogs. Butterfly combines data from JSON files with a Twitter Bootstrap UI to produce a simple, minimal blog. Perfect for hosting on websites like GitHub Pages!
+Simple, beautiful, static websites. Butterfly combines Markdown files, JSON data, and your HTML layout file to produce a static website. Perfect for hosting on websites like GitHub Pages!
 
-- **Blazing Fast:** no server back-end required. Everything is static HTML.
+- **Blazing Fast:** no server back-end required. Everything is static HTML (and Javascript, if you like).
 - **Easy to use:** updating your blog is as easy as writing Markdown.
 - **Customizable:** you control how the final HTML looks.
 
 
 # Prerequisites
 
-You need to first install:
+You need to install:
 
 - Haxe 3.1.3 or newer
 - Neko 2.0.0 or newer
@@ -31,12 +31,12 @@ Your website files must include, at a minimum, a `src` directory with the follow
   - Include a `<butterfly-content />` tag, which will be replaced with actual page content (post/page content, or the list of posts for the index page).
   - Include a `<butterfly-pages />` tag, which will be replaced with a list of links to the pages.
   - Optionally include a `<butterfly-tags />` tag, which will be replaced with a list of tag links.
-- An optional `posts` directory, with one markdown file per post.
+- An optional `pages` directory which contains one markdown file per page. You don't need any meta-data for it.
   - The file name becomes the post name, and the markdown content becomes HTML.
+- An optional `posts` directory, with one markdown file per post.
   - The line`meta-tags: foo, bar, baz` tags a post with the tags `foo`, `bar`, and `baz`.
   - The line `meta-publishedOn: 2015-12-31` sets the post's publication date to December 31st, 2015.
   - See the "Meta-Data" section below for more information about meta-data.
-- An optional `pages` directory which contains one markdown file per page. You don't need any meta-entries for it.
 - A `content` directory containing CSS, Javascript, and `favicon` files (if they're not referenced through a CDN).
 - A `config.json` file. See the *JSON Configuration* section for information on what goes in here. It must have at least `siteName`, `siteUrl`, and `authorName` defined.
 
@@ -56,7 +56,7 @@ Butterfly generates:
 
 # JSON Configuration
 
-Butterfly requires a `config.json` file. At a minimum, it should , contains the following fields: `siteName`, `siteUrl`, `authorName`, and `authorEmail` (these are used for Atom feed generation).
+Butterfly requires a `config.json` file. At a minimum, it should , contains the following fields: `siteName`, `siteUrl`, and `authorName` (these are used for Atom feed generation).
 
 ## Required Attributes
 
