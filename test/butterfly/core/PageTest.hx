@@ -29,7 +29,7 @@ class PageTest
   }
 
   @Test
-  public function parseParsesAllMetaDataProperly()
+  public function parseParsesOrder()
   {
     // Random sample of some orders we might use
     for (expected in [-10, -1, 0, 1, 3, 7]) {

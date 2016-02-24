@@ -2,6 +2,7 @@ import massive.munit.TestSuite;
 
 import butterfly.core.PageTest;
 import butterfly.core.PostTest;
+import butterfly.core.ContentTest;
 import butterfly.generator.HtmlGeneratorTest;
 import butterfly.generator.AtomGeneratorTest;
 import butterfly.html.LayoutModifierTest;
@@ -23,6 +24,7 @@ class TestSuite extends massive.munit.TestSuite
 
 		add(butterfly.core.PageTest);
 		add(butterfly.core.PostTest);
+		add(butterfly.core.ContentTest);
 		add(butterfly.generator.HtmlGeneratorTest);
 		add(butterfly.generator.AtomGeneratorTest);
 		add(butterfly.html.LayoutModifierTest);
