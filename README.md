@@ -87,9 +87,9 @@ Your layout file needs the following tags:
 
 - `<butterfly-content />` which renders the actual post/page content
 - `<butterfly-pages />` renders the list of page titles (and links to the pages), usually for navigation. This generates a link (`a` tag) for each page. Optional attributes include:
-  - `page-link-prefix`: An HTML/text prefix to preprend to each link (before the `<a` tag, eg. `<li>`);
-  - `page-link-suffix`: An HTML/text suffix to attach after each link (after the `</a>` tag, eg. `</li>`)
-  - `page-link-class`: The CSS class to specify on all links, eg. if you specify `blog-nav-item`, the HTML generated for each `a` tag includes `class="blog-nav-item"`.
+  - `link-prefix`: An HTML/text prefix to preprend to each link (before the `<a` tag, eg. `<li>`);
+  - `link-suffix`: An HTML/text suffix to attach after each link (after the `</a>` tag, eg. `</li>`)
+  - `link-class`: The CSS class to specify on all links, eg. if you specify `blog-nav-item`, the HTML generated for each `a` tag includes `class="blog-nav-item"`.
 
 ## Optional Tags
 
