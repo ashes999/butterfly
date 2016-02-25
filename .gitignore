@@ -3,3 +3,4 @@ report
 build
 Main.n
 .temp
+coverage.txt

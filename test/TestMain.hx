@@ -30,6 +30,13 @@ class TestMain
 			var httpClient = new HTTPClient(new SummaryReportClient());
 		#end
 
+		//////////////////////////////////////////////////////////////////////
+		// This block manually added to enable detailed coverage on Neko
+		client.includeMissingBlocks = true;
+		client.includeExecutionFrequency = true;
+		client.includeClassAndPackageBreakdowns = true;
+		//////////////////////////////////////////////////////////////////////
+
 		var runner:TestRunner = new TestRunner(client);
 		runner.addResultClient(httpClient);
 		//runner.addResultClient(new HTTPClient(new JUnitReportClient()));
