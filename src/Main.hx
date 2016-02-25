@@ -117,9 +117,9 @@ class Main {
       var homePageLayoutFile:String = '${srcDir}/${config.homePageLayout}';
       var homePageHtml = new LayoutModifier(homePageLayoutFile, config, posts, pages, false).getHtml();
       var homePageGenerator:HtmlGenerator = new HtmlGenerator(homePageHtml, posts, pages);
-      indexPageHtml = homePageGenerator.generateHomePage();
+      indexPageHtml = homePageGenerator.generateHomePageHtml();
     } else {
-      indexPageHtml = generator.generateHomePage();
+      indexPageHtml = generator.generateHomePageHtml();
     }
     writer.write("index.html", indexPageHtml);
   }

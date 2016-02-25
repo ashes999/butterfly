@@ -33,26 +33,6 @@ class HtmlGenerator {
     this.pages = pages;
   }
 
-  /**
-  Generates the HTML for a page, using values from config (like the site URL).
-  Returns the fully-formed, final HTML (after rendering to Markdown).
-  */
-  public function generateCommonHtml(content:Content, config:ButterflyConfig) : String
-  {
-    var finalContent = this.layoutHtml;
-
-    // replace <butterfly-title /> with the title, if it exists
-    finalContent = finalContent.replace(TITLE_PLACEHOLDER, content.title);
-
-    // comments (disqus snippet)
-    var disqusHtml = getDisqusHtml(content, config);
-    finalContent = finalContent.replace(COMMENTS_PLACEHOLDER, disqusHtml);
-
-    // prefix the post name to the title tag
-    finalContent = finalContent.replace("<title>", '<title>${content.title} | ');
-    return finalContent;
-  }
-
   public function generatePageHtml(page:Page, config:ButterflyConfig) : String
   {
     var html:String = generateCommonHtml(page, config);
@@ -102,7 +82,67 @@ class HtmlGenerator {
     return finalHtml;
   }
 
-  public function generateIntraSiteLinks(content:String) : String
+  // Precondition: posts are sorted in the order we want to list them on the home page.
+  public function generateTagPageHtml(tag:String, posts:Array<Post>):String
+  {
+    var count = 0;
+    var html = "<ul>";
+    for (post in posts) {
+      if (post.tags.indexOf(tag) > -1) {
+        html += '<li><a href="${post.url}.html">${post.title}</a></li>';
+        count++;
+      }
+    }
+    html += "</ul>";
+    html = '<p>${count} posts tagged with ${tag}:</p>\n${html}';
+    return this.layoutHtml.replace(CONTENT_PLACEHOLDER, html);
+  }
+
+  public function generateHomePageHtml() : String
+  {
+    var html = "<ul>";
+    for (post in posts) {
+      html += '<li><a href="${post.url}.html">${post.title}</a> (${post.createdOn.format("%Y-%m-%d")})</li>';
+    }
+    html += "</ul>";
+    return this.layoutHtml.replace(CONTENT_PLACEHOLDER, html);
+  }
+
+  public static function tagLink(tag:String):String
+  {
+    return '<a href="tag-${tag}.html">${tag}</a>';
+  }
+
+  /**
+  Generates the HTML for a page, using values from config (like the site URL).
+  Returns the fully-formed, final HTML (after rendering to Markdown).
+  */
+  private function generateCommonHtml(content:Content, config:ButterflyConfig) : String
+  {
+    var finalContent = this.layoutHtml;
+
+    // replace <butterfly-title /> with the title, if it exists
+    finalContent = finalContent.replace(TITLE_PLACEHOLDER, content.title);
+
+    // comments (disqus snippet)
+    var disqusHtml = getDisqusHtml(content, config);
+    finalContent = finalContent.replace(COMMENTS_PLACEHOLDER, disqusHtml);
+
+    // prefix the post name to the title tag
+    finalContent = finalContent.replace("<title>", '<title>${content.title} | ');
+    return finalContent;
+  }
+
+  private function getDisqusHtml(content:Content, config:ButterflyConfig):String
+  {
+    var template = sys.io.File.getContent(DISQUS_HTML_FILE);
+    var url = '${config.siteUrl}/${content.url}';
+    template = template.replace(DISQUS_PAGE_URL, '"${url}"');
+    template = template.replace(DISQUS_PAGE_IDENTIFIER, '"${content.id}"');
+    return template;
+  }
+
+  private function generateIntraSiteLinks(content:String) : String
   {
     var toReturn = content;
 
@@ -128,45 +168,5 @@ class HtmlGenerator {
     }
 
     return toReturn;
-  }
-
-  // Precondition: posts are sorted in the order we want to list them on the home page.
-  public function generateTagPageHtml(tag:String, posts:Array<Post>):String
-  {
-    var count = 0;
-    var html = "<ul>";
-    for (post in posts) {
-      if (post.tags.indexOf(tag) > -1) {
-        html += '<li><a href="${post.url}.html">${post.title}</a></li>';
-        count++;
-      }
-    }
-    html += "</ul>";
-    html = '<p>${count} posts tagged with ${tag}:</p>\n${html}';
-    return this.layoutHtml.replace(CONTENT_PLACEHOLDER, html);
-  }
-
-  public function generateHomePage() : String
-  {
-    var html = "<ul>";
-    for (post in posts) {
-      html += '<li><a href="${post.url}.html">${post.title}</a> (${post.createdOn.format("%Y-%m-%d")})</li>';
-    }
-    html += "</ul>";
-    return this.layoutHtml.replace(CONTENT_PLACEHOLDER, html);
-  }
-
-  public static function tagLink(tag:String):String
-  {
-    return '<a href="tag-${tag}.html">${tag}</a>';
-  }
-
-  private function getDisqusHtml(content:Content, config:ButterflyConfig):String
-  {
-    var template = sys.io.File.getContent(DISQUS_HTML_FILE);
-    var url = '${config.siteUrl}/${content.url}';
-    template = template.replace(DISQUS_PAGE_URL, '"${url}"');
-    template = template.replace(DISQUS_PAGE_IDENTIFIER, '"${content.id}"');
-    return template;
   }
 }

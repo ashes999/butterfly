@@ -63,7 +63,7 @@ class HtmlGeneratorTest
 	}
 
 	@Test
-	public function generateIntraSiteLinksReplacesPageAndPostTitlesWithLinks()
+	public function generatePostHtmlReplacesPageAndPostTitlesWithLinks()
 	{
 		var post = new Post();
 		post.title = "Chocolate Truffles";
@@ -78,7 +78,38 @@ class HtmlGeneratorTest
 		var generator = new HtmlGenerator("<butterfly-pages /><butterfly-content /><butterfly-tags />",
 			[post], [page]);
 
-		var actual = generator.generateIntraSiteLinks(content);
+		var config = Factory.createButterflyConfig();
+
+		var postWithLinks = new Post();
+		postWithLinks.content = content;
+
+		var actual = generator.generatePostHtml(postWithLinks, config);
+		Assert.isTrue(actual.indexOf(post.url) > -1);
+		Assert.isTrue(actual.indexOf(page.url) > -1);
+	}
+
+	@Test
+	public function generatePageHtmlReplacesPageAndPostTitlesWithLinks()
+	{
+		var post = new Post();
+		post.title = "Chocolate Truffles";
+		post.url = "http://fake.com/chocolate-truffles";
+
+		var page = new Page();
+		page.title = "About Le Chocolatier";
+		page.url = "http://fake.com/about";
+
+		var content = 'Do not ask [[${page.title}]]; just read this: [[${post.title}]]';
+
+		var generator = new HtmlGenerator("<butterfly-pages /><butterfly-content /><butterfly-tags />",
+			[post], [page]);
+
+		var config = Factory.createButterflyConfig();
+
+		var pageWithLinks = new Page();
+		pageWithLinks.content = content;
+
+		var actual = generator.generatePageHtml(pageWithLinks, config);
 		Assert.isTrue(actual.indexOf(post.url) > -1);
 		Assert.isTrue(actual.indexOf(page.url) > -1);
 	}
