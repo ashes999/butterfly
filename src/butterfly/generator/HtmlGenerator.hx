@@ -117,7 +117,7 @@ class HtmlGenerator {
   Generates the HTML for a page, using values from config (like the site URL).
   Returns the fully-formed, final HTML (after rendering to Markdown).
   */
-  private function generateCommonHtml(content:Content, config:ButterflyConfig) : String
+  private function generateCommonHtml(content:Content, config:ButterflyConfig):String
   {
     var finalContent = this.layoutHtml;
 

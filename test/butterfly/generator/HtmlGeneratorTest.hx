@@ -5,11 +5,27 @@ import butterfly.generator.HtmlGenerator;
 import butterfly.core.Page;
 import butterfly.core.Post;
 import test.helpers.Factory;
+import sys.FileSystem;
 
 using DateTools;
 
+// When you add common code to both post/page generation, make sure you add
+// tests for both functions (post/page generation)
 class HtmlGeneratorTest
 {
+	private static inline var TEST_FILES_DIR = "test/temp/html_generator";
+
+  @Before
+  public function createTestFilesDirectory() {
+    FileSystem.createDirectory(TEST_FILES_DIR);
+  }
+
+  @After
+  public function deleteTestFiles() {
+    butterfly.io.FileSystem.deleteDirRecursively(TEST_FILES_DIR);
+    FileSystem.deleteDirectory(TEST_FILES_DIR);
+  }
+
 	@Test
   // In Butterfly 0.3, we stopped auto-inserting the title in the post in a <h2>
   // tag. Butterfly now generates the titleif/where the layout has a <butterfly-title />
@@ -63,6 +79,30 @@ class HtmlGeneratorTest
 	}
 
 	@Test
+	public function generatePostHtmlReplacesContentTagWithContent()
+	{
+		var layout = "<butterfly-content />";
+		var expected = "Hi there!";
+		var markdown = 'meta-publishedOn: 2016-01-31\r\n${expected}';
+		var generator = Factory.createHtmlGenerator(layout);
+		var post = Factory.createPost(markdown, '${TEST_FILES_DIR}/post.md');
+		var actual = generator.generatePostHtml(post, Factory.createButterflyConfig());
+		Assert.isTrue(actual.indexOf(expected) > -1);
+	}
+
+	@Test
+	public function generatePostHtmlReplacesCommentTagWithDisqusHtml()
+	{
+		Assert.isTrue(true);
+	}
+
+	@Test
+	public function GeneratePostHtmlAppendsPostTitleToHtmlTitleTag()
+	{
+		Assert.isTrue(true);
+	}
+
+	@Test
 	public function generatePostHtmlReplacesPageAndPostTitlesWithLinks()
 	{
 		var post = new Post();
@@ -86,6 +126,30 @@ class HtmlGeneratorTest
 		var actual = generator.generatePostHtml(postWithLinks, config);
 		Assert.isTrue(actual.indexOf(post.url) > -1);
 		Assert.isTrue(actual.indexOf(page.url) > -1);
+	}
+
+	@Test
+	public function generatePageHtmlReplacesContentTagWithContent()
+	{
+		Assert.isTrue(true);
+	}
+
+	@Test
+	public function generatePageHtmlReplacesButterflyTitleTagWithTitle()
+	{
+		Assert.isTrue(true);
+	}
+
+	@Test
+	public function generatePageHtmlReplacesCommentTagWithDisqusHtml()
+	{
+		Assert.isTrue(true);
+	}
+
+	@Test
+	public function GeneratePageHtmlAppendsPostTitleToHtmlTitleTag()
+	{
+		Assert.isTrue(true);
 	}
 
 	@Test

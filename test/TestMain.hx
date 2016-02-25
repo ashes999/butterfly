@@ -24,18 +24,19 @@ class TestMain
 
 		#if MCOVER
 			var client = new mcover.coverage.munit.client.MCoverPrintClient();
+
+			//////////////////////////////////////////////////////////////////////
+			// This block manually added to enable detailed coverage on Neko
+			client.includeMissingBlocks = true;
+			client.includeExecutionFrequency = true;
+			client.includeClassAndPackageBreakdowns = true;
+			//////////////////////////////////////////////////////////////////////
+
 			var httpClient = new HTTPClient(new mcover.coverage.munit.client.MCoverSummaryReportClient());
 		#else
 			var client = new RichPrintClient();
 			var httpClient = new HTTPClient(new SummaryReportClient());
 		#end
-
-		//////////////////////////////////////////////////////////////////////
-		// This block manually added to enable detailed coverage on Neko
-		client.includeMissingBlocks = true;
-		client.includeExecutionFrequency = true;
-		client.includeClassAndPackageBreakdowns = true;
-		//////////////////////////////////////////////////////////////////////
 
 		var runner:TestRunner = new TestRunner(client);
 		runner.addResultClient(httpClient);

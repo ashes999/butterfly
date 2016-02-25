@@ -2,14 +2,13 @@ package butterfly;
 
 import sys.io.File;
 import sys.FileSystem;
+import massive.munit.Assert;
+
 import butterfly.core.Page;
 import butterfly.core.Post;
 import butterfly.html.FileWriter;
 import Main;
-
-import massive.munit.Assert;
 import test.helpers.Factory;
-import test.helpers.ContentMaker;
 
 class MainTest
 {
@@ -63,9 +62,9 @@ class MainTest
   public function sortPostsSortsPostsReverseChronologically()
   {
     // Create three posts, out of order (with respect to their "order" field);
-    var firstPost = ContentMaker.createPost('meta-publishedOn: 2011-01-31\r\nFirst post!', '${TEST_FILES_DIR}/first.md');
-    var secondPost = ContentMaker.createPost('meta-publishedOn: 2016-02-21\r\nSecond post!!', '${TEST_FILES_DIR}/second.md');
-    var thirdPost = ContentMaker.createPost('meta-publishedOn: 2016-02-22\r\nThird post!!!', '${TEST_FILES_DIR}/third.md');
+    var firstPost = Factory.createPost('meta-publishedOn: 2011-01-31\r\nFirst post!', '${TEST_FILES_DIR}/c-first.md');
+    var secondPost = Factory.createPost('meta-publishedOn: 2016-02-21\r\nSecond post!!', '${TEST_FILES_DIR}/a-second.md');
+    var thirdPost = Factory.createPost('meta-publishedOn: 2016-02-22\r\nThird post!!!', '${TEST_FILES_DIR}/b-third.md');
 
     var posts:Array<Post> = [secondPost, thirdPost, firstPost];
     new Main().sortPosts(posts);
@@ -78,11 +77,11 @@ class MainTest
   public function sortPagesSortsPagesByOrderAscending()
   {
     // Create four pages, out of order (with respect to their "order" field);
-    var firstPage = ContentMaker.createPage('meta-order: -3\r\nFirst post!', '${TEST_FILES_DIR}/first.md');
-    // default (0). These two should be sorted by name (a-name first, then s-name)
-    var secondPage = ContentMaker.createPage('Third post!!', '${TEST_FILES_DIR}/a-name.md');
-    var thirdPage = ContentMaker.createPage('Second post!!', '${TEST_FILES_DIR}/s-name.md');
-    var fourthPage = ContentMaker.createPage('meta-order: 1\r\nFourth post!!!', '${TEST_FILES_DIR}/third.md');
+    var firstPage = Factory.createPage('meta-order: -3\r\nFirst post!', '${TEST_FILES_DIR}/first.md');
+    // default (0). These two should be sorted by name alphabetically
+    var secondPage = Factory.createPage('Third post!!', '${TEST_FILES_DIR}/second.md');
+    var thirdPage = Factory.createPage('Second post!!', '${TEST_FILES_DIR}/third.md');
+    var fourthPage = Factory.createPage('meta-order: 1\r\nFourth post!!!', '${TEST_FILES_DIR}/last.md');
 
     var pages:Array<Page> = [thirdPage, secondPage, fourthPage, firstPage];
     new Main().sortPages(pages);
