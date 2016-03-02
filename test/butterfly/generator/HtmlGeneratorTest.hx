@@ -105,9 +105,7 @@ class HtmlGeneratorTest
 	@Test
 	public function generatePostHtmlReplacesPageAndPostTitlesWithLinks()
 	{
-		var post = new Post();
-		post.title = "Chocolate Truffles";
-		post.url = "http://fake.com/chocolate-truffles";
+		var post = makePost("Chocolate Truffles", "http://fake.com/chocolate-truffles");
 
 		var page = new Page();
 		page.title = "About Le Chocolatier";
@@ -155,9 +153,7 @@ class HtmlGeneratorTest
 	@Test
 	public function generatePageHtmlReplacesPageAndPostTitlesWithLinks()
 	{
-		var post = new Post();
-		post.title = "Chocolate Truffles";
-		post.url = "http://fake.com/chocolate-truffles";
+		var post = makePost("Chocolate Truffles", "http://fake.com/chocolate-truffles");
 
 		var page = new Page();
 		page.title = "About Le Chocolatier";
@@ -176,5 +172,70 @@ class HtmlGeneratorTest
 		var actual = generator.generatePageHtml(pageWithLinks, config);
 		Assert.isTrue(actual.indexOf(post.url) > -1);
 		Assert.isTrue(actual.indexOf(page.url) > -1);
+	}
+
+	@Test
+	public function generateTagPageHtmlGeneratesListOfPostsAndPostCount()
+	{
+			var p1 = makePost("First Post", "http://test.com/first-post.html");
+			p1.tags = ["test"];
+			var p2 = makePost("Second Post");
+			p2.tags = ["test"];
+			var p3 = makePost("Third Post");
+			p3.tags = ["test"];
+			var p4 = makePost("Real, Non-Test Post", "http://test.com/fourth-post.html");
+			p4.tags = ["apple", "banana"];
+
+			var html = Factory.createHtmlGenerator().generateTagPageHtml(p1.tags[0], [p1, p2, p3]);
+
+			Assert.isTrue(html.indexOf("3") > -1); // Post count
+			Assert.isTrue(html.indexOf("tagged with test") > -1); // tag header
+			Assert.isTrue(html.indexOf(p1.url) > -1);
+
+			Assert.isTrue(html.indexOf(p1.title) > -1);
+			Assert.isTrue(html.indexOf(p2.title) > -1);
+			Assert.isTrue(html.indexOf(p3.title) > -1);
+
+			// Doesn't have anything from p4
+			Assert.areEqual(-1, html.indexOf(p4.title));
+			Assert.areEqual(-1, html.indexOf(p4.url));
+			Assert.areEqual(-1, html.indexOf(p4.tags[0]));
+			Assert.areEqual(-1, html.indexOf(p4.tags[1]));
+	}
+
+	@Test
+	public function generateHomePageHtmlGeneratesListOfPostsInOrder()
+	{
+		var p1 = makePost("Benefits of Drinking Water", "http://test.com/water.html");
+		var p2 = makePost("Benefits of Eating Fish", "http://test.com/fish.html");
+		var p3 = makePost("Donuts That Kill", "http://test.com/donutz.html");
+		var posts:Array<Post> = [p1, p2, p3];
+
+		var generator = new HtmlGenerator("<butterfly-content />", posts, new Array<Page>());
+		var html = generator.generateHomePageHtml();
+		for (post in posts) {
+			Assert.isTrue(html.indexOf(post.title) > -1);
+			Assert.isTrue(html.indexOf(post.url) > -1);
+		}
+
+		Assert.isTrue(html.indexOf(p1.title) < html.indexOf(p2.title));
+		Assert.isTrue(html.indexOf(p2.title) < html.indexOf(p3.title));
+	}
+
+	@Test
+	public function tagLinkGeneratesAnchorTagWithTagName()
+	{
+		var actual = HtmlGenerator.tagLink("avacado");
+		Assert.areEqual(0, actual.indexOf("<a"));
+		Assert.isTrue(actual.indexOf("avacado") > -1);
+		Assert.isTrue(actual.indexOf(".html") > -1);
+	}
+
+	private function makePost(title:String, url:String = ""):Post
+	{
+		var post = new Post();
+		post.title = title;
+		post.url = url;
+		return post;
 	}
 }
