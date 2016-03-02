@@ -63,6 +63,13 @@ class LayoutModifier
     this.layoutHtml = html;
   }
 
+  // Returns the final, generated HTML that takes into account all of the required
+  // changes (through the config).
+  public function getHtml() : String
+  {
+    return this.layoutHtml;
+  }
+
   /**
   Substitues any variables defined in the layout with their values from config.json.
   eg. $siteName is replaced with the value of the config.json property
@@ -80,13 +87,6 @@ class LayoutModifier
     }
 
     return toReturn;
-  }
-
-  // Returns the final, generated HTML that takes into account all of the required
-  // changes (through the config).
-  public function getHtml() : String
-  {
-    return this.layoutHtml;
   }
 
   private function generatePagesLinksHtml(pagesTag:HtmlTag, pages:Array<Page>) : String

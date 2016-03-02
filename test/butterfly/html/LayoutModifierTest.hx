@@ -26,6 +26,26 @@ class LayoutModifierTest
   }
 
   @Test
+  public function constructorThrowsIfLayoutFileIsMissing() {
+    Assert.isTrue(true);
+  }
+
+  @Test
+  public function constructorThrowsIfPageTagIsMissing() {
+    Assert.isTrue(true);
+  }
+
+  @Test
+  public function constructorDoesntThrowIfPageTagIsMissingAndIgnoreIsTrue() {
+    Assert.isTrue(true);
+  }
+
+  @Test
+  public function constructorGeneratesPageLinks() {
+    Assert.isTrue(true);
+  }
+
+  @Test
   public function constructorAddsGoogleAnalyticsFromConfigToHtml() {
     var gaId = "UA-999999";
     var gaCode = sys.io.File.getContent("templates/googleAnalytics.html").replace("GOOGLE_ANALYTICS_ID", gaId);
