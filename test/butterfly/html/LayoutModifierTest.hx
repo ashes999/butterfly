@@ -70,16 +70,15 @@ class LayoutModifierTest
     
     var p1:Page = new Page();
     p1.title = "First Page";
-    p1.url = "first-page.html";
+    p1.url = "first-page";
     
     var p2:Page = new Page();
     p2.title = "Second Page";
-    p2.url = "second/page.html";
+    p2.url = "second/page";
     
-    var html = new LayoutModifier(layoutFile, config, [], [p1, p2]).getHtml();
-    throw html;
-    Assert.isTrue(html.indexOf('href="${p1.url}"') > -1);
-    Assert.isTrue(html.indexOf('href="${p2.url}"') > -1);
+    var actual = new LayoutModifier(layoutFile, config, [], [p1, p2]).getHtml();
+    Assert.isTrue(actual.indexOf('href="${p1.url}.html"') > -1);
+    Assert.isTrue(actual.indexOf('href="${p2.url}.html"') > -1);
   }
 
   @Test
