@@ -4,3 +4,4 @@ build
 Main.n
 .temp
 coverage.txt
+vscode-project.hxml
