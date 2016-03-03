@@ -24,7 +24,7 @@ class LayoutModifier
   private var pages:Array<Page>;
 
   public function new(layoutFile:String, config:ButterflyConfig, posts:Array<Post>,
-    pages:Array<Page>, checkForPagesPlaceholder:Bool = true)
+    pages:Array<Page>, checkForButterflyPagesTag:Bool = true)
   {
     if (!sys.FileSystem.exists(layoutFile)) {
       throw "Can't find layout file " + layoutFile;
@@ -37,7 +37,7 @@ class LayoutModifier
 
     var pagesTag:HtmlTag = TagFinder.findTag(PAGES_LINKS_PLACEHOLDER, html);
     if (pagesTag == null) {
-      if (checkForPagesPlaceholder) {
+      if (checkForButterflyPagesTag) {
         throw 'Layout file ${layoutFile} does not contain the tag to list pages: ${PAGES_LINKS_PLACEHOLDER}';
       }
     } else {
