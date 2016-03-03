@@ -49,4 +49,13 @@ class Factory
     post.parse(path);
     return post;
   }
+  
+  // Creates a layout file. Has a sensible default HTML/filename. Returns the
+  // fully-qualified file name.
+  public static  function createLayoutFile(fileName:String = 'layout.html',
+    html:String = "<html><head></head><body><butterfly-pages /><!-- Placeholder --></body></html>") : String
+  {
+    sys.io.File.saveContent(fileName, html);
+    return fileName;
+  }
 }
