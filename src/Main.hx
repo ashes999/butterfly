@@ -9,6 +9,7 @@ import butterfly.generator.HtmlGenerator;
 import butterfly.html.FileWriter;
 import butterfly.html.LayoutModifier;
 import butterfly.io.FileSystem;
+import butterfly.extensions.StringExtensions;
 
 class Main {
   static public function main() : Void {
@@ -18,86 +19,23 @@ class Main {
   public function new() { }
 
   public function run() : Void {
-    if (Sys.args().length != 1) {
-      throw "Usage: neko Main.n <source directory>";
-    }
-
-    var projectDir = Sys.args()[0];
-    trace("Using " + projectDir + " as project directory");
-    FileSystem.ensureDirExists(projectDir);
-
-    var binDir = projectDir + "/bin";
-    if (sys.FileSystem.exists(binDir)) {
-      // always clean/rebuild
-      FileSystem.deleteDirRecursively(binDir);
-      sys.FileSystem.createDirectory(binDir);
-    }
-
-    var srcDir = projectDir + "/src";
+    // Initial setup/validation
+    var projectDir:String = extractProjectDirFromArgs(); 
+    var binDir:String = recreateBinDirectory(projectDir); 
+    var srcDir = '${projectDir}/src';
     FileSystem.ensureDirExists(srcDir);
+    var config:ButterflyConfig = getConfig(srcDir);
 
-    var configFile = '${srcDir}/config.json';
-    if (!sys.FileSystem.exists(configFile)) {
-      throw 'Config file ${configFile} is missing. Please add it as a JSON file with fields for siteName, siteUrl, authorName, and authorEmail.';
-    }
-    var config:Dynamic = haxe.Json.parse(sys.io.File.getContent(configFile));
-
+    // Start creating content files
+    var pages:Array<Page> = getPages(srcDir);
+    var posts:Array<Post> = getPosts(srcDir);
+    var tags:Array<String> = getTags(posts);
     FileSystem.copyDirRecursively('${srcDir}/content', '${binDir}/content');
 
-    var layoutFile = '${srcDir}/layout.html';
-
-    // generate pages and tags first, because they appear in the header/layout
-    var pages:Array<Page> = new Array<Page>();
-    var posts:Array<Post> = new Array<Post>();
-
-    var files:Array<String> = getContentFiles('${srcDir}/pages');
-    for (file in files) {
-      var p = new Page();
-      p.parse(file);
-      pages.push(p);
-    }
-
-    sortPages(pages);
-
-    files = getContentFiles('${srcDir}/posts');
-    for (file in files) {
-      var p = new Post();
-      p.parse(file);
-      posts.push(p);
-    }
-
-    sortPosts(posts);
-
-    var tags = new Array<String>();
-
-    for (post in posts) {
-      for (tag in post.tags) {
-        if (tags.indexOf(tag) == -1) {
-          tags.push(tag);
-        }
-      }
-    }
-
-    var layoutHtml = new LayoutModifier(layoutFile, config, posts, pages).getHtml();
-    if (layoutHtml.indexOf(HtmlGenerator.CONTENT_PLACEHOLDER) == -1) {
-      throw "Layout HTML doesn't have the blog post placeholder in it: " + HtmlGenerator.CONTENT_PLACEHOLDER;
-    }
-
-    var generator = new HtmlGenerator(layoutHtml, posts, pages);
-    var writer = new FileWriter(binDir);
-
-    generateHtmlFilesForPosts(posts, generator, config, writer);
-    generateHtmlFilesForPages(pages, generator, config, writer);
-
-    for (tag in tags) {
-      var html = generator.generateTagPageHtml(tag, posts);
-      writer.write('tag-${tag}.html', html);
-    }
-
-    this.generateIndexPage(config, srcDir, posts, pages, generator, writer);
-
-    var atomXml = AtomGenerator.generate(posts, config);
-    writer.write("atom.xml", atomXml);
+    // Start HTML generation
+    var layoutHtml = getAndValidateLayoutHtml(srcDir, config, posts, pages);
+    generateHtmlPages(posts, pages, tags, layoutHtml, srcDir, binDir, config);
+    generateRssFeed(posts, binDir, config);
 
     trace('Generated index page, ${pages.length} page(s), and ${posts.length} post(s).');
   }
@@ -162,6 +100,114 @@ class Main {
       });
     }
   }
+  
+  private function extractProjectDirFromArgs():String {
+      if (Sys.args().length != 1) {
+      throw "Usage: neko Main.n <source directory>";
+    }
+
+    var projectDir:String = Sys.args()[0];
+    trace("Using " + projectDir + " as project directory");
+    FileSystem.ensureDirExists(projectDir);
+    
+    return projectDir;
+  }
+  
+  private function recreateBinDirectory(projectDir:String):String {
+    var binDir = projectDir + "/bin";
+    if (sys.FileSystem.exists(binDir)) {
+      // always clean/rebuild
+      FileSystem.deleteDirRecursively(binDir);
+      sys.FileSystem.createDirectory(binDir);
+    }
+    return binDir;
+  }
+  
+  private function getConfig(srcDir:String):ButterflyConfig {
+    var configFile = '${srcDir}/config.json';
+    if (!sys.FileSystem.exists(configFile)) {
+      throw 'Config file ${configFile} is missing. Please add it as a JSON file with fields for siteName, siteUrl, and authorName.';
+    }
+    var config:ButterflyConfig = haxe.Json.parse(sys.io.File.getContent(configFile));
+    if (StringExtensions.IsNullOrWhiteSpace(config.siteName)) {
+        throw 'siteName is empty in ${configFile}';
+    }
+    if (StringExtensions.IsNullOrWhiteSpace(config.siteUrl)) {
+        throw 'siteUrl is empty in ${configFile}';
+    }
+    if (StringExtensions.IsNullOrWhiteSpace(config.authorName)) {
+        throw 'authorName is empty in ${configFile}';
+    }
+    return config;
+  }
+  
+  private function getPages(srcDir:String):Array<Page> {
+    var pages:Array<Page> = new Array<Page>();
+
+    var files:Array<String> = getContentFiles('${srcDir}/pages');
+    for (file in files) {
+      var p = new Page();
+      p.parse(file);
+      pages.push(p);
+    }
+
+    sortPages(pages);
+    return pages;
+  }
+  
+  private function getPosts(srcDir:String):Array<Post> {
+    var posts:Array<Post> = new Array<Post>();
+
+    var files:Array<String> = getContentFiles('${srcDir}/posts');
+    for (file in files) {
+      var p = new Post();
+      p.parse(file);
+      posts.push(p);
+    }
+
+    sortPosts(posts);
+    return posts;
+  }
+  
+  /** Returns a unique list of tags across all posts */
+  private function getTags(posts:Array<Post>):Array<String> {
+    var tags:Array<String> = new Array<String>();
+    for (post in posts) {
+      for (tag in post.tags) {
+        if (tags.indexOf(tag) == -1) {
+          tags.push(tag);
+        }
+      }
+    }
+    
+    return tags;
+  }
+  
+  private function getAndValidateLayoutHtml(srcDir:String, config:ButterflyConfig,
+    posts:Array<Post>, pages:Array<Page>):String {
+    var layoutFile = '${srcDir}/layout.html';
+    var layoutHtml = new LayoutModifier(layoutFile, config, posts, pages).getHtml();
+    if (layoutHtml.indexOf(HtmlGenerator.CONTENT_PLACEHOLDER) == -1) {
+      throw "Layout HTML doesn't have the blog post placeholder in it: " + HtmlGenerator.CONTENT_PLACEHOLDER;
+    }
+    return layoutHtml;
+  }
+  
+  private function generateHtmlPages(posts:Array<Post>, pages:Array<Page>, tags:Array<String>,
+    layoutHtml:String, srcDir:String, binDir:String, config:ButterflyConfig):Void {
+    var generator = new HtmlGenerator(layoutHtml, posts, pages);
+    var writer = new FileWriter(binDir);
+
+    this.generateHtmlFilesForPosts(posts, generator, config, writer);
+    this.generateHtmlFilesForPages(pages, generator, config, writer);
+
+    for (tag in tags) {
+      var html = generator.generateTagPageHtml(tag, posts);
+      writer.write('tag-${tag}.html', html);
+    }
+
+    this.generateIndexPage(config, srcDir, posts, pages, generator, writer);
+  }
 
   private function generateHtmlFilesForPosts(posts:Array<Post>, generator:HtmlGenerator,
     config:ButterflyConfig, writer:FileWriter) : Void
@@ -197,5 +243,11 @@ class Main {
     }
 
     return toReturn;
+  }
+  
+  private function generateRssFeed(posts:Array<Post>, binDir:String, config:ButterflyConfig):Void {
+    var writer = new FileWriter(binDir);      
+    var atomXml = AtomGenerator.generate(posts, config);
+    writer.write("atom.xml", atomXml);
   }
 }
