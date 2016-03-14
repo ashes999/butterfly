@@ -22,7 +22,8 @@ class Main {
   public function run() : Void {
     // Initial setup/validation
     var projectDir:String = ArgsParser.extractProjectDirFromArgs(Sys.args()); 
-    var binDir:String = recreateBinDirectory(projectDir); 
+    var binDir:String = '${projectDir}/bin';
+    FileSystem.recreateDirectory(binDir); 
     var srcDir = '${projectDir}/src';
     FileSystem.ensureDirExists(srcDir);
     var config:ButterflyConfig = getConfig(srcDir);
@@ -101,37 +102,7 @@ class Main {
       });
     }
   }
-  
-  /// Project setup: (file) IO
-  
-  private function recreateBinDirectory(projectDir:String):String {
-    var binDir = projectDir + "/bin";
-    if (sys.FileSystem.exists(binDir)) {
-      // always clean/rebuild
-      FileSystem.deleteDirRecursively(binDir);
-      sys.FileSystem.createDirectory(binDir);
-    }
-    return binDir;
-  }
-
-  private function getContentFiles(path:String) : Array<String>
-  {
-    var toReturn = new Array<String>();
-
-    if (sys.FileSystem.exists(path) && sys.FileSystem.isDirectory(path)) {
-      var filesAndDirs = sys.FileSystem.readDirectory(path);
-      for (entry in filesAndDirs) {
-        var relativePath = '${path}/${entry}';
-        // Ignore .DS on Mac/OSX
-        if (entry.indexOf(".DS") == -1 && !sys.FileSystem.isDirectory(relativePath)) {
-          toReturn.push(relativePath);
-        }
-      }
-    }
-
-    return toReturn;
-  }
-  
+    
   // Getting "business objects" from srcDir
   
   private function getConfig(srcDir:String):ButterflyConfig {
@@ -155,7 +126,7 @@ class Main {
   private function getPages(srcDir:String):Array<Page> {
     var pages:Array<Page> = new Array<Page>();
 
-    var files:Array<String> = getContentFiles('${srcDir}/pages');
+    var files:Array<String> = FileSystem.getFiles('${srcDir}/pages');
     for (file in files) {
       var p = new Page();
       p.parse(file);
@@ -169,7 +140,7 @@ class Main {
   private function getPosts(srcDir:String):Array<Post> {
     var posts:Array<Post> = new Array<Post>();
 
-    var files:Array<String> = getContentFiles('${srcDir}/posts');
+    var files:Array<String> = FileSystem.getFiles('${srcDir}/posts');
     for (file in files) {
       var p = new Post();
       p.parse(file);

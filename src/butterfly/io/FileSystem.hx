@@ -49,4 +49,32 @@ class FileSystem
       throw path + " isn't a directory";
     }
   }
+  
+  /** If a directory exists, delete it. Recreate the directory. */
+  public static function recreateDirectory(directory:String):Void {
+    if (sys.FileSystem.exists(directory)) {
+      // always clean/rebuild
+      FileSystem.deleteDirRecursively(directory);
+      sys.FileSystem.createDirectory(directory);
+    }
+  }
+  
+  /** Get all files on a given path. Ignores .DS files/folders. */
+  public static function getFiles(path:String) : Array<String>
+  {
+    var toReturn = new Array<String>();
+
+    if (sys.FileSystem.exists(path) && sys.FileSystem.isDirectory(path)) {
+      var filesAndDirs = sys.FileSystem.readDirectory(path);
+      for (entry in filesAndDirs) {
+        var relativePath = '${path}/${entry}';
+        // Ignore .DS on Mac/OSX
+        if (entry.indexOf(".DS") == -1 && !sys.FileSystem.isDirectory(relativePath)) {
+          toReturn.push(relativePath);
+        }
+      }
+    }
+
+    return toReturn;
+  }
 }
