@@ -101,6 +101,8 @@ class Main {
     }
   }
   
+  /// Project setup: (file) IO
+  
   private function extractProjectDirFromArgs():String {
       if (Sys.args().length != 1) {
       throw "Usage: neko Main.n <source directory>";
@@ -122,6 +124,26 @@ class Main {
     }
     return binDir;
   }
+
+  private function getContentFiles(path:String) : Array<String>
+  {
+    var toReturn = new Array<String>();
+
+    if (sys.FileSystem.exists(path) && sys.FileSystem.isDirectory(path)) {
+      var filesAndDirs = sys.FileSystem.readDirectory(path);
+      for (entry in filesAndDirs) {
+        var relativePath = '${path}/${entry}';
+        // Ignore .DS on Mac/OSX
+        if (entry.indexOf(".DS") == -1 && !sys.FileSystem.isDirectory(relativePath)) {
+          toReturn.push(relativePath);
+        }
+      }
+    }
+
+    return toReturn;
+  }
+  
+  // Getting "business objects" from srcDir
   
   private function getConfig(srcDir:String):ButterflyConfig {
     var configFile = '${srcDir}/config.json';
@@ -169,6 +191,18 @@ class Main {
     return posts;
   }
   
+  private function getAndValidateLayoutHtml(srcDir:String, config:ButterflyConfig,
+    posts:Array<Post>, pages:Array<Page>):String {
+    var layoutFile = '${srcDir}/layout.html';
+    var layoutHtml = new LayoutModifier(layoutFile, config, posts, pages).getHtml();
+    if (layoutHtml.indexOf(HtmlGenerator.CONTENT_PLACEHOLDER) == -1) {
+      throw "Layout HTML doesn't have the blog post placeholder in it: " + HtmlGenerator.CONTENT_PLACEHOLDER;
+    }
+    return layoutHtml;
+  }
+  
+  // Operations on posts
+  
   /** Returns a unique list of tags across all posts */
   private function getTags(posts:Array<Post>):Array<String> {
     var tags:Array<String> = new Array<String>();
@@ -183,15 +217,7 @@ class Main {
     return tags;
   }
   
-  private function getAndValidateLayoutHtml(srcDir:String, config:ButterflyConfig,
-    posts:Array<Post>, pages:Array<Page>):String {
-    var layoutFile = '${srcDir}/layout.html';
-    var layoutHtml = new LayoutModifier(layoutFile, config, posts, pages).getHtml();
-    if (layoutHtml.indexOf(HtmlGenerator.CONTENT_PLACEHOLDER) == -1) {
-      throw "Layout HTML doesn't have the blog post placeholder in it: " + HtmlGenerator.CONTENT_PLACEHOLDER;
-    }
-    return layoutHtml;
-  }
+  // Generate stuff.
   
   private function generateHtmlPages(posts:Array<Post>, pages:Array<Page>, tags:Array<String>,
     layoutHtml:String, srcDir:String, binDir:String, config:ButterflyConfig):Void {
@@ -227,24 +253,7 @@ class Main {
     }
   }
 
-  private function getContentFiles(path:String) : Array<String>
-  {
-    var toReturn = new Array<String>();
 
-    if (sys.FileSystem.exists(path) && sys.FileSystem.isDirectory(path)) {
-      var filesAndDirs = sys.FileSystem.readDirectory(path);
-      for (entry in filesAndDirs) {
-        var relativePath = '${path}/${entry}';
-        // Ignore .DS on Mac/OSX
-        if (entry.indexOf(".DS") == -1 && !sys.FileSystem.isDirectory(relativePath)) {
-          toReturn.push(relativePath);
-        }
-      }
-    }
-
-    return toReturn;
-  }
-  
   private function generateRssFeed(posts:Array<Post>, binDir:String, config:ButterflyConfig):Void {
     var writer = new FileWriter(binDir);      
     var atomXml = AtomGenerator.generate(posts, config);
