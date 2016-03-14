@@ -9,6 +9,7 @@ import butterfly.generator.HtmlGenerator;
 import butterfly.html.FileWriter;
 import butterfly.html.LayoutModifier;
 import butterfly.io.FileSystem;
+import butterfly.io.ArgsParser;
 import butterfly.extensions.StringExtensions;
 
 class Main {
@@ -20,7 +21,7 @@ class Main {
 
   public function run() : Void {
     // Initial setup/validation
-    var projectDir:String = extractProjectDirFromArgs(); 
+    var projectDir:String = ArgsParser.extractProjectDirFromArgs(Sys.args()); 
     var binDir:String = recreateBinDirectory(projectDir); 
     var srcDir = '${projectDir}/src';
     FileSystem.ensureDirExists(srcDir);
@@ -102,18 +103,6 @@ class Main {
   }
   
   /// Project setup: (file) IO
-  
-  private function extractProjectDirFromArgs():String {
-      if (Sys.args().length != 1) {
-      throw "Usage: neko Main.n <source directory>";
-    }
-
-    var projectDir:String = Sys.args()[0];
-    trace("Using " + projectDir + " as project directory");
-    FileSystem.ensureDirExists(projectDir);
-    
-    return projectDir;
-  }
   
   private function recreateBinDirectory(projectDir:String):String {
     var binDir = projectDir + "/bin";
