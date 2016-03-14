@@ -31,6 +31,21 @@ class Post extends Content {
     this.tags = getTags(markdown);
     return markdown;
   }
+  
+  /** Returns a unique list of tags across all posts */
+  public static function getPostTags(posts:Array<Post>):Array<String>
+  {
+    var tags:Array<String> = new Array<String>();
+    for (post in posts) {
+      for (tag in post.tags) {
+        if (tags.indexOf(tag) == -1) {
+          tags.push(tag);
+        }
+      }
+    }
+    
+    return tags;
+  }
 
   private static function getTags(markdown:String) : Array<String>
   {
@@ -64,4 +79,5 @@ class Post extends Content {
       throw '${fileName} does not seem to have a valid published-on meta date. Please make sure the content contains a line containing: meta-publishedOn: YYYY-mm-dd';
     }
   }
+  
 }

@@ -31,7 +31,7 @@ class Main {
     // Start creating content files
     var pages:Array<Page> = getPages(srcDir);
     var posts:Array<Post> = getPosts(srcDir);
-    var tags:Array<String> = getTags(posts);
+    var tags:Array<String> = Post.getPostTags(posts);
     FileSystem.copyDirRecursively('${srcDir}/content', '${binDir}/content');
 
     // Start HTML generation
@@ -159,22 +159,6 @@ class Main {
       throw "Layout HTML doesn't have the blog post placeholder in it: " + HtmlGenerator.CONTENT_PLACEHOLDER;
     }
     return layoutHtml;
-  }
-  
-  // Operations on posts
-  
-  /** Returns a unique list of tags across all posts */
-  private function getTags(posts:Array<Post>):Array<String> {
-    var tags:Array<String> = new Array<String>();
-    for (post in posts) {
-      for (tag in post.tags) {
-        if (tags.indexOf(tag) == -1) {
-          tags.push(tag);
-        }
-      }
-    }
-    
-    return tags;
   }
   
   // Generate stuff.
