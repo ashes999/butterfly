@@ -1,9 +1,12 @@
 package butterfly.generator;
 
 import massive.munit.Assert;
-import butterfly.generator.HtmlGenerator;
+
+import butterfly.core.ButterflyConfig;
 import butterfly.core.Page;
 import butterfly.core.Post;
+import butterfly.generator.HtmlGenerator;
+
 import test.helpers.Factory;
 import sys.FileSystem;
 
@@ -36,7 +39,7 @@ class HtmlGeneratorTest
     var post = new Post();
 		post.title = "Running MUnit with Haxelib";
 
-    var actual = gen.generatePostHtml(post, Factory.createButterflyConfig());
+    var actual = gen.generatePostHtml(post, new ButterflyConfig());
     Assert.areEqual(-1, actual.indexOf(post.title));
 	}
 
@@ -48,7 +51,7 @@ class HtmlGeneratorTest
     var post = new Post();
 		post.title = "Regex Replacement in Haxe";
 
-    var actual = gen.generatePostHtml(post, Factory.createButterflyConfig());
+    var actual = gen.generatePostHtml(post, new ButterflyConfig());
     Assert.isTrue(actual.indexOf('<h2>${post.title}</h2>') > -1);
 	}
 
@@ -61,7 +64,7 @@ class HtmlGeneratorTest
     var post = new Post();
 		post.createdOn = Date.now();
 
-    var actual = gen.generatePostHtml(post, Factory.createButterflyConfig());
+    var actual = gen.generatePostHtml(post, new ButterflyConfig());
     Assert.isTrue(actual.indexOf('Posted on ${post.createdOn.format("%Y-%m-%d")}') > -1);
 	}
 
@@ -74,7 +77,7 @@ class HtmlGeneratorTest
     var post = new Post();
 		post.createdOn = Date.now();
 
-    var actual = gen.generatePostHtml(post, Factory.createButterflyConfig());
+    var actual = gen.generatePostHtml(post, new ButterflyConfig());
     Assert.isTrue(actual.indexOf('<p class="post-meta">Crafted on ${post.createdOn.format("%Y-%m-%d")}') > -1);
 	}
 
@@ -86,7 +89,7 @@ class HtmlGeneratorTest
 		var markdown = 'meta-publishedOn: 2016-01-31\r\n${expected}';
 		var generator = Factory.createHtmlGenerator(layout);
 		var post = Factory.createPost(markdown, '${TEST_FILES_DIR}/post.md');
-		var actual = generator.generatePostHtml(post, Factory.createButterflyConfig());
+		var actual = generator.generatePostHtml(post, new ButterflyConfig());
 		Assert.isTrue(actual.indexOf(expected) > -1);
 	}
 
@@ -116,7 +119,7 @@ class HtmlGeneratorTest
 		var generator = new HtmlGenerator("<butterfly-pages /><butterfly-content /><butterfly-tags />",
 			[post], [page]);
 
-		var config = Factory.createButterflyConfig();
+		var config = new ButterflyConfig();
 
 		var postWithLinks = new Post();
 		postWithLinks.content = content;
@@ -164,7 +167,7 @@ class HtmlGeneratorTest
 		var generator = new HtmlGenerator("<butterfly-pages /><butterfly-content /><butterfly-tags />",
 			[post], [page]);
 
-		var config = Factory.createButterflyConfig();
+		var config = new ButterflyConfig();
 
 		var pageWithLinks = new Page();
 		pageWithLinks.content = content;

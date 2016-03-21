@@ -4,8 +4,10 @@ import massive.munit.Assert;
 import sys.FileSystem;
 import sys.io.File;
 
+import butterfly.core.ButterflyConfig;
 import butterfly.core.Page;
 import butterfly.core.Post;
+
 import test.helpers.Factory;
 import test.helpers.Assert2;
 
@@ -28,7 +30,7 @@ class LayoutModifierTest
 
   @Test
   public function constructorThrowsIfLayoutFileIsMissing() {
-    var config = Factory.createButterflyConfig();
+    var config = new ButterflyConfig();
     
     var message = Assert2.throws(function() {
       new LayoutModifier('${TEST_FILES_DIR}/doesntexist.html', config, [], []);
@@ -39,10 +41,10 @@ class LayoutModifierTest
 
   @Test
   public function constructorThrowsIfButterflyPagesTagIsMissing() {
-    var config = Factory.createButterflyConfig();
+    var config = new ButterflyConfig();
     var layoutFile = '${TEST_FILES_DIR}/layout.html';
     var layout = Factory.createLayoutFile(layoutFile, "<butterfly-tags show-counts=\"true\" />");
-    var config = Factory.createButterflyConfig();
+    var config = new ButterflyConfig();
     
     var message = Assert2.throws(function() {
       new LayoutModifier(layoutFile, config, [], []);
@@ -54,10 +56,10 @@ class LayoutModifierTest
 
   @Test
   public function constructorDoesntThrowIfPageTagIsMissingAndCheckForButterflyPagesIsFalse() {
-    var config = Factory.createButterflyConfig();
+    var config = new ButterflyConfig();
     var layoutFile = '${TEST_FILES_DIR}/layout.html';
     var layout = Factory.createLayoutFile(layoutFile, "<butterfly-tags show-counts=\"true\" />");
-    var config = Factory.createButterflyConfig();
+    var config = new ButterflyConfig();
     
     new LayoutModifier(layoutFile, config, [], [], false);
   }
@@ -66,7 +68,7 @@ class LayoutModifierTest
   public function constructorGeneratesPageLinks() {
     var layoutFile = '${TEST_FILES_DIR}/layout.html';
     var layout = Factory.createLayoutFile(layoutFile, "<butterfly-pages /><butterfly-tags />");
-    var config = Factory.createButterflyConfig();
+    var config = new ButterflyConfig();
     
     var p1:Page = new Page();
     p1.title = "First Page";
@@ -89,7 +91,7 @@ class LayoutModifierTest
     var layoutFile = Factory.createLayoutFile('${TEST_FILES_DIR}/layout.html');
     // Sanity check that default value layout doesn't have expected HTML
     Assert.isTrue(sys.io.File.getContent(layoutFile).indexOf("google-analytics.com") == -1);
-    var config = Factory.createButterflyConfig();
+    var config = new ButterflyConfig();
     config.googleAnalyticsId = gaId;
 
     var modifier = new LayoutModifier(layoutFile, config, new Array<Post>(), new Array<Page>());
@@ -105,7 +107,7 @@ class LayoutModifierTest
     var expectedSnippet = '<link type="application/atom+xml"';
     // Sanity check that default value layout doesn't have a hard-coded link tag
     Assert.isTrue(sys.io.File.getContent(layoutFile).indexOf(expectedSnippet) == -1);
-    var config = Factory.createButterflyConfig();
+    var config = new ButterflyConfig();
 
     var modifier = new LayoutModifier(layoutFile, config, new Array<Post>(), new Array<Page>());
     var actualHtml = modifier.getHtml();
@@ -115,7 +117,7 @@ class LayoutModifierTest
   @Test
   public function constructorSubstitutesVariablesFromConfigWithTheirValues() {
     var layoutFile = Factory.createLayoutFile('${TEST_FILES_DIR}/layout.html', "<head><title>$siteName</title></head> <butterfly-pages />");
-    var config = Factory.createButterflyConfig();
+    var config = new ButterflyConfig();
     config.siteName = "Learn Haxe";
     var modifier = new LayoutModifier(layoutFile, config, new Array<Post>(), new Array<Page>());
     var actual = modifier.getHtml();
@@ -135,7 +137,7 @@ class LayoutModifierTest
 		// Create a layout with <butterfly-tags />
     var layoutFile = '${TEST_FILES_DIR}/layout.html';
     var layout = Factory.createLayoutFile(layoutFile, "<butterfly-pages /><butterfly-tags />");
-    var config = Factory.createButterflyConfig();
+    var config = new ButterflyConfig();
     
 		// Validate that you can see both tags in the final HTML
 		var actual = new LayoutModifier(layoutFile, config, [p1, p2], []).getHtml();
@@ -157,7 +159,7 @@ class LayoutModifierTest
     // Create a layout with <butterfly-tags show-counts="true" />
     var layoutFile = '${TEST_FILES_DIR}/layout.html';
     var layout = Factory.createLayoutFile(layoutFile, "<butterfly-pages /><butterfly-tags show-counts=\"true\" />");
-    var config = Factory.createButterflyConfig();
+    var config = new ButterflyConfig();
     
 		// Validate that you can see both tags in the final HTML, with their post counts
 		var actual = new LayoutModifier(layoutFile, config, [p1, p2], []).getHtml();

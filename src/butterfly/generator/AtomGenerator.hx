@@ -3,7 +3,8 @@ package butterfly.generator;
 using DateTools;
 using StringTools;
 
-using haxe.crypto.Md5;
+import haxe.crypto.Md5;
+import butterfly.core.ButterflyConfig;
 
 class AtomGenerator {
   public static function generate(posts:Array<butterfly.core.Post>, config:ButterflyConfig):String

@@ -1,13 +1,15 @@
 package butterfly;
 
-import sys.io.File;
-import sys.FileSystem;
-import massive.munit.Assert;
-
+import butterfly.core.ButterflyConfig;
 import butterfly.core.Page;
 import butterfly.core.Post;
 import butterfly.html.FileWriter;
+
 import Main;
+import massive.munit.Assert;
+import sys.io.File;
+import sys.FileSystem;
+
 import test.helpers.Factory;
 
 class MainTest
@@ -34,7 +36,7 @@ class MainTest
   @Test
   public function generateIndexPageUsesHomePageLayoutIfSpecifiedInConfig()
   {
-    var config = Factory.createButterflyConfig();
+    var config = new ButterflyConfig();
 
     config.siteName = "Client-Facing Site";
     config.homePageLayout = "custom-home.html";

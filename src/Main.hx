@@ -1,6 +1,7 @@
 using StringTools;
 using DateTools;
 
+import butterfly.core.ButterflyConfig;
 import butterfly.core.Content;
 import butterfly.core.Post;
 import butterfly.core.Page;
@@ -26,7 +27,7 @@ class Main {
     FileSystem.recreateDirectory(binDir); 
     var srcDir = '${projectDir}/src';
     FileSystem.ensureDirExists(srcDir);
-    var config:ButterflyConfig = getConfig(srcDir);
+    var config:ButterflyConfig = ButterflyConfig.fromFile('${srcDir}/config.json');
 
     // Start creating content files
     var pages:Array<Page> = getPages(srcDir);
@@ -104,25 +105,7 @@ class Main {
   }
     
   // Getting "business objects" from srcDir
-  
-  private function getConfig(srcDir:String):ButterflyConfig {
-    var configFile = '${srcDir}/config.json';
-    if (!sys.FileSystem.exists(configFile)) {
-      throw 'Config file ${configFile} is missing. Please add it as a JSON file with fields for siteName, siteUrl, and authorName.';
-    }
-    var config:ButterflyConfig = haxe.Json.parse(sys.io.File.getContent(configFile));
-    if (StringExtensions.IsNullOrWhiteSpace(config.siteName)) {
-        throw 'siteName is empty in ${configFile}';
-    }
-    if (StringExtensions.IsNullOrWhiteSpace(config.siteUrl)) {
-        throw 'siteUrl is empty in ${configFile}';
-    }
-    if (StringExtensions.IsNullOrWhiteSpace(config.authorName)) {
-        throw 'authorName is empty in ${configFile}';
-    }
-    return config;
-  }
-  
+    
   private function getPages(srcDir:String):Array<Page> {
     var pages:Array<Page> = new Array<Page>();
 
@@ -160,8 +143,6 @@ class Main {
     }
     return layoutHtml;
   }
-  
-  // Generate stuff.
   
   private function generateHtmlPages(posts:Array<Post>, pages:Array<Page>, tags:Array<String>,
     layoutHtml:String, srcDir:String, binDir:String, config:ButterflyConfig):Void {

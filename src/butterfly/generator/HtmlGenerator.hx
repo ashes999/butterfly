@@ -3,10 +3,10 @@ package butterfly.generator;
 using StringTools;
 using DateTools;
 
+import butterfly.core.ButterflyConfig;
 import butterfly.core.Page;
 import butterfly.core.Post;
 import butterfly.core.Content;
-import ButterflyConfig;
 import butterfly.html.TagFinder;
 import butterfly.html.HtmlTag;
 

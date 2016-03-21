@@ -1,8 +1,10 @@
 package butterfly.generator;
 
-import massive.munit.Assert;
-import butterfly.generator.AtomGenerator;
+import butterfly.core.ButterflyConfig;
 import butterfly.core.Post;
+import butterfly.generator.AtomGenerator;
+
+import massive.munit.Assert;
 import test.helpers.Factory;
 
 class AtomGeneratorTest
@@ -10,7 +12,7 @@ class AtomGeneratorTest
 	@Test
 	public function generateUrlEncodesAngleBrackets()
 	{
-    var config = Factory.createButterflyConfig();
+    var config = new ButterflyConfig();
     config.siteName = "Haxe > Stuff";
     var post = new Post();
     post.title = "Use of <b> is deprecated";
@@ -32,7 +34,7 @@ class AtomGeneratorTest
   @Test
   public function generateIncludesSiteNameSiteUrlAuthorNameAndEmailFromConfig()
   {
-    var config = Factory.createButterflyConfig();
+    var config = new ButterflyConfig();
     config.siteName = "Haxe Blog";
     config.siteUrl = "http://awesome.haxe.com/blog";
     config.authorName = "Haxerman";
@@ -55,7 +57,7 @@ class AtomGeneratorTest
   @Test
   public function generateExcludesAuthorEmailIfNotSetInConfig()
   {
-    var config = Factory.createButterflyConfig();
+    var config = new ButterflyConfig();
     config.siteName = "Haxe Blog";
     config.siteUrl = "http://awesome.haxe.com/blog";
     config.authorName = "Haxerman";

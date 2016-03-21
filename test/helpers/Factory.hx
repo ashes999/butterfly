@@ -20,18 +20,6 @@ class Factory
     return toReturn;
   }
 
-  public static function createButterflyConfig() : ButterflyConfig
-  {
-    // Required fields are all that we need here
-    var config:ButterflyConfig = {
-      "siteName": "",
-      "siteUrl": "",
-      "authorName": "",
-    }
-
-    return config;
-  }
-
   // Construct, parse, and return a page.
   public static function createPage(markdown:String, path:String)
   {

@@ -1,5 +1,6 @@
 package butterfly.html;
 
+import butterfly.core.ButterflyConfig;
 import butterfly.core.Post;
 import butterfly.core.Page;
 import butterfly.generator.HtmlGenerator;
