@@ -26,18 +26,23 @@ class ButterflyConfig
       throw 'Config file ${configFile} is missing. Please add it as a JSON file with fields for siteName, siteUrl, and authorName.';
     }
     var config:ButterflyConfig = haxe.Json.parse(sys.io.File.getContent(configFile));
-    if (StringExtensions.IsNullOrWhiteSpace(config.siteName))
-    {
-        throw 'siteName is a required field, and it is empty in ${configFile}';
-    }
-    if (StringExtensions.IsNullOrWhiteSpace(config.siteUrl))
-    {
-        throw 'siteUrl is a required field, and it is empty in ${configFile}';
-    }
-    if (StringExtensions.IsNullOrWhiteSpace(config.authorName))
-    {
-        throw 'authorName is a required field, and it is empty in ${configFile}';
-    }
+    config.validate();
     return config;
+  }
+  
+  public function validate()
+  {
+    if (StringExtensions.IsNullOrWhiteSpace(this.siteName))
+    {
+        throw 'siteName is a required config field, and it is empty';
+    }
+    if (StringExtensions.IsNullOrWhiteSpace(this.siteUrl))
+    {
+        throw 'siteUrl is a required config field, and it is empty';
+    }
+    if (StringExtensions.IsNullOrWhiteSpace(this.authorName))
+    {
+        throw 'authorName is a required config field, and it is empty';
+    }
   }
 }

@@ -32,7 +32,8 @@ class LayoutModifierTest
   public function constructorThrowsIfLayoutFileIsMissing() {
     var config = new ButterflyConfig();
     
-    var message = Assert2.throws(function() {
+    var message:String = Assert2.throws(function()
+    {
       new LayoutModifier('${TEST_FILES_DIR}/doesntexist.html', config, [], []);
     });
     
@@ -46,7 +47,7 @@ class LayoutModifierTest
     var layout = Factory.createLayoutFile(layoutFile, "<butterfly-tags show-counts=\"true\" />");
     var config = new ButterflyConfig();
     
-    var message = Assert2.throws(function() {
+    var message:String = Assert2.throws(function() {
       new LayoutModifier(layoutFile, config, [], []);
     });
     
