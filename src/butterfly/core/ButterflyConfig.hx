@@ -32,15 +32,15 @@ class ButterflyConfig
   
   public function validate()
   {
-    if (StringExtensions.IsNullOrWhiteSpace(this.siteName))
+    if (StringExtensions.isNullOrWhitespace(this.siteName))
     {
         throw 'siteName is a required config field, and it is empty';
     }
-    if (StringExtensions.IsNullOrWhiteSpace(this.siteUrl))
+    if (StringExtensions.isNullOrWhitespace(this.siteUrl))
     {
         throw 'siteUrl is a required config field, and it is empty';
     }
-    if (StringExtensions.IsNullOrWhiteSpace(this.authorName))
+    if (StringExtensions.isNullOrWhitespace(this.authorName))
     {
         throw 'authorName is a required config field, and it is empty';
     }
