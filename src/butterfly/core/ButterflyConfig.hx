@@ -13,7 +13,6 @@ class ButterflyConfig
   public var googleAnalyticsId(default, default):String;
   public var homePageLayout(default, default):String;
   
-  // Mostly used for testing; in production, don't create an empty config.
   public function new()
   {
       
@@ -25,7 +24,18 @@ class ButterflyConfig
     {
       throw 'Config file ${configFile} is missing. Please add it as a JSON file with fields for siteName, siteUrl, and authorName.';
     }
-    var config:ButterflyConfig = haxe.Json.parse(sys.io.File.getContent(configFile));
+    
+    // You can't typecast the return value of haxe.Json.parse into a class.
+    // It only works with typedefs. So, we have to use reflection to get/set values. 
+    var raw = haxe.Json.parse(sys.io.File.getContent(configFile));
+    var config:ButterflyConfig = new ButterflyConfig();
+    
+    for (field in Reflect.fields(raw))
+    {
+        var value:Dynamic = Reflect.field(raw, field);
+        Reflect.setField(config, field, value);
+    }
+    
     config.validate();
     return config;
   }

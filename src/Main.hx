@@ -9,9 +9,9 @@ import butterfly.generator.AtomGenerator;
 import butterfly.generator.HtmlGenerator;
 import butterfly.html.FileWriter;
 import butterfly.html.LayoutModifier;
-import butterfly.io.FileSystem;
 import butterfly.io.ArgsParser;
 import butterfly.extensions.StringExtensions;
+import nucleus.io.FileSystemExtensions;
 
 class Main {
   static public function main() : Void {
@@ -24,16 +24,16 @@ class Main {
     // Initial setup/validation
     var projectDir:String = ArgsParser.extractProjectDirFromArgs(Sys.args()); 
     var binDir:String = '${projectDir}/bin';
-    FileSystem.recreateDirectory(binDir); 
+    FileSystemExtensions.recreateDirectory(binDir); 
     var srcDir = '${projectDir}/src';
-    FileSystem.ensureDirExists(srcDir);
+    FileSystemExtensions.ensureDirExists(srcDir);
     var config:ButterflyConfig = ButterflyConfig.fromFile('${srcDir}/config.json');
 
     // Start creating content files
     var pages:Array<Page> = getPages(srcDir);
     var posts:Array<Post> = getPosts(srcDir);
     var tags:Array<String> = Post.getPostTags(posts);
-    FileSystem.copyDirRecursively('${srcDir}/content', '${binDir}/content');
+    FileSystemExtensions.copyDirRecursively('${srcDir}/content', '${binDir}/content');
 
     // Start HTML generation
     var layoutHtml = getAndValidateLayoutHtml(srcDir, config, posts, pages);
@@ -107,7 +107,7 @@ class Main {
   private function getPages(srcDir:String):Array<Page> {
     var pages:Array<Page> = new Array<Page>();
 
-    var files:Array<String> = FileSystem.getFiles('${srcDir}/pages');
+    var files:Array<String> = FileSystemExtensions.getFiles('${srcDir}/pages');
     for (file in files) {
       var p = new Page();
       p.parse(file);
@@ -121,7 +121,7 @@ class Main {
   private function getPosts(srcDir:String):Array<Post> {
     var posts:Array<Post> = new Array<Post>();
 
-    var files:Array<String> = FileSystem.getFiles('${srcDir}/posts');
+    var files:Array<String> = FileSystemExtensions.getFiles('${srcDir}/posts');
     for (file in files) {
       var p = new Post();
       p.parse(file);

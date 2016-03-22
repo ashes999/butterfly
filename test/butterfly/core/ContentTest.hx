@@ -16,7 +16,7 @@ class ContentTest
 
   @After
   public function deleteTestFiles() {
-    butterfly.io.FileSystem.deleteDirRecursively(TEST_FILES_DIR);
+    nucleus.io.FileSystemExtensions.deleteDirRecursively(TEST_FILES_DIR);
     FileSystem.deleteDirectory(TEST_FILES_DIR);
   }
 

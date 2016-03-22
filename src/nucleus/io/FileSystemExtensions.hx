@@ -1,7 +1,9 @@
-package butterfly.io;
+package nucleus.io;
+
+import sys.FileSystem;
 
 // static class
-class FileSystem
+class FileSystemExtensions
 {
   public static function copyDirRecursively(srcPath:String, destPath:String) : Void
   {
@@ -54,7 +56,7 @@ class FileSystem
   public static function recreateDirectory(directory:String):Void {
     if (sys.FileSystem.exists(directory)) {
       // always clean/rebuild
-      FileSystem.deleteDirRecursively(directory);
+      FileSystemExtensions.deleteDirRecursively(directory);
       sys.FileSystem.createDirectory(directory);
     }
   }

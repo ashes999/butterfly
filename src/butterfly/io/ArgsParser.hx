@@ -1,6 +1,7 @@
 package butterfly.io;
 
 using butterfly.extensions.StringExtensions;
+import nucleus.io.FileSystemExtensions;
 
 class ArgsParser
 {
@@ -13,7 +14,7 @@ class ArgsParser
 
         var projectDir:String = args[0];
         trace("Using " + projectDir + " as project directory");
-        FileSystem.ensureDirExists(projectDir);
+        FileSystemExtensions.ensureDirExists(projectDir);
             
         return projectDir;
     }
