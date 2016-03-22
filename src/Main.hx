@@ -104,8 +104,6 @@ class Main {
     }
   }
     
-  // Getting "business objects" from srcDir
-    
   private function getPages(srcDir:String):Array<Page> {
     var pages:Array<Page> = new Array<Page>();
 
@@ -152,7 +150,8 @@ class Main {
     this.generateHtmlFilesForPosts(posts, generator, config, writer);
     this.generateHtmlFilesForPages(pages, generator, config, writer);
 
-    for (tag in tags) {
+    for (tag in tags)
+    {
       var html = generator.generateTagPageHtml(tag, posts);
       writer.write('tag-${tag}.html', html);
     }
