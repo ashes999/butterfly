@@ -81,10 +81,9 @@ class FileSystemExtensions
   {
     if (FileSystem.exists(directory))
     {
-      // always clean/rebuild
       FileSystemExtensions.deleteDirRecursively(directory);
-      FileSystem.createDirectory(directory);
     }
+    FileSystem.createDirectory(directory);
   }
   
   /** Get all files on a given path. Ignores .DS files/folders. */

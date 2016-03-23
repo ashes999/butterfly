@@ -14,13 +14,13 @@ class FileSystemExtensionTest
     @Before
     public function createTestFilesDirectory()
     {
-        FileSystem.createDirectory(TEST_FILES_DIR);
+        FileSystem.createDirectory(TEST_FILES_ROOT);
     }
 
     @After
     public function deleteTestFiles()
     {
-        nucleus.io.FileSystemExtensions.deleteDirRecursively(TEST_FILES_DIR);
+        FileSystemExtensions.deleteDirRecursively(TEST_FILES_ROOT);
     }
     
     @Test
@@ -134,19 +134,35 @@ class FileSystemExtensionTest
     @Test
     public function ensureDirExistsDoesntThrowIfDirectoryExists()
     {
-        
+        var targetDir:String = '${TEST_FILES_ROOT}/empty';
+        FileSystem.createDirectory(targetDir);
+        FileSystemExtensions.ensureDirExists(targetDir);
     }
     
     @Test
     public function recreateDirectoryCreatesDirectoryIfItDoesntExist()
     {
+        var targetDir:String = '${TEST_FILES_ROOT}/recreated';
+        Assert.isFalse(FileSystem.exists(targetDir));
         
+        FileSystemExtensions.recreateDirectory(targetDir);
+        Assert.isTrue(FileSystem.exists(targetDir));
     }
     
     @Test
-    public function recreateDirectoryDeletesDirectoryIfItExists()
+    public function recreateDirectoryDeletesDirectoryRecursivelyIfItExists()
     {
+        var targetDir:String = '${TEST_FILES_ROOT}/recreated2';
+        FileSystem.createDirectory(targetDir);
+        FileSystem.createDirectory('${targetDir}/test');
+        File.saveContent('${targetDir}/hello.txt', "Hello, world!");
+        File.saveContent('${targetDir}/test/world.txt', "World, hello!!");
         
+        FileSystemExtensions.recreateDirectory(targetDir);
+        Assert.isTrue(FileSystem.exists(targetDir));
+        Assert.isFalse(FileSystem.exists('${targetDir}/hello.txt'));
+        Assert.isFalse(FileSystem.exists('${targetDir}/test'));
+        Assert.isFalse(FileSystem.exists('${targetDir}/test/world.txt'));
     }
     
     @Test
