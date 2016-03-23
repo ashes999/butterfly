@@ -8,7 +8,7 @@ import test.helpers.Assert2;
 
 class FileSystemExtensionTest
 {
-    private static inline var TEST_FILES_ROOT = "test/temp";
+    private static inline var TEST_FILES_ROOT = "test/temp/fse";
     private static inline var TEST_FILES_DIR = '${TEST_FILES_ROOT}/filesystemext';
 
     @Before
@@ -21,7 +21,6 @@ class FileSystemExtensionTest
     public function deleteTestFiles()
     {
         nucleus.io.FileSystemExtensions.deleteDirRecursively(TEST_FILES_DIR);
-        FileSystem.deleteDirectory(TEST_FILES_DIR);
     }
     
     @Test
@@ -84,19 +83,52 @@ class FileSystemExtensionTest
     @Test
     public function deleteDirRecursivelyDeletesSubDirectoriesAndFiles()
     {
+        // Set up a directory tree of files/folders to delete        
+        var srcDir:String = '${TEST_FILES_ROOT}/source';
+        FileSystem.createDirectory(srcDir);
+        File.saveContent('${srcDir}/hi.txt', "root hi.txt");
         
+        FileSystem.createDirectory('${srcDir}/abc');
+        File.saveContent('${srcDir}/abc/hi.txt', "abc hi.txt");
+        
+        FileSystem.createDirectory('${srcDir}/def');
+        File.saveContent('${srcDir}/def/hi.txt', "def hi.txt");
+                
+        FileSystem.createDirectory('${srcDir}/def/ghi');
+        File.saveContent('${srcDir}/def/ghi/hi.txt', "ghi hi.txt");
+        
+        // Nuke directory and verify all files/folders disappeared.
+        FileSystemExtensions.deleteDirRecursively(srcDir);
+        
+        Assert.isFalse(FileSystem.exists(srcDir));
+        Assert.isFalse(FileSystem.exists('${srcDir}/abc'));
+        Assert.isFalse(FileSystem.exists('${srcDir}/def'));
+        Assert.isFalse(FileSystem.exists('${srcDir}/def/ghi'));
+        Assert.isFalse(FileSystem.exists('${srcDir}/hi.txt'));
+        Assert.isFalse(FileSystem.exists('${srcDir}/abc/hi.txt'));
+        Assert.isFalse(FileSystem.exists('${srcDir}/def//hi.txt'));
+        Assert.isFalse(FileSystem.exists('${srcDir}/def/ghi/hi.txt'));
     }
     
     @Test
     public function ensureDirExistsThrowsIfDirectoryDoesntExist()
     {
-        
+        var message:String = Assert2.throws(function()
+        {
+            FileSystemExtensions.deleteDirRecursively('${TEST_FILES_ROOT}/a/b/c');
+        });
+        Assert.isTrue(message.indexOf('exist') > -1);
     }   
     
     @Test
-    public function ensureDirExistsThrowsIfDirectoryIsFile()
+    public function ensureDirExistsThrowsIfDirectoryIsAFile()
     {
-        
+        File.saveContent('${TEST_FILES_ROOT}/a', "Text file, not a dir!");
+        var message:String = Assert2.throws(function()
+        {
+            FileSystemExtensions.deleteDirRecursively('${TEST_FILES_ROOT}/a');
+        });
+        Assert.isTrue(message.indexOf('directory') > -1);
     }
     
     @Test

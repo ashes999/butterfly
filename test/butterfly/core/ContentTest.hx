@@ -17,7 +17,6 @@ class ContentTest
   @After
   public function deleteTestFiles() {
     nucleus.io.FileSystemExtensions.deleteDirRecursively(TEST_FILES_DIR);
-    FileSystem.deleteDirectory(TEST_FILES_DIR);
   }
 
   @Test

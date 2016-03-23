@@ -15,7 +15,7 @@ using StringTools;
 
 class LayoutModifierTest
 {
-  private static inline var TEST_FILES_DIR = "test/temp";
+  private static inline var TEST_FILES_DIR = "test/temp/layoutmodifier";
 
   @Before
   public function createTestFilesDirectory() {
@@ -25,7 +25,6 @@ class LayoutModifierTest
   @After
   public function deleteTestFiles() {
     nucleus.io.FileSystemExtensions.deleteDirRecursively(TEST_FILES_DIR);
-    FileSystem.deleteDirectory(TEST_FILES_DIR);
   }
 
   @Test
