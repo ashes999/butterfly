@@ -29,11 +29,16 @@ class ButterflyConfig
     // It only works with typedefs. So, we have to use reflection to get/set values. 
     var raw = haxe.Json.parse(sys.io.File.getContent(configFile));
     var config:ButterflyConfig = new ButterflyConfig();
+    var structsFields:Array<String> = Reflect.fields(raw);
+    var classFields:Array<String> = Type.getInstanceFields(Type.getClass(config));
     
-    for (field in Reflect.fields(raw))
+    for (field in structsFields)
     {
-        var value:Dynamic = Reflect.field(raw, field);
-        Reflect.setField(config, field, value);
+        if (classFields.indexOf(field) > -1)
+        {
+            var value:Dynamic = Reflect.field(raw, field);
+            Reflect.setField(config, field, value);
+        }
     }
     
     config.validate();
