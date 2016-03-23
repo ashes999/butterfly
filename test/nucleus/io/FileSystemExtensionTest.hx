@@ -166,21 +166,44 @@ class FileSystemExtensionTest
     }
     
     @Test
-    public function getFilesGetsFilesAndFoldersButIgnoresDsDirectory()
+    public function getFilesGetsFilesButIgnoresFoldersAndDsFiles()
     {
+        var targetDir:String = '${TEST_FILES_ROOT}/fromOsx';
+        FileSystem.createDirectory(targetDir);
+        FileSystem.createDirectory('${targetDir}/test');
+        File.saveContent('${targetDir}/hello.txt', "Hello, world!");
+        File.saveContent('${targetDir}/.ds', "Not a real .ds file");
+        File.saveContent('${targetDir}/test/world.txt', "World, hello!!");
         
+        var actual:Array<String> = FileSystemExtensions.getFiles(targetDir);
+        Assert.isTrue(actual.indexOf('${targetDir}/hello.txt') > -1);
+        
+        Assert.areEqual(-1, actual.indexOf('${targetDir}/test')); // directory, ignored
+        Assert.areEqual(-1, actual.indexOf('${targetDir}/.ds')); // ignored explciitly
+        Assert.areEqual(-1, actual.indexOf('${targetDir}/test/world.txt')); // not recursive
     }
     
     @Test
     public function getFilesThrowsIfDirectoryDoesntExist()
     {
+        var message:String = Assert2.throws(function()
+        {
+            FileSystemExtensions.getFiles('${TEST_FILES_ROOT}/doesntexist');
+        });
         
+        Assert.isTrue(message.indexOf('exist') > -1);
     }
     
     @Test
     public function getFilesThrowsIfPathIsAFile()
     {
+        File.saveContent('${TEST_FILES_ROOT}/file', "Text file, not a dir!");        
+        var message:String = Assert2.throws(function()
+        {
+            FileSystemExtensions.getFiles('${TEST_FILES_ROOT}/file');
+        });
         
+        Assert.isTrue(message.indexOf('file') > -1);
     }
     
     // Assert that a file exists. Return its contents;

@@ -38,15 +38,7 @@ class FileSystemExtensions
 
   public static function deleteDirRecursively(path:String) : Void
   {
-    if (!FileSystem.exists(path))
-    {
-        throw 'Path ${path} doesn\'t exist';
-    }
-     
-    if (!FileSystem.isDirectory(path))
-    {
-        throw 'Path ${path} isn\'t a directory';        
-    }    
+    validateDirectoryExists(path);
     
     var entries = FileSystem.readDirectory(path);
     for (entry in entries)
@@ -86,25 +78,38 @@ class FileSystemExtensions
     FileSystem.createDirectory(directory);
   }
   
-  /** Get all files on a given path. Ignores .DS files/folders. */
+  /** Get all files (not directories) on a given path. Not recursive. Ignores .DS files/folders. */
   public static function getFiles(path:String) : Array<String>
   {
     var toReturn = new Array<String>();
 
-    if (FileSystem.exists(path) && FileSystem.isDirectory(path))
-    {
-      var filesAndDirs = FileSystem.readDirectory(path);
-      for (entry in filesAndDirs)
-      {
+    validateDirectoryExists(path);
+    
+    var filesAndDirs = FileSystem.readDirectory(path);
+    for (entry in filesAndDirs)
+        {
         var relativePath = '${path}/${entry}';
         // Ignore .DS on Mac/OSX
-        if (entry.indexOf(".DS") == -1 && !FileSystem.isDirectory(relativePath))
+        if (entry.toUpperCase().indexOf(".DS") == -1 && !FileSystem.isDirectory(relativePath))
         {
-          toReturn.push(relativePath);
+            toReturn.push(relativePath);
         }
-      }
     }
+    
 
     return toReturn;
+  }
+  
+  private static function validateDirectoryExists(path:String):Void
+  {
+    if (!FileSystem.exists(path))
+    {
+        throw 'Path ${path} doesn\'t exist';
+    }
+     
+    if (!FileSystem.isDirectory(path))
+    {
+        throw 'Path ${path} isn\'t a directory';        
+    }
   }
 }
