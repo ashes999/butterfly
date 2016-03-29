@@ -10,8 +10,10 @@ import massive.munit.Assert;
 import sys.io.File;
 import sys.FileSystem;
 
+import test.helpers.Assert2;
 import test.helpers.Factory;
 
+@:access(Main)
 class MainTest
 {
   private static inline var TEST_FILES_DIR = "test/temp/main";
@@ -90,5 +92,30 @@ class MainTest
     Assert.areEqual(1, pages.indexOf(secondPage));
     Assert.areEqual(2, pages.indexOf(thirdPage));
     Assert.areEqual(3, pages.indexOf(fourthPage));
+  }
+  
+  @Test
+  public function getAndValidateLayoutHtmlThrowsIfLayoutHtmlDoesntHaveContentPlaceholder()
+  {
+      var srcDir = TEST_FILES_DIR;
+      var config = new ButterflyConfig();      
+      File.saveContent('${srcDir}/layout.html', "<butterfly-pages />Bad, bad layout!");
+      
+      var message:String = Assert2.throws(function()
+      {
+          new Main().getAndValidateLayoutHtml(srcDir, config, [], []);
+      });
+      
+      Assert.isNotNull(message);
+      Assert.isTrue(message.indexOf("placeholder") > -1);
+  }
+  
+  @Test
+  public function getAndValidateLayoutHtmlDoesntThrowIfLayoutHasContentPlaceholder()
+  {
+      var srcDir = TEST_FILES_DIR;
+      var config = new ButterflyConfig();      
+      File.saveContent('${srcDir}/layout.html', "<butterfly-pages /><butterfly-content />");
+      new Main().getAndValidateLayoutHtml(srcDir, config, [], []);
   }
 }
