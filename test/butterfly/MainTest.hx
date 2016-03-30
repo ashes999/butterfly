@@ -5,6 +5,7 @@ import butterfly.core.Page;
 import butterfly.core.Post;
 import butterfly.html.FileWriter;
 
+using DateTools;
 import Main;
 import massive.munit.Assert;
 import sys.io.File;
@@ -117,5 +118,130 @@ class MainTest
       var config = new ButterflyConfig();      
       File.saveContent('${srcDir}/layout.html', "<butterfly-pages /><butterfly-content />");
       new Main().getAndValidateLayoutHtml(srcDir, config, [], []);
+  }
+  
+  @Test
+  public function runGeneratesHtmlFilesForPagesPostsTagsAndAtomFeed()
+  {
+      // Set up two posts, a custom home page, one page, config.json,
+      // a layout, a CSS file, a JS file, and an image. Then test that they all generate correctly.
+      // We're just testing files exist (with rough content checks). Most of the content generation
+      // is tested in the core classes (Content, Post, Page) tests.
+      
+      var projectDir:String = '${TEST_FILES_DIR}/project';
+      var srcDir:String = '${projectDir}/src';
+      
+      var post1Title:String = "brave-new-world";
+      var post1Markdown:String = "Enter a brave new world!";
+      var post1Content:String = createPostMarkdown(post1Markdown, ["exploration", "courage"], Date.fromString("2011-01-01"));
+      var post2Title:String = "shiny-boat";
+      var post2Markdown:String = "Guess which country creates the shiniest boats!";
+      var post2Content:String = createPostMarkdown(post2Markdown, ["exploration", "boats"], Date.fromString("2011-12-31"));
+
+      var pageTitle:String = "about";
+      var pageContent:String = "Hello, World!";
+      
+      var layout:String = "<html><head><title>Cool Travel Site</title></head><body><butterfly-pages /><butterfly-content /></body></html>";
+      var layoutFile:String = "layout.html";
+      
+      var customLayout:String = "<html><body><butterfly-pages />Custom home page!<br /><butterfly-content /></body></html>";
+      var customLayoutFile = "custom.html";
+      
+      var config:String = '{ "siteName": "dummy site", "siteUrl": "http://dummy.com", 
+        "authorName": "test robot", "homePageLayout": "${customLayoutFile}" }';      
+      
+      FileSystem.createDirectory(projectDir);
+      FileSystem.createDirectory(srcDir);
+      File.saveContent('${srcDir}/config.json', config);
+      File.saveContent('${srcDir}/${layoutFile}', layout);
+      File.saveContent('${srcDir}/${customLayoutFile}', customLayout);
+      
+      FileSystem.createDirectory('${srcDir}/posts');
+      File.saveContent('${srcDir}/posts/${post1Title}.md', post1Content);
+      File.saveContent('${srcDir}/posts/${post2Title}.md', post2Content);
+      FileSystem.createDirectory('${srcDir}/pages');
+      File.saveContent('${srcDir}/pages/${pageTitle}.md', pageContent);
+      
+      var contentDir:String = '${srcDir}/content';
+      var cssFile = "main.css";
+      var css:String = "* { padding: 0px; margin: 0px; }";
+      var jsFile = "custom.js";
+      var js:String = "function main() { }";
+      
+      FileSystem.createDirectory(contentDir);
+      File.saveContent('${contentDir}/${cssFile}', css);
+      File.saveContent('${contentDir}/${jsFile}', js);
+      File.saveContent('${contentDir}/logo.png', "Not really a logo");
+      
+      new Main().run([projectDir]);
+      
+      // Verify all HTML was created correctly
+      
+      var binDir:String = '${projectDir}/bin';
+      
+      // Home page should use our custom layout
+      var indexHtml:String = getFile('${binDir}/index.html');
+      Assert.isTrue(indexHtml.indexOf('Custom home page') > -1);
+      // Verify ordering of posts
+      var earlierPostIndex = indexHtml.indexOf(post1Title);
+      Assert.isTrue(earlierPostIndex > -1);
+      var laterPostIndex = indexHtml.indexOf(post2Title);
+      Assert.isTrue(laterPostIndex > -1);
+      Assert.isTrue(laterPostIndex > -1);
+      Assert.isTrue(laterPostIndex < earlierPostIndex);
+      
+      // About page uses the normal layout
+      var aboutPage:String = getFile('${binDir}/about.html');
+      Assert.isTrue(aboutPage.indexOf('<head>') > -1);
+      Assert.isTrue(aboutPage.indexOf(pageContent) > -1);
+      
+      // Posts have content. Everything else is tested elsewhere.
+      var post1:String = getFile('${binDir}/${post1Title}.html');
+      Assert.isTrue(post1.indexOf(post1Markdown) > -1);
+      var post2:String = getFile('${binDir}/${post2Title}.html');
+      Assert.isTrue(post2.indexOf(post2Markdown) > -1);
+      
+      // Tag pages generate with all posts
+      var uniqueTags = ["exploration", "courage", "boats"];
+      for (tag in uniqueTags)
+      {
+          var tagFile:String = getFile('${binDir}/tag-${tag}.html');
+          // A link to either post (not sure which is in which tag)
+          Assert.isTrue(tagFile.indexOf(post1Title) > -1 || tagFile.indexOf(post2Title) > -1);
+      }
+      
+      // Atom feed
+      var atomXml:String = getFile('${binDir}/atom.xml');
+      // Verify ordering of posts. Earliest posts are first.
+      // Atom doesn't require this, but we do this. It's easier than using
+      // xpath to get the updated date.
+      earlierPostIndex = atomXml.indexOf(post1Title);
+      Assert.isTrue(earlierPostIndex > -1);
+      laterPostIndex = atomXml.indexOf(post2Title);
+      Assert.isTrue(laterPostIndex > -1);
+      Assert.isTrue(laterPostIndex > -1);
+      Assert.isTrue(laterPostIndex < earlierPostIndex);
+      
+      // Verify all content files copied over
+      assertFile('${binDir}/content/${cssFile}');
+      assertFile('${binDir}/content/${jsFile}');
+      assertFile('${binDir}/content/logo.png');
+  }
+  
+  private function getFile(pathAndFilename:String):String
+  {
+      assertFile(pathAndFilename);
+      return File.getContent(pathAndFilename);
+  }
+  
+  private function assertFile(pathAndFilename:String):Void
+  {
+      Assert.isTrue(FileSystem.exists(pathAndFilename));
+      Assert.isFalse(FileSystem.isDirectory(pathAndFilename));
+  }
+  
+  private function createPostMarkdown(content:String, tags:Array<String>, publishedOn:Date):String
+  {
+      return 'meta-publishedOn: ${publishedOn.format("%Y-%m-%d")}\nmeta-tags: ${tags.join(", ")} \n ${content}'; 
   }
 }

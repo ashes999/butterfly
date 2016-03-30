@@ -15,14 +15,14 @@ import nucleus.io.FileSystemExtensions;
 
 class Main {
 	static public function main() : Void {
-		new Main().run();
+		new Main().run(Sys.args());
 	}
 
 	public function new() { }
 
-	public function run() : Void {
+	public function run(args:Array<String>) : Void {
 		// Initial setup/validation
-		var projectDir:String = ArgsParser.extractProjectDirFromArgs(Sys.args()); 
+		var projectDir:String = ArgsParser.extractProjectDirFromArgs(args); 
 		var binDir:String = '${projectDir}/bin';
 		FileSystemExtensions.recreateDirectory(binDir); 
 		var srcDir = '${projectDir}/src';
