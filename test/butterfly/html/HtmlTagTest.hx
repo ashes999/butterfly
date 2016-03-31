@@ -33,14 +33,13 @@ class HtmlTagTest
 		Assert.areEqual("Koko", actual.attribute("leader-name"));
 	}
 
-	@Ignore("Same as the above test, but fails when we use single quotes on the attribute")
 	@Test
 	public function constructorFindsSelfEnclosedTagWithAttributesButOnlyMatchesSingleQuotedAttributes()
 	{
-		var expected = "<barrel-o-monkeys no-chimps leader-name='Koko' />";
-		var actual = new HtmlTag("barrel-o-monkeys", '<div><span>${expected}</div></span>'); // out of order tags
+		var expected = "<awesome-spaceships can-cloak flagship-name='Enterprise' />";
+		var actual = new HtmlTag("awesome-spaceships", '<div><span>${expected}</div></span>'); // out of order tags
 		Assert.areEqual(1, actual.attributeCount);
-		Assert.areEqual("Koko", actual.attribute("leader-name"));
+		Assert.areEqual("Enterprise", actual.attribute("flagship-name"));
 	}
 
 	@Test
