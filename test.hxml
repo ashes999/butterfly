@@ -1,8 +1,9 @@
 ## Neko
 -main TestMain
--lib munit
 -lib hamcrest
 -lib markdown
+-lib munit
+-lib noor
 
 -cp src
 -cp test

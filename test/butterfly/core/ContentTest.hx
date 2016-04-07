@@ -1,9 +1,9 @@
 package butterfly.core;
 
+import butterfly.core.Post;
 import sys.io.File;
 import sys.FileSystem;
-import butterfly.core.Post;
-import massive.munit.Assert;
+import noor.Assert;
 
 class ContentTest
 {
@@ -34,8 +34,8 @@ Why would you want to display animated GIFs in a HaxeFlixel game? ...';
     var content:Content = new Content();
     content.parse(fullFileName);
 
-    Assert.areEqual(title, content.title);
-    Assert.areEqual(id, content.id);
+    Assert.that(content.title, Is.equalTo(title));
+    Assert.that(content.id, Is.equalTo(id));
   }
 
   @Test
