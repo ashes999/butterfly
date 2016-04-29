@@ -6,6 +6,8 @@ hxml:
   - test.hxml
 install:
   - haxelib git noor https://github.com/ashes999/noor > /dev/null
-  - haxelib install munit > /dev/null
+  - haxelib install hamcrest > /dev/null
+  - haxelib install markdown > /dev/null
+  - haxelib install munit > /dev/null  
 script:  
   - haxelib run munit test -coverage -result-exit-code
