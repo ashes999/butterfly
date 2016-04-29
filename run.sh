@@ -1,4 +1,4 @@
-haxe compile.hxml
+haxe build.hxml
 
 if [ $? -eq 0 ]
 then

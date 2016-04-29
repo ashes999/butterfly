@@ -1,20 +1,21 @@
 package butterfly.io;
 
-using butterfly.extensions.StringExtensions;
-import nucleus.io.FileSystemExtensions;
+using noor.io.FileSystemExtensions;
+using noor.StringExtensions;
+import sys.FileSystem;
 
 class ArgsParser
 {
     public static function extractProjectDirFromArgs(args:Array<String>):String
     {
-        if (args == null || args.length != 1 || StringExtensions.isNullOrWhitespace(args[0]))
+        if (args == null || args.length != 1 || args[0].isNullOrWhitespace())
         {
             throw "Usage: neko Main.n <source directory>";
         }
 
         var projectDir:String = args[0];
         trace("Using " + projectDir + " as project directory");
-        FileSystemExtensions.ensureDirExists(projectDir);
+        FileSystemExtensions.ensureDirectoryExists(FileSystem, projectDir);
             
         return projectDir;
     }

@@ -3,6 +3,7 @@ package butterfly.core;
 import butterfly.core.Post;
 import butterfly.core.Content;
 using massive.munit.Assert;
+using noor.io.FileSystemExtensions;
 import sys.io.File;
 import sys.FileSystem;
 
@@ -17,7 +18,7 @@ class ContentTest
 
   @After
   public function deleteTestFiles() {
-    nucleus.io.FileSystemExtensions.deleteDirRecursively(TEST_FILES_DIR);
+    FileSystem.deleteDirectoryRecursively(TEST_FILES_DIR);
   }
 
   @Test

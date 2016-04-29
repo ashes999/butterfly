@@ -7,7 +7,7 @@ import sys.io.File;
 import butterfly.core.ButterflyConfig;
 import butterfly.core.Page;
 import butterfly.core.Post;
-
+using noor.io.FileSystemExtensions;
 import test.helpers.Factory;
 import test.helpers.Assert2;
 
@@ -24,7 +24,7 @@ class LayoutModifierTest
 
   @After
   public function deleteTestFiles() {
-    nucleus.io.FileSystemExtensions.deleteDirRecursively(TEST_FILES_DIR);
+    FileSystem.deleteDirectoryRecursively(TEST_FILES_DIR);
   }
 
   @Test

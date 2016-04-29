@@ -1,4 +1,5 @@
 --cwd src
 -main Main
 -lib markdown
+-lib noor
 -neko Main.n

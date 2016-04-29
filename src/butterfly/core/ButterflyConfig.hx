@@ -1,6 +1,6 @@
 package butterfly.core;
 
-import butterfly.extensions.StringExtensions;
+using noor.StringExtensions;
 
 class ButterflyConfig
 {
@@ -47,15 +47,15 @@ class ButterflyConfig
   
   public function validate()
   {
-    if (StringExtensions.isNullOrWhitespace(this.siteName))
+    if (this.siteName.isNullOrWhitespace())
     {
         throw 'siteName is a required config field, and it is empty';
     }
-    if (StringExtensions.isNullOrWhitespace(this.siteUrl))
+    if (this.siteUrl.isNullOrWhitespace())
     {
         throw 'siteUrl is a required config field, and it is empty';
     }
-    if (StringExtensions.isNullOrWhitespace(this.authorName))
+    if (this.authorName.isNullOrWhitespace())
     {
         throw 'authorName is a required config field, and it is empty';
     }

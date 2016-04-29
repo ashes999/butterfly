@@ -6,9 +6,9 @@ import butterfly.core.ButterflyConfig;
 import butterfly.core.Page;
 import butterfly.core.Post;
 import butterfly.generator.HtmlGenerator;
-
-import test.helpers.Factory;
+using noor.io.FileSystemExtensions;
 import sys.FileSystem;
+import test.helpers.Factory;
 
 using DateTools;
 
@@ -25,7 +25,7 @@ class HtmlGeneratorTest
 
   @After
   public function deleteTestFiles() {
-    nucleus.io.FileSystemExtensions.deleteDirRecursively(TEST_FILES_DIR);
+    FileSystem.deleteDirectoryRecursively(TEST_FILES_DIR);
   }
 
 	@Test

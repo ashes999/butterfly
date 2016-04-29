@@ -8,9 +8,9 @@ import butterfly.html.FileWriter;
 using DateTools;
 import Main;
 import massive.munit.Assert;
+using noor.io.FileSystemExtensions;
 import sys.io.File;
 import sys.FileSystem;
-
 import test.helpers.Assert2;
 import test.helpers.Factory;
 
@@ -26,7 +26,7 @@ class MainTest
 
 	@After
 	public function deleteTestFiles() {
-		nucleus.io.FileSystemExtensions.deleteDirRecursively(TEST_FILES_DIR);
+		FileSystem.deleteDirectoryRecursively(TEST_FILES_DIR);
 	}
 
 	@Test

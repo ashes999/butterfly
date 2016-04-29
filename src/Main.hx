@@ -10,30 +10,33 @@ import butterfly.generator.HtmlGenerator;
 import butterfly.html.FileWriter;
 import butterfly.html.LayoutModifier;
 import butterfly.io.ArgsParser;
-import butterfly.extensions.StringExtensions;
-import nucleus.io.FileSystemExtensions;
+using noor.StringExtensions;
+using noor.io.FileSystemExtensions;
+import sys.FileSystem;
 
 class Main {
-	static public function main() : Void {
+	static public function main() : Void
+    {
 		new Main().run(Sys.args());
 	}
 
 	public function new() { }
 
-	public function run(args:Array<String>) : Void {
+	public function run(args:Array<String>) : Void
+    {
 		// Initial setup/validation
 		var projectDir:String = ArgsParser.extractProjectDirFromArgs(args); 
 		var binDir:String = '${projectDir}/bin';
-		FileSystemExtensions.recreateDirectory(binDir); 
+		FileSystem.recreateDirectory(binDir); 
 		var srcDir = '${projectDir}/src';
-		FileSystemExtensions.ensureDirExists(srcDir);
+		FileSystem.ensureDirectoryExists(srcDir);
 		var config:ButterflyConfig = ButterflyConfig.fromFile('${srcDir}/config.json');
 
 		// Start creating content files
 		var pages:Array<Page> = getPages(srcDir);
 		var posts:Array<Post> = getPosts(srcDir);
 		var tags:Array<String> = Post.getPostTags(posts);
-		FileSystemExtensions.copyDirRecursively('${srcDir}/content', '${binDir}/content');
+		FileSystem.copyDirectoryRecursively('${srcDir}/content', '${binDir}/content');
 
 		// Start HTML generation
 		var layoutHtml = getAndValidateLayoutHtml(srcDir, config, posts, pages);
@@ -107,7 +110,7 @@ class Main {
 	private function getPages(srcDir:String):Array<Page> {
 		var pages:Array<Page> = new Array<Page>();
 
-		var files:Array<String> = FileSystemExtensions.getFiles('${srcDir}/pages');
+		var files:Array<String> = FileSystem.getFiles('${srcDir}/pages');
 		for (file in files) {
 			var p = new Page();
 			p.parse(file);
@@ -121,7 +124,7 @@ class Main {
 	private function getPosts(srcDir:String):Array<Post> {
 		var posts:Array<Post> = new Array<Post>();
 
-		var files:Array<String> = FileSystemExtensions.getFiles('${srcDir}/posts');
+		var files:Array<String> = FileSystem.getFiles('${srcDir}/posts');
 		for (file in files) {
 			var p = new Post();
 			p.parse(file);

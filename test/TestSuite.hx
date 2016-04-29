@@ -11,7 +11,6 @@ import butterfly.html.TagFinderTest;
 import butterfly.html.HtmlTagTest;
 import butterfly.html.LayoutModifierTest;
 import butterfly.io.ArgParserTest;
-import nucleus.io.FileSystemExtensionTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -36,6 +35,5 @@ class TestSuite extends massive.munit.TestSuite
 		add(butterfly.html.HtmlTagTest);
 		add(butterfly.html.LayoutModifierTest);
 		add(butterfly.io.ArgParserTest);
-		add(nucleus.io.FileSystemExtensionTest);
 	}
 }
