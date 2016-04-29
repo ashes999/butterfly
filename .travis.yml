@@ -4,6 +4,7 @@ haxe:
 neko: "2.0.0"
 hxml:
   - test.hxml
-script:
-  haxelib git noor https://github.com/ashes999/noor
-  haxelib run munit test -coverage -result-exit-code
+install:
+  - haxelib git noor https://github.com/ashes999/noor
+script:  
+  - haxelib run munit test -coverage -result-exit-code
