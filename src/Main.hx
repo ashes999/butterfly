@@ -124,7 +124,7 @@ class Main {
 	private function getPosts(srcDir:String):Array<Post> {
 		var posts:Array<Post> = new Array<Post>();
 
-		var files:Array<String> = FileSystem.getFiles('${srcDir}/posts');
+		var files:Array<String> = FileSystem.getFilesRecursively('${srcDir}/posts');
 		for (file in files) {
 			var p = new Post();
 			p.parse(file);
