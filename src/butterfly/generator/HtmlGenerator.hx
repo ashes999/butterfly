@@ -140,9 +140,9 @@ class HtmlGenerator {
         finalContent = finalContent.replace("<title>", '<title>${content.title} | ');
 
         // Add OpenGraph metadata. TODO: add unit tests for this.
-        var openGraphHtml = "<meta property='og:type' content='article' />";
-        openGraphHtml += '<meta property="og:title" content="${content.title}" />';
-        openGraphHtml += '<meta property="og:image" content="${content.image}" />';
+        var openGraphHtml = '<meta property="og:type" content="article" />\r\n';
+        openGraphHtml += '<meta property="og:title" content="${content.title}" />\r\n';
+        openGraphHtml += '<meta property="og:image" content="${content.image}" />\r\n';
         openGraphHtml += "</head>";
         finalContent = finalContent.replace("</head>", openGraphHtml);
 

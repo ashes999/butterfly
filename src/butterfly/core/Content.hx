@@ -12,7 +12,7 @@ class Content
   private static var idRegex = ~/meta-id: (\w{40})/i;
   private static var titleRegex = ~/^meta-title:(.*)$/im;
   private static var imageRegex = ~/^meta-image:(.*)$/im;
-  private static var imageMarkdownRegex = ~/!\[[\w\-_:\s]*\]\([\w\-_:\/\.]+\)/im;
+  private static var imageMarkdownRegex = ~/!\[[\w\-_:\s]*\]\(([\w\-_:\/\.]+)\)/im;
 
   public var id(default, null) : String;
   public var title(default, default) : String;
@@ -94,9 +94,9 @@ ${markdown}';
   private static function getImage(markdown:String):String
   {
     if (imageRegex.match(markdown)) {
-      return imageRegex.matched(0).trim();
+      return imageRegex.matched(1).trim(); // first group
     } else if (imageMarkdownRegex.match(markdown)) {
-      return imageMarkdownRegex.matched(0).trim();
+      return imageMarkdownRegex.matched(1).trim(); // first group
     } else {
       return ""; // Image not found
     }
