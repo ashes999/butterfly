@@ -19,6 +19,7 @@ class Content
   public var content(default, default) : String;
   public var url(default, default) : String;
   public var image(default, null):String; // used for opengraph
+  public var description(default, null):String; // used for opengraph
 
   public function new()
   {
@@ -35,6 +36,7 @@ class Content
     this.content = getHtml(markdown);
     this.id = getAndGenerateId(pathAndFileName);
     this.image = getImage(markdown);
+    this.description = getDescription(markdown);
     return markdown;
   }
 
@@ -67,8 +69,7 @@ class Content
 
   private static function getHtml(markdown:String) : String
   {
-    // Remove meta-data lines
-    markdown = metaDataRegex.replace(markdown, "");
+    markdown = metaDataRegex.replace(markdown, ""); // Remove meta-data lines 
     var html = Markdown.markdownToHtml(markdown);
     return html;
   }
@@ -100,5 +101,21 @@ ${markdown}';
     } else {
       return ""; // Image not found
     }
+  }
+
+  private static function getDescription(markdown:String):String
+  {
+    var description = metaDataRegex.replace(markdown, ""); // Remove meta-data lines
+    var lines = description.split("\r");
+    for (line in lines)
+    {
+      line = line.trim();
+      if (line.length > 0 && line.indexOf("![") == -1)
+      {
+        // Return the first non-empty line without an image in it
+        return line;
+      }
+    }
+    return "";
   }
 }
