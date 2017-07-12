@@ -138,6 +138,14 @@ class HtmlGenerator {
 
         // prefix the post name to the title tag
         finalContent = finalContent.replace("<title>", '<title>${content.title} | ');
+
+        // Add OpenGraph metadata. TODO: add unit tests for this.
+        var openGraphHtml = "<meta property='og:type' content='article' />";
+        openGraphHtml += '<meta property="og:title" content="${content.title}" />';
+        openGraphHtml += '<meta property="og:image" content="${content.image}" />';
+        openGraphHtml += "</head>";
+        finalContent = finalContent.replace("</head>", openGraphHtml);
+
         return finalContent;
     }
 

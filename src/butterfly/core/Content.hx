@@ -11,11 +11,14 @@ class Content
   private static var metaDataRegex = ~/(meta-[\w\-]+:\s.*$)/igm;
   private static var idRegex = ~/meta-id: (\w{40})/i;
   private static var titleRegex = ~/^meta-title:(.*)$/im;
+  private static var imageRegex = ~/^meta-image:(.*)$/im;
+  private static var imageMarkdownRegex = ~/!\[[\w\-_:\s]*\]\([\w\-_:\/\.]+\)/im;
 
   public var id(default, null) : String;
   public var title(default, default) : String;
   public var content(default, default) : String;
   public var url(default, default) : String;
+  public var image(default, null):String; // used for opengraph
 
   public function new()
   {
@@ -31,6 +34,7 @@ class Content
     this.title = getTitle(fileName, markdown);
     this.content = getHtml(markdown);
     this.id = getAndGenerateId(pathAndFileName);
+    this.image = getImage(markdown);
     return markdown;
   }
 
@@ -84,6 +88,17 @@ ${markdown}';
       return id;
     } else {
       return idRegex.matched(1);
+    }
+  }
+
+  private static function getImage(markdown:String):String
+  {
+    if (imageRegex.match(markdown)) {
+      return imageRegex.matched(0).trim();
+    } else if (imageMarkdownRegex.match(markdown)) {
+      return imageMarkdownRegex.matched(0).trim();
+    } else {
+      return ""; // Image not found
     }
   }
 }
