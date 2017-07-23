@@ -1,4 +1,4 @@
 @echo off
 haxe compile.hxml
-neko ./Main.n %*
-del Main.n
+neko build\Main.n %*
+del build\Main.n

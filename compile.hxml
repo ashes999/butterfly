@@ -1,0 +1,9 @@
+## Neko
+-main Main
+-lib hamcrest
+-lib markdown
+-lib noor
+
+-cp src
+
+-neko build\Main.n
