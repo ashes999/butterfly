@@ -67,4 +67,37 @@ Why would you want to display animated GIFs in a HaxeFlixel game? ...';
     Assert.isTrue(content.description.indexOf("'") == -1);
     Assert.isTrue(content.description.indexOf('"') == -1);
   }
+
+  @Test
+  public function imageGetsMetaImageIfPresent()
+  {
+    var imageUrl = "http://i.imgur.com/iCjtnYS.gif";
+    var markdown = 'meta-image: ${imageUrl}
+    Content goes here.
+    Publication date is not necessary.';
+
+    var fullFileName = '${TEST_FILES_DIR}/simple.md';
+    File.saveContent(fullFileName, markdown);
+    var content:Content = new Content();
+    content.parse(fullFileName);
+
+    Assert.areEqual(content.image, imageUrl);
+  }
+
+  @Test
+  public function imageGetsFirstImageIfPresent()
+  {
+    var firstImageUrl = "http://i.imgur.com/iCjtnYS.gif";
+    var markdown = 'Week 4: ![](${firstImageUrl})
+    Week 3: ![](http://i.imgur.com/JuNPgsR.gif)
+    Content goes here.
+    Publication date is not necessary.';
+
+    var fullFileName = '${TEST_FILES_DIR}/simple.md';
+    File.saveContent(fullFileName, markdown);
+    var content:Content = new Content();
+    content.parse(fullFileName);
+
+    Assert.areEqual(content.image, firstImageUrl);
+  }
 }

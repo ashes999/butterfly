@@ -8,10 +8,10 @@ using StringTools;
 class Content
 {
   // Matches all meta-data
-  private static var metaDataRegex = ~/(meta-[\w\-]+:\s.*$)/igm;
-  private static var idRegex = ~/meta-id: (\w{40})/i;
-  private static var titleRegex = ~/^meta-title:(.*)$/im;
-  private static var imageRegex = ~/^meta-image:(.*)$/im;
+  private static var metaDataRegex = ~/\s*(meta-[\w\-]+:\s.*$)/igm;
+  private static var idRegex = ~/\s*meta-id: (\w{40})/i;
+  private static var titleRegex = ~/^\s*meta-title:(.*)$/im;
+  private static var imageRegex = ~/^\s*meta-image:(.*)$/im;
   private static var imageMarkdownRegex = ~/!\[[\w\-_:\s]*\]\(([\w\-_:\/\.]+)\)/im;
 
   public var id(default, null) : String;

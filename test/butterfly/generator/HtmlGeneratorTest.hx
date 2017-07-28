@@ -8,6 +8,7 @@ import butterfly.core.Post;
 import butterfly.generator.HtmlGenerator;
 using noor.io.FileSystemExtensions;
 import sys.FileSystem;
+import sys.io.File;
 import test.helpers.Factory;
 
 using DateTools;
@@ -273,6 +274,88 @@ class HtmlGeneratorTest
 		Assert.areEqual(0, actual.indexOf("<a"));
 		Assert.isTrue(actual.indexOf("avacado") > -1);
 		Assert.isTrue(actual.indexOf(".html") > -1);
+	}
+
+	@Test
+	public function generatePostHtmlGeneratesOpenGraphDescriptionWithoutQuotations()
+	{
+		var title:String = "Markdown File";
+
+    	var markdown = "meta-publishedOn: 2011-12-31
+			This is a multi-line 'post' (but don't " + '"quote" me on that)!
+			This is the second line.
+			And the last line.';
+
+		var fullFileName = '${TEST_FILES_DIR}/simple.md';
+		File.saveContent(fullFileName, markdown);
+		var post:Post = new Post();
+		post.parse(fullFileName);
+	
+		// </head> tag is required to generate OpenGraph data
+		var generator = new HtmlGenerator
+            ("<butterfly-pages /><head></head><butterfly-content /><butterfly-tags />", [post], []);
+		
+		// Use "parse" to get the description
+
+		var actual = generator.generatePostHtml(post, new ButterflyConfig());
+		var expected = "This is a multi-line post (but dont quote me on that)!";
+		expected = '<meta property="og:description" content="${expected}" />';
+		Assert.isTrue(actual.indexOf(expected) > -1);
+	}
+	
+	@Test
+	public function generatePostHtmlGeneratesOpenGraphImageUsingMetaImageUrl()
+	{
+		var title:String = "Markdown File";
+		var imageUrl = "http://i.imgur.com/iCjtnYS.gif";
+
+		// Also tests that prefixing with whitespace still properly detects metadata
+    	var markdown = '
+			meta-publishedOn: 2011-12-31
+			meta-image: ${imageUrl}
+			The rest of the content does not matter.';
+
+		var fullFileName = '${TEST_FILES_DIR}/imageMeta.md';
+		File.saveContent(fullFileName, markdown);
+		var post:Post = new Post();
+		post.parse(fullFileName);
+		Assert.isTrue(post.image != null && post.image != "");
+	
+		// </head> tag is required to generate OpenGraph data
+		var generator = new HtmlGenerator
+            ("<butterfly-pages /><head></head><butterfly-content /><butterfly-tags />", [post], []);
+		
+		var actual = generator.generatePostHtml(post, new ButterflyConfig());
+		var expected = '<meta property="og:image" content="${imageUrl}" />';
+		Assert.isTrue(actual.indexOf(expected) > -1);
+	}
+	
+	@Test
+	public function generatePostHtmlGeneratesOpenGraphImageUsingFirstEmbeddedImage()
+	{
+		var title:String = "Markdown File";
+		
+		// Also tests that prefixing with whitespace still properly detects metadata
+    	var firstImageUrl = "http://i.imgur.com/iCjtnYS.gif";
+		var markdown = 'meta-publishedOn: 2017-07-28
+			Week 4: ![](${firstImageUrl})
+			Week 3: ![](http://i.imgur.com/JuNPgsR.gif)
+			Content goes here.
+			Publication date is not necessary.';
+
+		var fullFileName = '${TEST_FILES_DIR}/embeddedImages.md';
+		File.saveContent(fullFileName, markdown);
+		var post:Post = new Post();
+		post.parse(fullFileName);
+		Assert.isTrue(post.image != null && post.image != "");
+	
+		// </head> tag is required to generate OpenGraph data
+		var generator = new HtmlGenerator
+            ("<butterfly-pages /><head></head><butterfly-content /><butterfly-tags />", [post], []);
+		
+		var actual = generator.generatePostHtml(post, new ButterflyConfig());
+		var expected = '<meta property="og:image" content="${firstImageUrl}" />';
+		Assert.isTrue(actual.indexOf(expected) > -1);
 	}
 
 	private function makePost(title:String, url:String = ""):Post
