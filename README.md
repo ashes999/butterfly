@@ -53,6 +53,11 @@ Butterfly generates:
 - One HTML page per tag, listing all posts with that tag (`tag-foo.html`)
 - An Atom feed of the most recent 10 items (`atom.xml`)
 
+## OpenGraph Support
+Butterfly includes very limited support for OpenGraph, and tries to behave sensibly out of the box:
+
+- The first line of your post, which doesn't include an image, becomes the content of the `og:description` meta tag.
+- If your post includes images, the first image becomes the content of the `og:image` meta tag. You can override this by including a `meta-image` line with an image URL, eg. `meta-image: http://i.imgur.com/iCjtnYS.gif`.
 
 # JSON Configuration
 
