@@ -71,6 +71,6 @@ class AtomGenerator {
   private static function toIsoTime(date:Date):String
   {
     // We're not accomodating for timzeones.
-    return date.format("%Y-%m-%d") + "T" + date.format("%T") + "Z";
+    return date.format("%Y-%m-%d") + "T" + date.format("%H:%M:%S") + "Z";
   }
 }
