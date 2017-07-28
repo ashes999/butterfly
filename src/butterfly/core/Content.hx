@@ -92,6 +92,7 @@ ${markdown}';
     }
   }
 
+  // Used for og:image
   private static function getImage(markdown:String):String
   {
     if (imageRegex.match(markdown)) {
@@ -103,6 +104,7 @@ ${markdown}';
     }
   }
 
+  // Used for og:description
   private static function getDescription(markdown:String):String
   {
     var description = metaDataRegex.replace(markdown, ""); // Remove meta-data lines
@@ -112,8 +114,8 @@ ${markdown}';
       line = line.trim();
       if (line.length > 0 && line.indexOf("![") == -1)
       {
-        // Return the first non-empty line without an image in it
-        return line;
+        // Return the first non-empty line without an image in it. And remove quotes, they break HTML.        
+        return line.replace('"', "").replace("'", "");
       }
     }
     return "";

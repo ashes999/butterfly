@@ -54,4 +54,17 @@ Why would you want to display animated GIFs in a HaxeFlixel game? ...';
     Assert.isNotNull(content.id);
     Assert.isTrue(content.id.length > 0);
   }
+
+  @Test
+  public function descriptionRemovesQuotesAndDoubleQuotes()
+  {
+    var markdown = "Here's some string with quotes.  " + 'And "double-quotes!"';
+    var fullFileName = '${TEST_FILES_DIR}/simple.md';
+    File.saveContent(fullFileName, markdown);
+    var content:Content = new Content();
+    content.parse(fullFileName);
+
+    Assert.isTrue(content.description.indexOf("'") == -1);
+    Assert.isTrue(content.description.indexOf('"') == -1);
+  }
 }
