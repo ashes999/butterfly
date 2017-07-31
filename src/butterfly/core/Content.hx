@@ -108,14 +108,19 @@ ${markdown}';
   private static function getDescription(markdown:String):String
   {
     var description = metaDataRegex.replace(markdown, ""); // Remove meta-data lines
-    var lines = description.split("\r");
+
+    // split on \r, \n, or both
+    description = description.replace("\r", "@@").replace("\n", "@@");
+    var lines = description.split("@@");
+    
     for (line in lines)
     {
       line = line.trim();
       if (line.length > 0 && line.indexOf("![") == -1)
       {
         // Return the first non-empty line without an image in it. And remove quotes, they break HTML.        
-        return line.replace('"', "").replace("'", "");
+        var toReturn = line.replace('"', "").replace("'", "");
+        return toReturn;
       }
     }
     return "";

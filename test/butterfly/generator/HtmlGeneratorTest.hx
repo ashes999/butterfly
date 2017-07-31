@@ -289,17 +289,18 @@ class HtmlGeneratorTest
 		var fullFileName = '${TEST_FILES_DIR}/simple.md';
 		File.saveContent(fullFileName, markdown);
 		var post:Post = new Post();
+		// Use "parse" to get the description
 		post.parse(fullFileName);
-	
+
+		var expected = "This is a multi-line post (but dont quote me on that)!";
+		Assert.areEqual(expected, post.description);
+
 		// </head> tag is required to generate OpenGraph data
 		var generator = new HtmlGenerator
             ("<butterfly-pages /><head></head><butterfly-content /><butterfly-tags />", [post], []);
 		
-		// Use "parse" to get the description
-
 		var actual = generator.generatePostHtml(post, new ButterflyConfig());
-		var expected = "This is a multi-line post (but dont quote me on that)!";
-		expected = '<meta property="og:description" content="${expected}" />';
+		expected = '<meta property="og:description" content="${expected}" />';		
 		Assert.isTrue(actual.indexOf(expected) > -1);
 	}
 	
