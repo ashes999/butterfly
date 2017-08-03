@@ -1,6 +1,0 @@
---cwd src
--main Main
--lib markdown
--lib noor
--lib hamcrest
--neko Main.n

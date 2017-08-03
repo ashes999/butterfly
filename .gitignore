@@ -1,8 +1,1 @@
-export/**/*
-report
-build
-Main.n
-.temp
-coverage.txt
-vscode-project.hxml
-test/temp
+**/*.pyc
